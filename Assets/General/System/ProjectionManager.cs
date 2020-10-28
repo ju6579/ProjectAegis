@@ -32,18 +32,18 @@ public class ProjectionManager : MonoBehaviour
             Transform tableTr;
 
             tableTr = Instantiate(pbc.TargetMesh, tablePlane.transform).transform;
-            tableTr.localPosition = targetPosition;
-            tableTr.rotation = targetRotation;
             tableTr.localScale = worldTr.localScale;
 
             tableTr.gameObject.AddComponent(typeof(ProjectPositionTracker));
-            tableTr.gameObject.GetComponent<ProjectPositionTracker>().targetTransform = worldTr;
+            tableTr.gameObject.GetComponent<ProjectPositionTracker>().TargetTransform = worldTr;
         }
     }
 
-    public void InstantiateToTable(GameObject origin, Vector3 targetPosition, Quaternion targetRotation)
+    public void InstantiateToTable(GameObject origin, Vector3 targetWorldPosition, Quaternion targetRotation)
     {
-
+        Vector3 targetLocalPosition = tablePlane.transform.InverseTransformPoint(targetWorldPosition);
+        Debug.Log(targetLocalPosition);
+        InstantiateToWorld(origin, targetLocalPosition, targetRotation);
     }
     #endregion
 

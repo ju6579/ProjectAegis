@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ProjectPositionTracker : MonoBehaviour
 {
-    public Transform targetTransform;
+    public Transform TargetTransform = null;
 
     private void Update()
     {
-        transform.localPosition = targetTransform.localPosition;
-        transform.rotation = targetTransform.rotation;
+        transform.localPosition = TargetTransform.localPosition;
+        transform.rotation = TargetTransform.rotation;
     }
 }

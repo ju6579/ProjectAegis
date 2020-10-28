@@ -17,11 +17,19 @@ public class BaseCameraController : MonoBehaviour
 
     protected static readonly Vector3 _halfRatioVector = new Vector3(0.5f, 0.5f, 0);
 
-    protected Collider RaycastMiddlePoint(float range, LayerMask targetLayer)
+    protected Collider GetColliderOnMiddlePoint(float range, LayerMask targetLayer)
     {
         RaycastHit rayInfo = new RaycastHit();
 
         return Physics.Raycast(GetCameraCenterRay(), out rayInfo, range, targetLayer) ? 
             rayInfo.collider : null;
+    }
+
+    protected RaycastHit RaycastOnMiddlePoint(float range, LayerMask targetLayer)
+    {
+        RaycastHit rayInfo = new RaycastHit();
+        Physics.Raycast(GetCameraCenterRay(), out rayInfo, range, targetLayer);
+
+        return rayInfo;
     }
 }

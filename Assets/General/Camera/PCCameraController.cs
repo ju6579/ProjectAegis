@@ -24,18 +24,20 @@ public class PCCameraController : BaseCameraController
         Cursor.lockState = CursorLockMode.Locked;
     }
 
+    //
+    public GameObject TestPrefab = null;
+    //
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            Collider interactObject = RaycastMiddlePoint(5f, InteractionLayer);
+            RaycastHit rayInfo = RaycastOnMiddlePoint(5f, InteractionLayer);
 
-            if(interactObject != null)
+            if(rayInfo.collider != null)
             {
-                Rigidbody rb = interactObject.GetComponent<Rigidbody>();
-
-                if (rb != null) rb.isKinematic = true;
-                StartCoroutine(_PickupObject(interactObject.transform));
+                ProjectionManager.GetInstance().InstantiateToTable(TestPrefab,
+                                                         rayInfo.point,
+                                                         Quaternion.identity);
             }
         }
     }
@@ -64,7 +66,5 @@ public class PCCameraController : BaseCameraController
             picked.position += Vector3.forward * Time.deltaTime * Input.GetAxis("Vertical");
             yield return _waitRate;
         }
-
-        picked.GetComponent<Rigidbody>().isKinematic = false;
     }
 }
