@@ -32,9 +32,11 @@ public class PCCameraController : BaseCameraController
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             RaycastHit rayInfo = RaycastOnMiddlePoint(5f, InteractionLayer);
-
+            
             if(rayInfo.collider != null)
             {
+                Collider[] col = Physics.OverlapSphere(rayInfo.point, 0.05f, InteractionLayer);
+                
                 ProjectionManager.GetInstance().InstantiateToTable(TestPrefab,
                                                          rayInfo.point,
                                                          Quaternion.identity);

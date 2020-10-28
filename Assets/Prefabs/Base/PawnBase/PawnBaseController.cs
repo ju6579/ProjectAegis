@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PawnBaseController : MonoBehaviour
 {
-    public GameObject TargetMesh = null;
+    public GameObject TargetMeshAnchor = null;
 }

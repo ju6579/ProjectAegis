@@ -11,16 +11,6 @@ public class TestGenerator : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(_test());
-    }
-
-    private IEnumerator _test()
-    {
-        while (this.enabled)
-        {
-            ProjectionManager.GetInstance().InstantiateToWorld(testPrefab, transform.localPosition, transform.rotation);
-            yield return rate;
-        }
-        yield return null;
+        ProjectionManager.GetInstance().InstantiateToWorld(testPrefab, transform.localPosition, transform.rotation);
     }
 }
