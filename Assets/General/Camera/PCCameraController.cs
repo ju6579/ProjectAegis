@@ -35,11 +35,7 @@ public class PCCameraController : BaseCameraController
             
             if(rayInfo.collider != null)
             {
-                Collider[] col = Physics.OverlapSphere(rayInfo.point, 0.05f, InteractionLayer);
-                
-                ProjectionManager.GetInstance().InstantiateToTable(TestPrefab,
-                                                         rayInfo.point,
-                                                         Quaternion.identity);
+                ProjectionManager.GetInstance().InstantiateShip(TestPrefab);
             }
         }
     }

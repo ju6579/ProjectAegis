@@ -11,45 +11,37 @@ public class ProjectionManager : MonoBehaviour
     private Material projectionMaterial = null;
 
     [SerializeField]
-    private GameObject worldPlane = null;
+    private GameObject worldSpace = null;
 
     [SerializeField]
-    private GameObject tablePlane = null;
+    private GameObject tableSpace = null;
 
     private float _worldScaleRatio = 1f;
 
     #region Public Method
-    public Vector3 GetWorldPlaneLocalPosition(Vector3 point)
+    private GameObject InstantiateToWorld(GameObject origin, Vector3 targetPosition, Quaternion targetRotation)
     {
-        return worldPlane.transform.InverseTransformPoint(point);
-    }
-
-    public void InstantiateToWorld(GameObject origin, Vector3 targetPosition, Quaternion targetRotation)
-    {
-        Transform worldTr;
-
-        worldTr = Instantiate(origin, worldPlane.transform).transform;
+        Transform worldTr = Instantiate(origin, worldSpace.transform).transform;
         worldTr.localPosition = targetPosition;
         worldTr.rotation = targetRotation;
         worldTr.localScale *= _worldScaleRatio;
 
-        Transform tableTr;
         PawnBaseController pbc = worldTr.GetComponent<PawnBaseController>();
 
-        tableTr = Instantiate(pbc.TargetMeshAnchor, tablePlane.transform).transform;
+        Transform tableTr = Instantiate(pbc.TargetMeshAnchor, tableSpace.transform).transform;
         tableTr.localScale = worldTr.localScale;
 
-        tableTr.gameObject.AddComponent(typeof(ProjectPositionTracker));
+        ProjectPositionTracker tracker = (ProjectPositionTracker)tableTr.gameObject
+            .AddComponent(typeof(ProjectPositionTracker));
 
-        tableTr.gameObject.GetComponent<ProjectPositionTracker>()
-            .SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform, projectionMaterial);
+        tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform, projectionMaterial);
+
+        return worldTr.gameObject;
     }
 
-    public void InstantiateToTable(GameObject origin, Vector3 targetWorldPosition, Quaternion targetRotation)
+    public void InstantiateShip(GameObject ship)
     {
-        Vector3 targetLocalPosition = tablePlane.transform.InverseTransformPoint(targetWorldPosition);
-        Debug.Log(targetLocalPosition);
-        InstantiateToWorld(origin, targetLocalPosition, targetRotation);
+        InstantiateToWorld(ship, Vector3.back * 2f, Quaternion.identity);
     }
     #endregion
 
@@ -59,7 +51,7 @@ public class ProjectionManager : MonoBehaviour
         if (_instance != null) GlobalLogger.CallLogError(name, GErrorType.SingletonDuplicated);
         _instance = this;
 
-        _worldScaleRatio = 1f / worldPlane.transform.localScale.x;
+        _worldScaleRatio = 1f / worldSpace.transform.localScale.x;
     }
     #endregion
 }

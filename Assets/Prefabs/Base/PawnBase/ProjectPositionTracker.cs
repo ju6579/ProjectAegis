@@ -17,7 +17,6 @@ public class ProjectPositionTracker : MonoBehaviour
 
         List<MeshRenderer> meshRenderers = GetComponentsInChildren<MeshRenderer>().ToList<MeshRenderer>();
         meshRenderers.ForEach((MeshRenderer mr) => mr.material = projectionMaterial);
-
     }
 
     private Transform _targetTransform = null;
@@ -28,13 +27,18 @@ public class ProjectPositionTracker : MonoBehaviour
 
     private void Update()
     {
-        transform.localPosition = _targetTransform.localPosition;
-        transform.rotation = _targetTransform.rotation;
-
-        for(int i = 0; i < _followTargets.Count; i++)
+        if (_targetTransform != null)
         {
-            _followers[i].localPosition = _followTargets[i].localPosition;
-            _followers[i].rotation = _followTargets[i].rotation;
+            transform.localPosition = _targetTransform.localPosition;
+            transform.rotation = _targetTransform.rotation;
+
+            for (int i = 0; i < _followTargets.Count; i++)
+            {
+                _followers[i].localPosition = _followTargets[i].localPosition;
+                _followers[i].rotation = _followTargets[i].rotation;
+            }
         }
+        else
+            Destroy(this.gameObject);
     }
 }
