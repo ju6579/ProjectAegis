@@ -17,7 +17,10 @@ public class ProjectionManager : Singleton<ProjectionManager>
     private float _worldScaleRatio = 1f;
 
     #region Public Method
-    private GameObject InstantiateToWorld(GameObject origin, Vector3 targetPosition, Quaternion targetRotation)
+    // KeyValuePair<World Transform, Table Transform>
+    private KeyValuePair<Transform,Transform> InstantiateToWorld(GameObject origin, 
+                                                        Vector3 targetPosition, 
+                                                        Quaternion targetRotation)
     {
         Transform worldTr = Instantiate(origin, worldSpace.transform).transform;
         worldTr.localPosition = targetPosition;
@@ -34,7 +37,7 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
         tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform, projectionMaterial);
 
-        return worldTr.gameObject;
+        return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
     }
 
     public void InstantiateShip(GameObject ship)
@@ -44,7 +47,9 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
     public GameObject InstantiateEnemy(GameObject enemy)
     {
-        return InstantiateToWorld(enemy, Vector3.back * 5f, Quaternion.Euler(0, 180, 0));
+        return InstantiateToWorld(enemy, 
+                             Vector3.back * 5f, 
+                             Quaternion.Euler(0, 180, 0)).Key.gameObject;
     }
 
     public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation)
@@ -57,9 +62,17 @@ public class ProjectionManager : Singleton<ProjectionManager>
     {
         Vector3 spawnPosition = socketCollider.gameObject.transform.position;
         spawnPosition = tableSpace.transform.InverseTransformPoint(spawnPosition);
-        spawnPosition.y += weapon.transform.localScale.y * _worldScaleRatio / 2f;
+        spawnPosition.y += weapon.transform.localScale.y * _worldScaleRatio;
 
-        GameObject go = InstantiateToWorld(weapon, spawnPosition, Quaternion.identity);
+        KeyValuePair<Transform, Transform> trs = InstantiateToWorld(weapon, 
+                                                            spawnPosition, 
+                                                            Quaternion.identity);
+
+        Transform worldObject = socketCollider.gameObject.GetComponentInParent<ProjectPositionTracker>()
+            .GetProjectionTarget(socketCollider.gameObject.transform);
+
+        trs.Key.SetParent(worldObject);
+        trs.Value.SetParent(socketCollider.gameObject.transform);
     }
 
     #endregion
