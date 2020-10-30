@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public class ProjectionManager : MonoBehaviour
+public class ProjectionManager : Singleton<ProjectionManager>
 {
-    private static ProjectionManager _instance = null;
-    public static ProjectionManager GetInstance() { return _instance; }
-
     [SerializeField]
     private Material projectionMaterial = null;
 
@@ -41,16 +39,35 @@ public class ProjectionManager : MonoBehaviour
 
     public void InstantiateShip(GameObject ship)
     {
-        InstantiateToWorld(ship, Vector3.back * 2f, Quaternion.identity);
+        InstantiateToWorld(ship, Vector3.back * 5f, Quaternion.identity);
     }
+
+    public GameObject InstantiateEnemy(GameObject enemy)
+    {
+        return InstantiateToWorld(enemy, Vector3.back * 5f, Quaternion.Euler(0, 180, 0));
+    }
+
+    public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation)
+    {
+        Vector3 localPosition = worldSpace.transform.InverseTransformPoint(worldPosition);
+        InstantiateToWorld(bullet, localPosition, rotation);
+    }
+
+    public void InstantiateWeapon(GameObject weapon, Collider socketCollider)
+    {
+        Vector3 spawnPosition = socketCollider.gameObject.transform.position;
+        spawnPosition = tableSpace.transform.InverseTransformPoint(spawnPosition);
+        spawnPosition.y += weapon.transform.localScale.y * _worldScaleRatio / 2f;
+
+        GameObject go = InstantiateToWorld(weapon, spawnPosition, Quaternion.identity);
+    }
+
     #endregion
 
     #region MonoBehaviour Callbacks
-    private void Awake()
+    protected override void Awake()
     {
-        if (_instance != null) GlobalLogger.CallLogError(name, GErrorType.SingletonDuplicated);
-        _instance = this;
-
+        base.Awake();
         _worldScaleRatio = 1f / worldSpace.transform.localScale.x;
     }
     #endregion

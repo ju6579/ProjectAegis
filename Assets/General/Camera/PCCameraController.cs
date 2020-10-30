@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class PCCameraController : BaseCameraController
 {
+    public string InteractTag = "";
+    public string SocketTag = "";
+
     public float CameraRotateSpeed = 90f;
     public float HorizontalRotateRange = 45f;
     public float VerticalRotateRange = 45f;
-
-    public LayerMask InteractionLayer = -1;
 
     private float _verticalRotate = 0f;
     private float _horizontalRotate = 0f;
@@ -25,17 +26,26 @@ public class PCCameraController : BaseCameraController
     }
 
     //
-    public GameObject TestPrefab = null;
+    public GameObject TestShip = null;
+    public GameObject TestWeapon = null;
     //
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            RaycastHit rayInfo = RaycastOnMiddlePoint(5f, InteractionLayer);
+            RaycastHit rayInfo = RaycastOnMiddlePoint(5f);
             
             if(rayInfo.collider != null)
             {
-                ProjectionManager.GetInstance().InstantiateShip(TestPrefab);
+                if(rayInfo.collider.tag == InteractTag)
+                {
+                    ObjectButtonAction oba = rayInfo.collider.GetComponent<ObjectButtonAction>();
+                    if (oba != null) oba.OnButtonInteract(TestShip);
+                }
+                else if(rayInfo.collider.tag == SocketTag)
+                {
+                    ProjectionManager.GetInstance().InstantiateWeapon(TestWeapon, rayInfo.collider);
+                }
             }
         }
     }

@@ -10,10 +10,7 @@ public class ProjectPositionTracker : MonoBehaviour
         _targetAnchor = targetAnchor;
 
         _followTargets = _targetAnchor.GetComponentsInChildren<Transform>().ToList<Transform>();
-        _followTargets.RemoveAt(0);
-
         _followers = transform.GetComponentsInChildren<Transform>().ToList<Transform>();
-        _followers.RemoveAt(0);
 
         List<MeshRenderer> meshRenderers = GetComponentsInChildren<MeshRenderer>().ToList<MeshRenderer>();
         meshRenderers.ForEach((MeshRenderer mr) => mr.material = projectionMaterial);
@@ -24,6 +21,10 @@ public class ProjectPositionTracker : MonoBehaviour
 
     private List<Transform> _followers = null;
     private List<Transform> _followTargets = null;
+
+    // develop
+    private List<KeyValuePair<Transform, Transform>> _projectionPair 
+        = new List<KeyValuePair<Transform, Transform>>();
 
     private void Update()
     {

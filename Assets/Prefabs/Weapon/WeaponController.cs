@@ -7,6 +7,9 @@ public class WeaponController : MonoBehaviour
     private GameObject bulletObject = null;
 
     [SerializeField]
+    private GameObject muzzle = null;
+
+    [SerializeField]
     private int attackCount = 3;
 
     [SerializeField]
@@ -18,15 +21,35 @@ public class WeaponController : MonoBehaviour
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
 
+    private bool _isAttack = false;
+
+    private GameObject _attackTarget = null;
+
     private void Awake()
     {
         _attackWait = new WaitForSeconds(attackDelay);
         _reloadWait = new WaitForSeconds(reloadDelay);
     }
 
+    private void Update()
+    {
+        if (_attackTarget != null)
+        {
+            if (!_isAttack)
+            {
+                _isAttack = true;
+                StartCoroutine(_AttackTarget());
+            }
+
+            transform.LookAt(_attackTarget.transform);
+        }
+        else
+            _attackTarget = EnemyKingdom.GetInstance().GetCurrentEnemy();
+    }
+
     private void ShootTarget()
     {
-        Instantiate(bulletObject);
+        ProjectionManager.GetInstance().InstantiateBullet(bulletObject, muzzle.transform.position, transform.rotation);
     }
 
     private IEnumerator _AttackTarget()
@@ -37,5 +60,6 @@ public class WeaponController : MonoBehaviour
             yield return _attackWait;
         }
         yield return _reloadWait;
+        _isAttack = false;
     }
 }

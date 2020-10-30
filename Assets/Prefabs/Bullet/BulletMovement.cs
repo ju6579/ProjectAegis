@@ -18,5 +18,19 @@ public class BulletMovement : MonoBehaviour
     [SerializeField]
     private float bulletDamage = 1f;
 
+    private void Start()
+    {
+        StartCoroutine(_LifeTime());
+    }
 
+    private void Update()
+    {
+        transform.localPosition += transform.forward * Time.deltaTime * bulletSpeed;
+    }
+
+    private IEnumerator _LifeTime()
+    {
+        yield return new WaitForSeconds(0.3f);
+        Destroy(this.gameObject);
+    }
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.054966893, g: 0.0950237, b: 0.19772352, a: 1}
+  m_IndirectSpecularColor: {r: 0.05497357, g: 0.09503529, b: 0.19774653, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -180,7 +180,7 @@ GameObject:
   m_Layer: 0
   m_Name: Ship Anchor
   m_TagString: ShipAnchor
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -243,7 +243,7 @@ GameObject:
   m_Layer: 0
   m_Name: Ship Anchor
   m_TagString: ShipAnchor
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -316,6 +316,18 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.981
       objectReference: {fileID: 0}
+    - target: {fileID: 1429529731896564924, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
+      propertyPath: enemyFactory.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1429529731896564924, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
+      propertyPath: enemyGate
+      value: 
+      objectReference: {fileID: 1068366545}
+    - target: {fileID: 1429529731896564924, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
+      propertyPath: enemyFactory.Array.data[0]
+      value: 
+      objectReference: {fileID: 7275127044657883006, guid: fd106355c33693949b0c6fd6ee0d905d, type: 3}
     - target: {fileID: 1688200004326592429, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
       propertyPath: m_LocalScale.x
       value: 1000
@@ -396,14 +408,30 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.013
       objectReference: {fileID: 0}
+    - target: {fileID: 3210078261500455433, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
+      propertyPath: m_SortingOrder
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3249422634558864476, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3812146736000698043, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.11
+      objectReference: {fileID: 0}
+    - target: {fileID: 3812146736000698043, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.555
       objectReference: {fileID: 0}
     - target: {fileID: 4227833297747330179, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+    - target: {fileID: 5587488609388915919, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e5072259320908f4d9290cf8fb4a87e2, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9609cc2c446e1c244af2a3a3706d0092, type: 3}
 --- !u!1 &481205924
@@ -485,7 +513,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 481205924}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -38.092354, y: 72.792915, z: -173.08}
+  m_LocalPosition: {x: -38.092354, y: 72.792915, z: -172.801}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 137275394}
@@ -608,13 +636,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b33fe6abd81a5a748870d1b5d3f500a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  InteractTag: Interact
+  SocketTag: Socket
   CameraRotateSpeed: 90
   HorizontalRotateRange: 45
   VerticalRotateRange: 75
-  InteractionLayer:
-    serializedVersion: 2
-    m_Bits: 1024
-  TestPrefab: {fileID: 3763352825025767769, guid: 08d6574a60823564992d15c4af884105, type: 3}
+  TestShip: {fileID: 3763352825025767769, guid: 08d6574a60823564992d15c4af884105, type: 3}
+  TestWeapon: {fileID: 3759940353233759847, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
 --- !u!1 &532741100
 GameObject:
   m_ObjectHideFlags: 0
@@ -840,7 +868,7 @@ GameObject:
   m_Layer: 0
   m_Name: Ship Anchor
   m_TagString: ShipAnchor
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -857,6 +885,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1320099668}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1068366544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1068366545}
+  m_Layer: 0
+  m_Name: EnemyGate
+  m_TagString: Untagged
+  m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1068366545
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1068366544}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.466, y: 0.477, z: 0.61}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1320099668}
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1117463603
 GameObject:
@@ -945,7 +1003,7 @@ GameObject:
   m_Layer: 0
   m_Name: Ship Anchor
   m_TagString: ShipAnchor
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -980,7 +1038,7 @@ GameObject:
   m_Layer: 0
   m_Name: Ship Anchor
   m_TagString: ShipAnchor
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -997,6 +1055,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1320099668}
   m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1507380634
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1507380635}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1507380635
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1507380634}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.192185, y: 7.557151, z: -0.3247037}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1862332512
 GameObject:
@@ -1257,7 +1345,7 @@ GameObject:
   m_Layer: 0
   m_Name: Ship Anchor
   m_TagString: ShipAnchor
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -5397416234189338067, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1

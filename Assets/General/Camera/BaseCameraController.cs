@@ -25,10 +25,10 @@ public class BaseCameraController : MonoBehaviour
             rayInfo.collider : null;
     }
 
-    protected RaycastHit RaycastOnMiddlePoint(float range, LayerMask targetLayer)
+    protected RaycastHit RaycastOnMiddlePoint(float range)
     {
         RaycastHit rayInfo = new RaycastHit();
-        Physics.Raycast(GetCameraCenterRay(), out rayInfo, range, targetLayer);
+        Physics.Raycast(GetCameraCenterRay(), out rayInfo, range);
 
         return rayInfo;
     }
