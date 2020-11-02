@@ -19,7 +19,7 @@ public class ObjectButtonAction : MonoBehaviour
         switch (buttonActionType)
         {
             case ButtonType.ProductionSpaceShip:
-                PlayerKingdom.GetInstance().RequestTaskToKingdom();
+                //PlayerKingdom.GetInstance().RequestTaskToKingdom();
                 break;
 
             case ButtonType.WarpSpaceShip:

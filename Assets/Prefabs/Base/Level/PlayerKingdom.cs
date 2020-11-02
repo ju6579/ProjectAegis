@@ -7,9 +7,9 @@ using UnityEngine;
 public class PlayerKingdom : Singleton<PlayerKingdom>
 {
     #region Public Field
-    public void RequestTaskToKingdom()
+    public void RequestTaskToKingdom(PlayerTask playerTask)
     {
-        TaskWrapper taskWrapper = new TaskWrapper(ProductionTasks[0]);
+        TaskWrapper taskWrapper = new TaskWrapper(playerTask);
         StartCoroutine(taskWrapper._ExecuteTask(_taskHash));
     }
 
@@ -43,17 +43,20 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     // Except of Maintenance Task
     private HashSet<TaskWrapper> _taskHash = new HashSet<TaskWrapper>();
 
-    private Dictionary<GameObject, List<GameObject>> _shipCargo = new Dictionary<GameObject, List<GameObject>>();
-    public void SetShipToCargo(GameObject ship) 
+    private Dictionary<GameObject, List<GameObject>> _shipCargo 
+        = new Dictionary<GameObject, List<GameObject>>();
+    public void SetShipToCargo(GameObject prefab, GameObject shiptInstance) 
     {
-        if (!_shipCargo.ContainsKey(ship)) _shipCargo[ship] = new List<GameObject>();
-        _shipCargo[ship].Add(ship);
+        if (!_shipCargo.ContainsKey(prefab)) _shipCargo[prefab] = new List<GameObject>();
+        _shipCargo[prefab].Add(shiptInstance);
     }
 
-    private Dictionary<GameObject, List<GameObject>> _weaponCargo = new Dictionary<GameObject, List<GameObject>>();
-    public void SetWeaponToCargo(GameObject weapon)
+    private Dictionary<GameObject, List<GameObject>> _weaponCargo 
+        = new Dictionary<GameObject, List<GameObject>>();
+    public void SetWeaponToCargo(GameObject prefab, GameObject weaponInstance)
     {
-
+        if (_weaponCargo.ContainsKey(prefab)) _weaponCargo[prefab] = new List<GameObject>();
+        _weaponCargo[prefab].Add(weaponInstance);
     }
     #endregion
 
@@ -121,11 +124,13 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
             switch (pawnProperties.PawnActionType)
             {
                 case PawnBaseController.PawnType.SpaceShip:
-                    GameObject go = ProjectionManager.GetInstance().InstantiateShip(TaskTarget).Key.gameObject;
-                    PlayerKingdom.GetInstance().SetShipToCargo(go);
+                    GameObject ship = ProjectionManager.GetInstance().InstantiateShip(TaskTarget).Key.gameObject;
+                    PlayerKingdom.GetInstance().SetShipToCargo(TaskTarget, ship);
                     break;
 
                 case PawnBaseController.PawnType.Weapon:
+                    GameObject weapon = ProjectionManager.GetInstance().InstantiateShip(TaskTarget).Key.gameObject;
+                    PlayerKingdom.GetInstance().SetWeaponToCargo(TaskTarget, weapon);
                     break;
 
                 default:

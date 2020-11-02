@@ -21,8 +21,6 @@ public class PCCameraController : BaseCameraController
         Vector3 euler = transform.rotation.eulerAngles;
         _verticalRotate = euler.x;
         _horizontalRotate = euler.y;
-
-        Cursor.lockState = CursorLockMode.Locked;
     }
 
     //
@@ -63,16 +61,5 @@ public class PCCameraController : BaseCameraController
         targetRotationEuler.y = _horizontalRotate;
 
         transform.rotation = Quaternion.Euler(targetRotationEuler);
-    }
-
-    private IEnumerator _PickupObject(Transform picked)
-    {
-        while (Input.GetKey(KeyCode.Mouse0))
-        {
-            picked.position += Vector3.up * Time.deltaTime * Input.GetAxis("Height");
-            picked.position += Vector3.right * Time.deltaTime * Input.GetAxis("Horizontal");
-            picked.position += Vector3.forward * Time.deltaTime * Input.GetAxis("Vertical");
-            yield return _waitRate;
-        }
     }
 }
