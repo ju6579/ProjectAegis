@@ -4,29 +4,30 @@ using UnityEngine;
 
 public class ObjectButtonAction : MonoBehaviour
 {
-    protected enum ButtonType
+    public enum ButtonType
     {
-        CallSpaceShip
+        ProductionSpaceShip,
+        WarpSpaceShip
     }
 
     [SerializeField]
-    private ButtonType buttonActionType = ButtonType.CallSpaceShip;
+    private ButtonType buttonActionType = ButtonType.ProductionSpaceShip;
 
     public void OnButtonInteract(GameObject ship)
     {
+        Debug.Log(name + " Click");
         switch (buttonActionType)
         {
-            case ButtonType.CallSpaceShip:
-                CallSpaceShip(ship);
+            case ButtonType.ProductionSpaceShip:
+                PlayerKingdom.GetInstance().RequestTaskToKingdom();
+                break;
+
+            case ButtonType.WarpSpaceShip:
+                PlayerKingdom.GetInstance().RequestShipWarpToKingdom(ship);
                 break;
 
             default:
                 break;
         }
-    }
-
-    private void CallSpaceShip(GameObject ship)
-    {
-        ProjectionManager.GetInstance().InstantiateShip(ship);
     }
 }

@@ -1,22 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
+    [Serializable]
+    private struct WeaponProperty
+    {
+        public GameObject BulletObject;
+        public int AttackCount;
+        public float AttackDelay;
+        public float ReloadDelay;
+    }
+
     [SerializeField]
-    private GameObject bulletObject = null;
+    private WeaponProperty weaponProperty;
 
     [SerializeField]
     private GameObject muzzle = null;
-
-    [SerializeField]
-    private int attackCount = 3;
-
-    [SerializeField]
-    private float attackDelay = 0.25f;
-
-    [SerializeField]
-    private float reloadDelay = 1f;
 
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
@@ -27,8 +28,8 @@ public class WeaponController : MonoBehaviour
 
     private void Awake()
     {
-        _attackWait = new WaitForSeconds(attackDelay);
-        _reloadWait = new WaitForSeconds(reloadDelay);
+        _attackWait = new WaitForSeconds(weaponProperty.AttackDelay);
+        _reloadWait = new WaitForSeconds(weaponProperty.ReloadDelay);
     }
 
     private void Update()
@@ -49,12 +50,14 @@ public class WeaponController : MonoBehaviour
 
     private void ShootTarget()
     {
-        ProjectionManager.GetInstance().InstantiateBullet(bulletObject, muzzle.transform.position, transform.rotation);
+        ProjectionManager.GetInstance().InstantiateBullet(weaponProperty.BulletObject,
+                                                muzzle.transform.position,
+                                                transform.rotation);
     }
 
     private IEnumerator _AttackTarget()
     {
-        for(int i = 0; i < attackCount; i++)
+        for(int i = 0; i < weaponProperty.AttackCount; i++)
         {
             ShootTarget();
             yield return _attackWait;

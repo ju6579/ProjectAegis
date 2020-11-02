@@ -1,21 +1,23 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
 public class ShipController : MonoBehaviour
 {
-    [SerializeField]
-    private float maxMoveSpeed = 20f;
+    [Serializable]
+    private struct ShipProperty
+    {
+        public float MaxMoveSpeed;
+        public float Accelation;
+        public float ArrivalTime;
+    }
 
     [SerializeField]
-    private float accelation = 1f;
+    private ShipProperty shipProperty;
 
-    [SerializeField]
-    private float arrivalTime = 1f;
-
-    [SerializeField]
-    private float warpPower = 1f;
+    private float warpPower = 100f;
 
     private Rigidbody shipPhysics = null;
     private Vector3 _targetPosition;
@@ -23,18 +25,23 @@ public class ShipController : MonoBehaviour
 
     private WaitForSeconds _arrivalWait;
 
+    public void WarpToPosition()
+    {
+        StartCoroutine(_WarpToPosition());
+    }
+
     private void Awake()
     {
         shipPhysics = GetComponent<Rigidbody>();
 
         _targetPosition = transform.position;
-        _arrivalWait = new WaitForSeconds(arrivalTime);
+        _arrivalWait = new WaitForSeconds(shipProperty.ArrivalTime);
         warpPower = warpPower * shipPhysics.mass;
     }
 
     private void OnEnable()
     {
-        StartCoroutine(_WarpToPosition());
+        
     }
 
     private void Update()

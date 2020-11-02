@@ -123,11 +123,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8605348a249de45abd510a9b2b93e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  bulletObject: {fileID: 7395160476708356790, guid: 6b59918e5f9d4164f97ed8c2608b39cf, type: 3}
+  weaponProperty:
+    BulletObject: {fileID: 7395160476708356790, guid: 6b59918e5f9d4164f97ed8c2608b39cf, type: 3}
+    AttackCount: 3
+    AttackDelay: 0.1
+    ReloadDelay: 0.5
   muzzle: {fileID: 684143984939985697}
-  attackCount: 3
-  attackDelay: 0.25
-  reloadDelay: 1
 --- !u!1 &6802823801800659359
 GameObject:
   m_ObjectHideFlags: 0

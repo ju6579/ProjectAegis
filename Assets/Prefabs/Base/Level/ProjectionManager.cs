@@ -40,9 +40,9 @@ public class ProjectionManager : Singleton<ProjectionManager>
         return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
     }
 
-    public void InstantiateShip(GameObject ship)
+    public KeyValuePair<Transform,Transform> InstantiateShip(GameObject ship)
     {
-        InstantiateToWorld(ship, Vector3.back * 5f, Quaternion.identity);
+        return InstantiateToWorld(ship, Vector3.back * 5f, Quaternion.identity);
     }
 
     public GameObject InstantiateEnemy(GameObject enemy)
