@@ -108,7 +108,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 086252c34e3e4f149a215b1a063a5b32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buttonActionType: 0
+  _buttonActionType: 0
 --- !u!1 &1982062460786475509
 GameObject:
   m_ObjectHideFlags: 0
@@ -121,6 +121,7 @@ GameObject:
   - component: {fileID: 7813430442397148006}
   - component: {fileID: -8126974779823090671}
   - component: {fileID: 1429529731896564924}
+  - component: {fileID: 1663450481870267294}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -157,9 +158,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 80e5bab20dd685f4990e5e5745f83748, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectionMaterial: {fileID: 2100000, guid: e5072259320908f4d9290cf8fb4a87e2, type: 2}
-  worldSpace: {fileID: 8310476531613686051}
-  tableSpace: {fileID: 3639834765543431259}
+  _projectionMaterial: {fileID: 2100000, guid: e5072259320908f4d9290cf8fb4a87e2, type: 2}
+  _worldSpace: {fileID: 8310476531613686051}
+  _tableSpace: {fileID: 3639834765543431259}
 --- !u!114 &-8126974779823090671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -184,8 +185,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7efc36c25e268a04eab3a7d6e4432d63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyFactory: []
+  _enemyFactory:
+  - {fileID: 7275127044657883006, guid: fd106355c33693949b0c6fd6ee0d905d, type: 3}
   enemyGate: {fileID: 0}
+--- !u!114 &1663450481870267294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982062460786475509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac0151b21b4d6e94c9c96142417dda46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaintenanceTarget: {fileID: 0}
+  _productionTaskCatalog: []
+  _researchTaskCatalog: []
 --- !u!1 &3639834765543431259
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,19 +11,19 @@ public class ObjectButtonAction : MonoBehaviour
     }
 
     [SerializeField]
-    private ButtonType buttonActionType = ButtonType.ProductionSpaceShip;
+    private ButtonType _buttonActionType = ButtonType.ProductionSpaceShip;
 
     public void OnButtonInteract(GameObject ship)
     {
         Debug.Log(name + " Click");
-        switch (buttonActionType)
+        switch (_buttonActionType)
         {
             case ButtonType.ProductionSpaceShip:
                 //PlayerKingdom.GetInstance().RequestTaskToKingdom();
                 break;
 
             case ButtonType.WarpSpaceShip:
-                PlayerKingdom.GetInstance().RequestShipWarpToKingdom(ship);
+                //PlayerKingdom.GetInstance().RequestShipWarpToKingdom(ship);
                 break;
 
             default:

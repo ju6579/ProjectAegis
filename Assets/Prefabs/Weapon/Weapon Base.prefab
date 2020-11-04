@@ -123,12 +123,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce8605348a249de45abd510a9b2b93e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  weaponProperty:
+  _weaponProperty:
     BulletObject: {fileID: 7395160476708356790, guid: 6b59918e5f9d4164f97ed8c2608b39cf, type: 3}
     AttackCount: 3
     AttackDelay: 0.1
-    ReloadDelay: 0.5
-  muzzle: {fileID: 684143984939985697}
+    ReloadDelay: 0.3
+  _muzzle: {fileID: 684143984939985697}
 --- !u!1 &6802823801800659359
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,6 +219,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
+      propertyPath: PawnActionType
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

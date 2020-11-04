@@ -42,7 +42,7 @@ public class PCCameraController : BaseCameraController
                 }
                 else if(rayInfo.collider.tag == SocketTag)
                 {
-                    ProjectionManager.GetInstance().InstantiateWeapon(TestWeapon, rayInfo.collider);
+                    
                 }
             }
         }

@@ -123,8 +123,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4fa7c41abed7da4fa12d6d401f2153f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  arrivalTime: 3
-  warpPower: 200
+  _arrivalTime: 3
+  _warpPower: 1
 --- !u!1001 &135046522894068256
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -132,6 +132,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
+      propertyPath: PawnActionType
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemyKingdom : Singleton<EnemyKingdom>
 {
     [SerializeField]
-    private List<GameObject> enemyFactory = null;
+    private List<GameObject> _enemyFactory = null;
 
     public Transform enemyGate = null;
     private GameObject _launchedEnemy = null;
@@ -19,6 +19,6 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
     private void Start()
     {
         if (enemyGate != null)
-            _launchedEnemy = ProjectionManager.GetInstance().InstantiateEnemy(enemyFactory[0]);
+            _launchedEnemy = ProjectionManager.GetInstance().InstantiateEnemy(_enemyFactory[0]);
     }
 }

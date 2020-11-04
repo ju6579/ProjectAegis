@@ -13,10 +13,10 @@ public class BulletMovement : MonoBehaviour
     }
 
     [SerializeField]
-    private float bulletSpeed = 1f;
+    private float _bulletSpeed = 1f;
 
     [SerializeField]
-    private float bulletDamage = 1f;
+    private float _bulletDamage = 1f;
 
     private void Start()
     {
@@ -25,7 +25,7 @@ public class BulletMovement : MonoBehaviour
 
     private void Update()
     {
-        transform.localPosition += transform.forward * Time.deltaTime * bulletSpeed;
+        transform.localPosition += transform.forward * Time.deltaTime * _bulletSpeed;
     }
 
     private IEnumerator _LifeTime()

@@ -14,10 +14,10 @@ public class WeaponController : MonoBehaviour
     }
 
     [SerializeField]
-    private WeaponProperty weaponProperty;
+    private WeaponProperty _weaponProperty;
 
     [SerializeField]
-    private GameObject muzzle = null;
+    private GameObject _muzzle = null;
 
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
@@ -28,8 +28,8 @@ public class WeaponController : MonoBehaviour
 
     private void Awake()
     {
-        _attackWait = new WaitForSeconds(weaponProperty.AttackDelay);
-        _reloadWait = new WaitForSeconds(weaponProperty.ReloadDelay);
+        _attackWait = new WaitForSeconds(_weaponProperty.AttackDelay);
+        _reloadWait = new WaitForSeconds(_weaponProperty.ReloadDelay);
     }
 
     private void Update()
@@ -50,14 +50,14 @@ public class WeaponController : MonoBehaviour
 
     private void ShootTarget()
     {
-        ProjectionManager.GetInstance().InstantiateBullet(weaponProperty.BulletObject,
-                                                muzzle.transform.position,
+        ProjectionManager.GetInstance().InstantiateBullet(_weaponProperty.BulletObject,
+                                                _muzzle.transform.position,
                                                 transform.rotation);
     }
 
     private IEnumerator _AttackTarget()
     {
-        for(int i = 0; i < weaponProperty.AttackCount; i++)
+        for(int i = 0; i < _weaponProperty.AttackCount; i++)
         {
             ShootTarget();
             yield return _attackWait;

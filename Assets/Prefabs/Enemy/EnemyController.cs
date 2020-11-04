@@ -6,10 +6,10 @@ using UnityEngine;
 public class EnemyController : MonoBehaviour
 {
     [SerializeField]
-    private float arrivalTime = 3f;
+    private float _arrivalTime = 3f;
 
     [SerializeField]
-    private float warpPower = 1f;
+    private float _warpPower = 1f;
 
     private WaitForSeconds _arrivalWait;
     private Vector3 _targetPosition = Vector3.zero;
@@ -17,9 +17,9 @@ public class EnemyController : MonoBehaviour
 
     private void Awake()
     {
-        _arrivalWait = new WaitForSeconds(arrivalTime);
+        _arrivalWait = new WaitForSeconds(_arrivalTime);
         _enemyPhysics = GetComponent<Rigidbody>();
-        warpPower = warpPower * _enemyPhysics.mass;
+        _warpPower = _warpPower * _enemyPhysics.mass;
     }
 
     private void Start()
@@ -33,6 +33,6 @@ public class EnemyController : MonoBehaviour
         yield return _arrivalWait;
 
         transform.localPosition = _targetPosition + transform.forward * 0.1f;
-        _enemyPhysics.AddForce(transform.forward * warpPower, ForceMode.Impulse);
+        _enemyPhysics.AddForce(transform.forward * _warpPower, ForceMode.Impulse);
     }
 }
