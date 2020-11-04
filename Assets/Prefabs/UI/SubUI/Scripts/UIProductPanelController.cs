@@ -89,7 +89,7 @@ public class UIProductPanelController : MonoBehaviour
     private void Update()
     {
         if (_selectedProductType == PawnBaseController.PawnType.Weapon)
-            _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(_selectedTask.Product).ToString();
+            _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(_selectedTask).ToString();
     }
 
     private IEnumerator _ObserveTaskProceed(float totalTime, GameObject contents)
@@ -125,7 +125,7 @@ public class UIProductPanelController : MonoBehaviour
         if (_selectedProductType == PawnBaseController.PawnType.Weapon)
         {
             _targetCount.gameObject.SetActive(true);
-            _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(target.Product).ToString();
+            _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(target).ToString();
         }
         else
             _targetCount.gameObject.SetActive(false);

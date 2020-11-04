@@ -8,13 +8,13 @@ using UnityEngine;
 public class PlayerKingdom : Singleton<PlayerKingdom>
 {
     #region Facility Handler
-    private Facilities _facilityManager = new Facilities();
+    private PlayerKingdomCargo _kingdomCargo = new PlayerKingdomCargo();
 
-    public void ShipToCargo(GameObject instance) => _facilityManager.AddShipToCargo(instance);
-    public void ShipToField(GameObject instance) => _facilityManager.LaunchShip(instance);
+    public void ShipToCargo(ProductWrapper product) => _kingdomCargo.AddShipToCargo(product);
+    public void ShipToField(ProductWrapper product) => _kingdomCargo.LaunchShip(product);
 
-    public void WeaponToCargo(GameObject prefab, GameObject instance) => _facilityManager.AddWeaponToCargo(prefab, instance);
-    public int WeaponCount(GameObject prefab) => _facilityManager.GetSpecificWeaponCount(prefab);
+    public void WeaponToCargo(ProductWrapper product) => _kingdomCargo.AddWeaponToCargo(product);
+    public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
     #endregion
 
     #region Kingdom Handler
@@ -87,32 +87,59 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     #endregion
 
     #region Player Kingdom Facilities
-    private class Facilities
+    private class PlayerKingdomCargo
     {
-        private ObservableCollection<GameObject> _shipCargo = new ObservableCollection<GameObject>();
+        private List<ProductWrapper> _shipCargo = new List<ProductWrapper>();
 
-        private Dictionary<GameObject, Queue<GameObject>> _weaponCargo
-            = new Dictionary<GameObject, Queue<GameObject>>();
+        private Dictionary<ProductionTask, Queue<ProductWrapper>> _weaponCargo
+            = new Dictionary<ProductionTask, Queue<ProductWrapper>>();
 
-        public void AddShipToCargo(GameObject instance) { _shipCargo.Add(instance); }
+        private Dictionary<ProductionTask, ProductWrapper> _spaceField = new Dictionary<ProductionTask, ProductWrapper>();
 
-        public void LaunchShip(GameObject instance)
+        public void AddShipToCargo(ProductWrapper product) 
         {
-            _shipCargo.Remove(instance);
-            instance.GetComponent<ShipController>().WarpToPosition();
+            if (_spaceField.ContainsKey(product.ProductData)) _spaceField.Remove(product.ProductData);
+            _shipCargo.Add(product); 
         }
 
-        public void AddWeaponToCargo(GameObject prefab, GameObject instance) 
+        public void LaunchShip(ProductWrapper product)
         {
-            if (!_weaponCargo.ContainsKey(prefab))
-                _weaponCargo[prefab] = new Queue<GameObject>();
+            _shipCargo.Remove(product);
+            _spaceField.Add(product.ProductData, product);
 
-            _weaponCargo[prefab].Enqueue(instance);
+            product.Instance.GetComponent<ShipController>().WarpToPosition();
         }
 
-        public int GetSpecificWeaponCount(GameObject prefab)
+        public void AddWeaponToCargo(ProductWrapper product) 
         {
-            return _weaponCargo.ContainsKey(prefab) ? _weaponCargo[prefab].Count : 0;
+            if (_spaceField.ContainsKey(product.ProductData)) _spaceField.Remove(product.ProductData);
+
+            if (!_weaponCargo.ContainsKey(product.ProductData))
+                _weaponCargo[product.ProductData] = new Queue<ProductWrapper>();
+
+            _weaponCargo[product.ProductData].Enqueue(product);
+        }
+
+        public bool AddWeaponToShip(ProductionTask productData)
+        {
+            bool isSucceed = (GetSpecificWeaponCount(productData) > 0);
+
+            if (isSucceed)
+            {
+                ProductWrapper cache = _weaponCargo[productData].Dequeue();
+                _spaceField.Add(cache.ProductData, cache);
+
+                // Some Code Add To Ship
+                //
+                //
+            }
+
+            return isSucceed;
+        }
+
+        public int GetSpecificWeaponCount(ProductionTask productData)
+        {
+            return _weaponCargo.ContainsKey(productData) ? _weaponCargo[productData].Count : 0;
         }
 
         public GameObject MaintenanceTarget = null;
@@ -159,14 +186,14 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
                     GameObject ship = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
                     if (ship.GetComponent<ShipController>() == null)
                         GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-                    PlayerKingdom.GetInstance().ShipToCargo(ship);
+                    PlayerKingdom.GetInstance().ShipToCargo(new ProductWrapper(ship, this));
                     break;
 
                 case PawnBaseController.PawnType.Weapon:
                     GameObject weapon = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
                     if (weapon.GetComponent<WeaponController>() == null)
                         GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-                    PlayerKingdom.GetInstance().WeaponToCargo(Product, weapon);
+                    PlayerKingdom.GetInstance().WeaponToCargo(new ProductWrapper(weapon, this));
                     break;
 
                 default:
@@ -205,10 +232,22 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
         public bool IsSpendable(SpendableResource target)
         {
-            return (this.Crystal > target.Crystal) &&
-                  (this.Explosive > target.Explosive) &&
-                  (this.Metal > target.Metal) &&
-                  (this.Electronic > target.Electronic);
+            return (this.Crystal >= target.Crystal) &&
+                  (this.Explosive >= target.Explosive) &&
+                  (this.Metal >= target.Metal) &&
+                  (this.Electronic >= target.Electronic);
+        }
+    }
+
+    public struct ProductWrapper
+    {
+        public GameObject Instance;
+        public ProductionTask ProductData;
+
+        public ProductWrapper(GameObject instance, ProductionTask productData)
+        {
+            Instance = instance;
+            ProductData = productData;
         }
     }
     #endregion
