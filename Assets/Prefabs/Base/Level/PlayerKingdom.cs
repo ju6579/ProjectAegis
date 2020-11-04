@@ -22,6 +22,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
     public int CurrentAvailableTaskCount => _availableTaskCount;
     public void EndTask() => _availableTaskCount++;
+    public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveProduct(product);
 
     public static void ListenAvailableProduction(OnListChange<ProductionTask> listener) => _availableProductionListener += listener;
     public static void ListenAvailableResearch(OnListChange<ResearchTask> listener) => _availableResearchListener += listener;
@@ -39,11 +40,12 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
     [SerializeField]
     private int _kingdomHuman = 1;
+
+    [SerializeField]
+    private int _availableTaskCount = 3;
     #endregion
 
     #region Private Field
-    private int _availableTaskCount = 2;
-
     private List<ResearchTask> _availableResearch = new List<ResearchTask>();
     private static OnListChange<ResearchTask> _availableResearchListener;
     private void AddAvailableResearch(ResearchTask rt) => _availableResearchListener(rt);
@@ -95,6 +97,21 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
             = new Dictionary<ProductionTask, Queue<ProductWrapper>>();
 
         private Dictionary<ProductionTask, ProductWrapper> _spaceField = new Dictionary<ProductionTask, ProductWrapper>();
+
+        public void RemoveProduct(ProductWrapper product)
+        {
+            PawnBaseController.PawnType type = product.ProductData.Product
+                .GetComponent<PawnBaseController>().PawnActionType;
+
+            if (_spaceField.ContainsKey(product.ProductData)) _spaceField.Remove(product.ProductData);
+
+            if(type == PawnBaseController.PawnType.SpaceShip)
+            {
+                int shipIndex = _shipCargo.IndexOf(product);
+                if (shipIndex >= 0)
+                    _shipCargo.RemoveAt(shipIndex);
+            }
+        }
 
         public void AddShipToCargo(ProductWrapper product) 
         {
@@ -179,6 +196,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
             PawnBaseController pawn = Product.GetComponent<PawnBaseController>();
             if (pawn == null) GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
+            ProductWrapper product;
 
             switch (pawn.PawnActionType)
             {
@@ -186,14 +204,20 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
                     GameObject ship = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
                     if (ship.GetComponent<ShipController>() == null)
                         GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-                    PlayerKingdom.GetInstance().ShipToCargo(new ProductWrapper(ship, this));
+
+                    product = new ProductWrapper(ship, this);
+                    pawn.PawnData = product;
+                    PlayerKingdom.GetInstance().ShipToCargo(product);
                     break;
 
                 case PawnBaseController.PawnType.Weapon:
                     GameObject weapon = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
                     if (weapon.GetComponent<WeaponController>() == null)
                         GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-                    PlayerKingdom.GetInstance().WeaponToCargo(new ProductWrapper(weapon, this));
+
+                    product = new ProductWrapper(weapon, this);
+                    pawn.PawnData = product;
+                    PlayerKingdom.GetInstance().WeaponToCargo(product);
                     break;
 
                 default:
