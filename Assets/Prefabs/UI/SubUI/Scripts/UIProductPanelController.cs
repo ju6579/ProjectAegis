@@ -3,13 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIProductPanelController : MonoBehaviour
+public class UIProductPanelController : TaskListCallbacks<PlayerKingdom.ProductionTask>
 {
     [SerializeField]
     private ScrollRect _shipScrollView = null;
 
     [SerializeField]
+    private Button _shipScrollButton = null;
+
+    [SerializeField]
     private ScrollRect _weaponScrollView = null;
+
+    [SerializeField]
+    private Button _weaponScrollButton = null;
 
     [SerializeField]
     private Image _targetImage = null;
@@ -41,36 +47,11 @@ public class UIProductPanelController : MonoBehaviour
     private PlayerKingdom.ProductionTask _selectedTask = null;
     private PawnBaseController.PawnType _selectedProductType = PawnBaseController.PawnType.NotSet;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         PlayerUIController.DisableUIPanelEventCallbacks += DisableTargetData;
-
-        PlayerKingdom.ListenAvailableProduction((PlayerKingdom.ProductionTask changed) =>
-        {
-            PawnBaseController pbc = changed.Product.GetComponent<PawnBaseController>();
-            RectTransform targetRectTransform = null;
-
-            switch (pbc.PawnActionType)
-            {
-                case PawnBaseController.PawnType.Weapon:
-                    targetRectTransform = _weaponScrollView.content;
-                    break;
-                case PawnBaseController.PawnType.SpaceShip:
-                    targetRectTransform = _shipScrollView.content;
-                    break;
-
-                default:
-                    GlobalLogger.CallLogError(changed.TaskName, GErrorType.InspectorValueException);
-                    break;
-            }   
-
-            GameObject cache = Instantiate(_productScrollViewContentUI, targetRectTransform);
-            Button cacheButton = cache.GetComponent<Button>();
-            Text cacheText = cache.GetComponentInChildren<Text>();
-
-            cacheText.text = changed.TaskName;
-            cacheButton.onClick.AddListener(() => OnClickProductionContents(changed));
-        });
 
         _createButton.onClick.AddListener(() =>
         {
@@ -84,12 +65,65 @@ public class UIProductPanelController : MonoBehaviour
                 PlayerUIController.GetInstance().StartCoroutine(_ObserveTaskProceed(_selectedTask.TaskExecuteTime, cache));
             }
         });
+
+        _shipScrollButton.onClick.AddListener(() => OnClickShipScrollButton());
+        _weaponScrollButton.onClick.AddListener(() => OnClickWeaponScrollButton());
+        OnClickShipScrollButton();
     }
 
     private void Update()
     {
         if (_selectedProductType == PawnBaseController.PawnType.Weapon)
             _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(_selectedTask).ToString();
+    }
+
+    protected override void OnAvailableListChanged(PlayerKingdom.ProductionTask changed, bool isAdd)
+    {
+        base.OnAvailableListChanged(changed, isAdd);
+        if (isAdd)
+        {
+            _productUIContentsHash[changed].SetActive(true);
+        }
+        else
+        {
+            _productUIContentsHash.Remove(changed);
+        }
+    }
+
+    protected override void LoadTaskList()
+    {
+        PlayerKingdom.ListenSingletonLoaded(() =>
+        {
+            PlayerKingdom.GetInstance().ProductList.ForEach((PlayerKingdom.ProductionTask pTask) =>
+            {
+                PawnBaseController pbc = pTask.Product.GetComponent<PawnBaseController>();
+                RectTransform targetRectTransform = null;
+
+                switch (pbc.PawnActionType)
+                {
+                    case PawnBaseController.PawnType.Weapon:
+                        targetRectTransform = _weaponScrollView.content;
+                        break;
+                    case PawnBaseController.PawnType.SpaceShip:
+                        targetRectTransform = _shipScrollView.content;
+                        break;
+
+                    default:
+                        GlobalLogger.CallLogError(pTask.TaskName, GErrorType.InspectorValueException);
+                        break;
+                }
+
+                GameObject cache = Instantiate(_productScrollViewContentUI, targetRectTransform);
+                _productUIContentsHash.Add(pTask, cache);
+
+                cache.GetComponent<UIProductContentsProperty>().SetProductData(pTask);
+
+                Button cacheButton = cache.GetComponent<Button>();
+                cacheButton.onClick.AddListener(() => OnClickProductionContents(pTask));
+
+                cache.SetActive(false);
+            });
+        });
     }
 
     private IEnumerator _ObserveTaskProceed(float totalTime, GameObject contents)
@@ -149,5 +183,19 @@ public class UIProductPanelController : MonoBehaviour
         _targetName.gameObject.SetActive(true);
         _targetType.gameObject.SetActive(true);
         _targetInformation.gameObject.SetActive(true);
+    }
+
+    private void OnClickShipScrollButton()
+    {
+        _weaponScrollView.gameObject.SetActive(false);
+        _shipScrollView.gameObject.SetActive(true);
+        DisableTargetData();
+    }
+
+    private void OnClickWeaponScrollButton()
+    {
+        _weaponScrollView.gameObject.SetActive(true);
+        _shipScrollView.gameObject.SetActive(false);
+        DisableTargetData();
     }
 }

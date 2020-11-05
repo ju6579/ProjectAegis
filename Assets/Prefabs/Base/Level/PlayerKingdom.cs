@@ -18,14 +18,12 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     #endregion
 
     #region Kingdom Handler
-    public delegate void OnListChange<T>(T changedValue);
-
     public int CurrentAvailableTaskCount => _availableTaskCount;
     public void EndTask() => _availableTaskCount++;
     public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveProduct(product);
 
-    public static void ListenAvailableProduction(OnListChange<ProductionTask> listener) => _availableProductionListener += listener;
-    public static void ListenAvailableResearch(OnListChange<ResearchTask> listener) => _availableResearchListener += listener;
+    public List<ProductionTask> ProductList => _productionTaskCatalog;
+    public List<ResearchTask> ResearchList => _researchTaskCatalog;
     #endregion
 
     #region Inspector Field
@@ -47,12 +45,20 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
     #region Private Field
     private List<ResearchTask> _availableResearch = new List<ResearchTask>();
-    private static OnListChange<ResearchTask> _availableResearchListener;
-    private void AddAvailableResearch(ResearchTask rt) => _availableResearchListener(rt);
+    private void AddAvailableResearch(ResearchTask rTask) 
+    {
+        _availableResearch.Add(rTask);
+        // Broadcast To UI
+        TaskListCallbacks<ResearchTask>.BroadcastAvailableTaskChanged?.Invoke(rTask, true);
+    }
 
     private List<ProductionTask> _availableProduction = new List<ProductionTask>();
-    private static OnListChange<ProductionTask> _availableProductionListener;
-    private void AddAvailableProduct(ProductionTask pt) => _availableProductionListener(pt);
+    private void AddAvailableProduction(ProductionTask pTask)
+    {
+        _availableProduction.Add(pTask);
+        // Broadcast To UI
+        TaskListCallbacks<ProductionTask>.BroadcastAvailableTaskChanged?.Invoke(pTask, true);
+    }
     #endregion
 
     #region Kingdom Command
@@ -77,13 +83,11 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     protected override void Awake()
     {
         base.Awake();
-        _availableProductionListener += (ProductionTask pt) => _availableProduction.Add(pt);
-        _availableResearchListener += (ResearchTask rt) => _availableResearch.Add(rt);
     }
 
     private void Start()
     {
-        _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduct(pt));
+        _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
         _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
     }
     #endregion
@@ -100,6 +104,9 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
         public void RemoveProduct(ProductWrapper product)
         {
+            if (product.ProductData == null)
+                return;
+
             PawnBaseController.PawnType type = product.ProductData.Product
                 .GetComponent<PawnBaseController>().PawnActionType;
 
