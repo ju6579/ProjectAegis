@@ -46,7 +46,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
             case MainMenuButtonType.Map: _mapUIPanel.SetActive(true); break;
             case MainMenuButtonType.Team: _teamUIPanel.SetActive(true); break;
             case MainMenuButtonType.Ship: _shipUIPanel.SetActive(true); break;
-            case MainMenuButtonType.Cargo: _cargoUIPanel.SetActive(true); break;
+            case MainMenuButtonType.Base: _cargoUIPanel.SetActive(true); break;
             case MainMenuButtonType.Upgrade: _upgradeUIPanel.SetActive(true); break;
             case MainMenuButtonType.Product: _productUIPanel.SetActive(true); break;
         }
@@ -123,7 +123,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
         Map = 0,
         Team = 1,
         Ship = 2,
-        Cargo = 3,
+        Base = 3,
         Upgrade = 4,
         Product = 5
     }

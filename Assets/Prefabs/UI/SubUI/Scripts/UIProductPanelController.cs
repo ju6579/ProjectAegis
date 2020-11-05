@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIProductPanelController : TaskListCallbacks<PlayerKingdom.ProductionTask>
+public class UIProductPanelController : ListChangedObserveComponent<PlayerKingdom.ProductionTask, PlayerKingdom>
 {
     [SerializeField]
     private ScrollRect _shipScrollView = null;
@@ -77,52 +77,42 @@ public class UIProductPanelController : TaskListCallbacks<PlayerKingdom.Producti
             _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(_selectedTask).ToString();
     }
 
-    protected override void OnAvailableListChanged(PlayerKingdom.ProductionTask changed, bool isAdd)
+    protected override void OnListChanged(PlayerKingdom.ProductionTask changed, bool isAdd)
     {
-        base.OnAvailableListChanged(changed, isAdd);
-        if (isAdd)
-        {
-            _productUIContentsHash[changed].SetActive(true);
-        }
-        else
-        {
-            _productUIContentsHash.Remove(changed);
-        }
+        base.OnListChanged(changed, isAdd);
+        _objectUIContentsHash[changed].SetActive(isAdd);
     }
 
-    protected override void LoadTaskList()
+    protected override void LoadList()
     {
-        PlayerKingdom.ListenSingletonLoaded(() =>
+        PlayerKingdom.GetInstance().ProductList.ForEach((PlayerKingdom.ProductionTask pTask) =>
         {
-            PlayerKingdom.GetInstance().ProductList.ForEach((PlayerKingdom.ProductionTask pTask) =>
+            PawnBaseController pbc = pTask.Product.GetComponent<PawnBaseController>();
+            RectTransform targetRectTransform = null;
+
+            switch (pbc.PawnActionType)
             {
-                PawnBaseController pbc = pTask.Product.GetComponent<PawnBaseController>();
-                RectTransform targetRectTransform = null;
+                case PawnBaseController.PawnType.Weapon:
+                    targetRectTransform = _weaponScrollView.content;
+                    break;
+                case PawnBaseController.PawnType.SpaceShip:
+                    targetRectTransform = _shipScrollView.content;
+                    break;
 
-                switch (pbc.PawnActionType)
-                {
-                    case PawnBaseController.PawnType.Weapon:
-                        targetRectTransform = _weaponScrollView.content;
-                        break;
-                    case PawnBaseController.PawnType.SpaceShip:
-                        targetRectTransform = _shipScrollView.content;
-                        break;
+                default:
+                    GlobalLogger.CallLogError(pTask.TaskName, GErrorType.InspectorValueException);
+                    break;
+            }
 
-                    default:
-                        GlobalLogger.CallLogError(pTask.TaskName, GErrorType.InspectorValueException);
-                        break;
-                }
+            GameObject cache = Instantiate(_productScrollViewContentUI, targetRectTransform);
+            _objectUIContentsHash.Add(pTask, cache);
 
-                GameObject cache = Instantiate(_productScrollViewContentUI, targetRectTransform);
-                _productUIContentsHash.Add(pTask, cache);
+            cache.GetComponent<UIProductContentsProperty>().SetUIContentsData(pTask);
 
-                cache.GetComponent<UIProductContentsProperty>().SetProductData(pTask);
+            Button cacheButton = cache.GetComponent<Button>();
+            cacheButton.onClick.AddListener(() => OnClickProductionContents(pTask));
 
-                Button cacheButton = cache.GetComponent<Button>();
-                cacheButton.onClick.AddListener(() => OnClickProductionContents(pTask));
-
-                cache.SetActive(false);
-            });
+            cache.SetActive(false);
         });
     }
 

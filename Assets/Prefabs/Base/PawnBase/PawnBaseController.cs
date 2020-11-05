@@ -2,6 +2,15 @@
 
 public class PawnBaseController : MonoBehaviour
 {
+    public static bool CompareType(GameObject pawn, PawnType type)
+    {
+        PawnBaseController pbc = pawn.GetComponent<PawnBaseController>();
+        if (pbc == null) 
+            return false;
+
+        return pbc.PawnActionType == type;
+    }
+
     public enum PawnType
     {
         SpaceShip,
@@ -14,6 +23,7 @@ public class PawnBaseController : MonoBehaviour
     public PawnType PawnActionType = PawnType.NotSet;
     public GameObject TargetMeshAnchor = null;
     public PlayerKingdom.ProductWrapper PawnData;
+    public ProjectPositionTracker Projecter = null;
 
     private void OnDestroy()
     {

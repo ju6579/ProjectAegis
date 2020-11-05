@@ -31,20 +31,20 @@ public class PCCameraController : BaseCameraController
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            RaycastHit rayInfo = RaycastOnMiddlePoint(5f);
+            //RaycastHit rayInfo = RaycastOnMiddlePoint(5f);
             
-            if(rayInfo.collider != null)
-            {
-                if(rayInfo.collider.tag == InteractTag)
-                {
-                    ObjectButtonAction oba = rayInfo.collider.GetComponent<ObjectButtonAction>();
-                    if (oba != null) oba.OnButtonInteract(TestShip);
-                }
-                else if(rayInfo.collider.tag == SocketTag)
-                {
+            //if(rayInfo.collider != null)
+            //{
+            //    if(rayInfo.collider.tag == InteractTag)
+            //    {
+            //        ObjectButtonAction oba = rayInfo.collider.GetComponent<ObjectButtonAction>();
+            //        if (oba != null) oba.OnButtonInteract(TestShip);
+            //    }
+            //    else if(rayInfo.collider.tag == SocketTag)
+            //    {
                     
-                }
-            }
+            //    }
+            //}
         }
     }
 

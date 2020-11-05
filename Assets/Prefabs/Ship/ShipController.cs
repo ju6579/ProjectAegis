@@ -7,19 +7,23 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class ShipController : MonoBehaviour
 {
+    public ShipProperty ShipData => _shipProperty;
+
     [Serializable]
-    private struct ShipProperty
+    public class ShipProperty
     {
+        public float ShieldPoint;
+        public float ArmorPoint;
         public float MaxMoveSpeed;
         public float Accelation;
         public float ArrivalTime;
     }
 
     [SerializeField]
-    private ShipProperty _shipProperty;
+    private ShipProperty _shipProperty = null;
 
-    [SerializeField]
-    private List<GameObject> _sockets;
+    private List<GameObject> _sockets = new List<GameObject>();
+
     public void SetWeaponOnSocket(GameObject weapon)
     {
         if(_sockets.Count != 0)
@@ -36,7 +40,11 @@ public class ShipController : MonoBehaviour
 
     private Rigidbody shipPhysics = null;
     private Vector3 _targetPosition;
+#pragma warning disable IDE0044 // 읽기 전용 한정자 추가
+#pragma warning disable IDE0051 // 사용되지 않는 private 멤버 제거
     private float _currentSpeed = 0f;
+#pragma warning restore IDE0051 // 사용되지 않는 private 멤버 제거
+#pragma warning restore IDE0044 // 읽기 전용 한정자 추가
 
     private WaitForSeconds _arrivalWait;
     
@@ -48,6 +56,15 @@ public class ShipController : MonoBehaviour
 
     private void Awake()
     {
+        GameObject anchor = GetComponent<PawnBaseController>().TargetMeshAnchor;
+        for (int i = 0; i < anchor.transform.childCount; i++)
+        {
+            Transform tr = anchor.transform.GetChild(i);
+            Debug.Log(tr.name);
+            if (tr.CompareTag("Socket"))
+                _sockets.Add(tr.gameObject);
+        }
+
         shipPhysics = GetComponent<Rigidbody>();
 
         _targetPosition = transform.position;
@@ -55,17 +72,9 @@ public class ShipController : MonoBehaviour
         warpPower = warpPower * shipPhysics.mass;
     }
 
-    private void OnEnable()
-    {
-        
-    }
-
-    private void Update()
-    {
-
-    }
-
+#pragma warning disable IDE0051 // 사용되지 않는 private 멤버 제거
     private void ShipMovement()
+#pragma warning restore IDE0051 // 사용되지 않는 private 멤버 제거
     {
 
     }

@@ -122,6 +122,7 @@ GameObject:
   - component: {fileID: -8126974779823090671}
   - component: {fileID: 1429529731896564924}
   - component: {fileID: 1663450481870267294}
+  - component: {fileID: 5008155528813062948}
   m_Layer: 0
   m_Name: Table
   m_TagString: Untagged
@@ -200,9 +201,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0151b21b4d6e94c9c96142417dda46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaintenanceTarget: {fileID: 0}
   _productionTaskCatalog: []
   _researchTaskCatalog: []
+  _kingdomResource:
+    Crystal: 0
+    Explosive: 0
+    Metal: 0
+    Electronic: 0
+  _kingdomHuman: 1
+  _availableTaskCount: 3
+--- !u!114 &5008155528813062948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982062460786475509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4341c327866f9fe4280aa0bf9bbd7539, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Sockets: []
+  _playerShipPrefab: {fileID: 7515011326080006859, guid: acb471a86b9da42408301554996c4d50, type: 3}
 --- !u!1 &3639834765543431259
 GameObject:
   m_ObjectHideFlags: 0

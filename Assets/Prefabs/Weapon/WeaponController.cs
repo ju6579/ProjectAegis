@@ -5,13 +5,15 @@ using UnityEngine;
 public class WeaponController : MonoBehaviour
 {
     [Serializable]
-    private struct WeaponProperty
+    public class WeaponProperty
     {
         public GameObject BulletObject;
         public int AttackCount;
         public float AttackDelay;
         public float ReloadDelay;
     }
+
+    public WeaponProperty WeaponData => _weaponProperty;
 
     [SerializeField]
     private WeaponProperty _weaponProperty;

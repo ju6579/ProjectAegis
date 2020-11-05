@@ -28,7 +28,7 @@ public class UIProductContentsProperty : MonoBehaviour
 
     private PlayerKingdom.ProductionTask _taskData = null;
 
-    public void SetProductData(PlayerKingdom.ProductionTask pTask)
+    public void SetUIContentsData(PlayerKingdom.ProductionTask pTask)
     {
         if (_productImage == null &&
             _productName == null &&

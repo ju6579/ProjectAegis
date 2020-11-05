@@ -9,11 +9,14 @@ public class ProjectPositionTracker : MonoBehaviour
         _targetTransform = root;
         _targetAnchor = targetAnchor;
 
-        _followTargets = _targetAnchor.GetComponentsInChildren<Transform>().ToList<Transform>();
-        _followTargets.RemoveAt(0);
+        List<Transform> followTargets = _targetAnchor.GetComponentsInChildren<Transform>().ToList<Transform>();
+        followTargets.RemoveAt(0);
 
-        _followers = transform.GetComponentsInChildren<Transform>().ToList<Transform>();
-        _followers.RemoveAt(0);
+        List<Transform> followers = transform.GetComponentsInChildren<Transform>().ToList<Transform>();
+        followers.RemoveAt(0);
+
+        for (int i = 0; i < followTargets.Count; i++)
+            _projectionHash.Add(followTargets[i], followers[i]);
 
         List<MeshRenderer> meshRenderers = GetComponentsInChildren<MeshRenderer>().ToList<MeshRenderer>();
         meshRenderers.ForEach((MeshRenderer mr) => mr.material = projectionMaterial);
@@ -21,14 +24,13 @@ public class ProjectPositionTracker : MonoBehaviour
 
     public Transform GetProjectionTarget(Transform projected) 
     {
-        return _followTargets[_followers.IndexOf(projected)];
+        return _projectionHash[projected];
     }
 
     private Transform _targetTransform = null;
     private Transform _targetAnchor = null;
 
-    private List<Transform> _followers = null;
-    private List<Transform> _followTargets = null;
+    private Dictionary<Transform, Transform> _projectionHash = new Dictionary<Transform, Transform>();
 
     private void Update()
     {
@@ -37,10 +39,12 @@ public class ProjectPositionTracker : MonoBehaviour
             transform.localPosition = _targetTransform.localPosition;
             transform.rotation = _targetTransform.rotation;
 
-            for (int i = 0; i < _followTargets.Count; i++)
+            var enumerator = _projectionHash.GetEnumerator();
+            while(enumerator.MoveNext())
             {
-                _followers[i].localPosition = _followTargets[i].localPosition;
-                _followers[i].rotation = _followTargets[i].rotation;
+                var pair = enumerator.Current;
+                pair.Value.localPosition = pair.Key.localPosition;
+                pair.Value.localRotation = pair.Key.localRotation;
             }
         }
         else

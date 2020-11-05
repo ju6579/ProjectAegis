@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class ProjectionManager : Singleton<ProjectionManager>
 {
+    public Vector3 TableWorldPosition => _tableSpace.transform.position;
+    public Transform WorldTransform => _worldSpace.transform;
+
     [SerializeField]
     private Material _projectionMaterial = null;
 
@@ -40,10 +43,37 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
         ProjectPositionTracker tracker = (ProjectPositionTracker)tableTr.gameObject
             .AddComponent(typeof(ProjectPositionTracker));
-
+        pbc.Projecter = tracker;
         tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform, _projectionMaterial);
 
         return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
+    }
+
+    public KeyValuePair<Transform,Transform> InstantiatePlayerBaseShip(GameObject playerBaseShip)
+    {
+        return InstantiateToWorld(playerBaseShip, _tableSpace.transform.position, _tableSpace.transform.rotation);
+    }
+
+    public static void PairOtherObject(GameObject child, GameObject parent)
+    {
+        GameObject childAnchor = GetTargetAnchorAtPawn(child);
+        GameObject parentAnchor = GetTargetAnchorAtPawn(parent);
+
+        Transform childProject = GetPositionTracker(child).GetProjectionTarget(childAnchor.transform);
+        Transform parentProject = GetPositionTracker(parent).GetProjectionTarget(parentAnchor.transform);
+
+        childProject.SetParent(parentProject);
+        childProject.localPosition = Vector3.zero;
+    }
+
+    public static GameObject GetTargetAnchorAtPawn(GameObject target)
+    {
+        return target.GetComponentInParent<PawnBaseController>().TargetMeshAnchor;
+    }
+
+    public static ProjectPositionTracker GetPositionTracker(GameObject target)
+    {
+        return target.GetComponentInParent<PawnBaseController>().Projecter;
     }
 
     /// <summary>
@@ -78,8 +108,8 @@ public class ProjectionManager : Singleton<ProjectionManager>
     #region MonoBehaviour Callbacks
     protected override void Awake()
     {
-        base.Awake();
         _worldScaleRatio = 1f / _worldSpace.transform.localScale.x;
+        base.Awake();
     }
     #endregion
 }

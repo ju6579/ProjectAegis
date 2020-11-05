@@ -13,13 +13,13 @@ public class MapSystem : Singleton<MapSystem>
     private int MaxMapHeight = 10;
 
     [SerializeField]
-    private ScrollRect mapScrollView;
+    private ScrollRect mapScrollView = null;
 
     [SerializeField]
-    private GameObject mapButtonSample;
+    private GameObject mapButtonSample = null;
 
     [SerializeField]
-    private RectTransform anchor;
+    private RectTransform anchor = null;
 
     // [Width] [Height]
     private SingleTile[][] _hexagonalMap;

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using UnityEngine;
 
 public class PlayerKingdom : Singleton<PlayerKingdom>
@@ -14,7 +12,12 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     public void ShipToField(ProductWrapper product) => _kingdomCargo.LaunchShip(product);
 
     public void WeaponToCargo(ProductWrapper product) => _kingdomCargo.AddWeaponToCargo(product);
+    public ProductWrapper WeaponToSocket(ProductionTask productData, GameObject socket)
+        => _kingdomCargo.AddWeaponToSocket(productData, socket);
+
     public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
+
+    public List<ProductWrapper> CargoList => _kingdomCargo.CargoList;
     #endregion
 
     #region Kingdom Handler
@@ -28,13 +31,13 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
     #region Inspector Field
     [SerializeField]
-    private List<ProductionTask> _productionTaskCatalog;
+    private List<ProductionTask> _productionTaskCatalog = null;
 
     [SerializeField]
-    private List<ResearchTask> _researchTaskCatalog;
+    private List<ResearchTask> _researchTaskCatalog = null;
 
     [SerializeField]
-    private SpendableResource _kingdomResource;
+    private SpendableResource _kingdomResource = new SpendableResource();
 
     [SerializeField]
     private int _kingdomHuman = 1;
@@ -45,20 +48,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
     #region Private Field
     private List<ResearchTask> _availableResearch = new List<ResearchTask>();
-    private void AddAvailableResearch(ResearchTask rTask) 
-    {
-        _availableResearch.Add(rTask);
-        // Broadcast To UI
-        TaskListCallbacks<ResearchTask>.BroadcastAvailableTaskChanged?.Invoke(rTask, true);
-    }
-
     private List<ProductionTask> _availableProduction = new List<ProductionTask>();
-    private void AddAvailableProduction(ProductionTask pTask)
-    {
-        _availableProduction.Add(pTask);
-        // Broadcast To UI
-        TaskListCallbacks<ProductionTask>.BroadcastAvailableTaskChanged?.Invoke(pTask, true);
-    }
     #endregion
 
     #region Kingdom Command
@@ -92,15 +82,32 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     }
     #endregion
 
+    #region Private Method Area
+    private void AddAvailableResearch(ResearchTask rTask)
+    {
+        _availableResearch.Add(rTask);
+
+        ListChangedObserveComponent<ResearchTask, PlayerKingdom>.BroadcastListChange(rTask, true);
+    }
+    private void AddAvailableProduction(ProductionTask pTask)
+    {
+        _availableProduction.Add(pTask);
+
+        ListChangedObserveComponent<ProductionTask, PlayerKingdom>.BroadcastListChange(pTask, true);
+    }
+    #endregion
+
     #region Player Kingdom Facilities
     private class PlayerKingdomCargo
     {
+        public List<ProductWrapper> CargoList => _shipCargo;
+
         private List<ProductWrapper> _shipCargo = new List<ProductWrapper>();
 
         private Dictionary<ProductionTask, Queue<ProductWrapper>> _weaponCargo
             = new Dictionary<ProductionTask, Queue<ProductWrapper>>();
 
-        private Dictionary<ProductionTask, ProductWrapper> _spaceField = new Dictionary<ProductionTask, ProductWrapper>();
+        private Dictionary<GameObject, ProductWrapper> _spaceField = new Dictionary<GameObject, ProductWrapper>();
 
         public void RemoveProduct(ProductWrapper product)
         {
@@ -110,7 +117,8 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
             PawnBaseController.PawnType type = product.ProductData.Product
                 .GetComponent<PawnBaseController>().PawnActionType;
 
-            if (_spaceField.ContainsKey(product.ProductData)) _spaceField.Remove(product.ProductData);
+            if (_spaceField.ContainsKey(product.Instance)) 
+                _spaceField.Remove(product.Instance);
 
             if(type == PawnBaseController.PawnType.SpaceShip)
             {
@@ -122,43 +130,57 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
         public void AddShipToCargo(ProductWrapper product) 
         {
-            if (_spaceField.ContainsKey(product.ProductData)) _spaceField.Remove(product.ProductData);
-            _shipCargo.Add(product); 
+            if (_spaceField.ContainsKey(product.Instance)) 
+                _spaceField.Remove(product.Instance);
+
+            _shipCargo.Add(product);
+
+            ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
+                .BroadcastListChange(product, true);
         }
 
         public void LaunchShip(ProductWrapper product)
         {
             _shipCargo.Remove(product);
-            _spaceField.Add(product.ProductData, product);
+            _spaceField.Add(product.Instance, product);
+
+            ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
+                .BroadcastListChange(product, false);
 
             product.Instance.GetComponent<ShipController>().WarpToPosition();
         }
 
         public void AddWeaponToCargo(ProductWrapper product) 
         {
-            if (_spaceField.ContainsKey(product.ProductData)) _spaceField.Remove(product.ProductData);
+            if (_spaceField.ContainsKey(product.Instance)) 
+                _spaceField.Remove(product.Instance);
 
             if (!_weaponCargo.ContainsKey(product.ProductData))
                 _weaponCargo[product.ProductData] = new Queue<ProductWrapper>();
 
+            product.Instance.transform.SetParent(ProjectionManager.GetInstance().WorldTransform);
+            product.Instance.transform.localPosition = Vector3.back * 5f;
             _weaponCargo[product.ProductData].Enqueue(product);
         }
 
-        public bool AddWeaponToShip(ProductionTask productData)
+        public ProductWrapper AddWeaponToSocket(ProductionTask productData, GameObject socket)
         {
-            bool isSucceed = (GetSpecificWeaponCount(productData) > 0);
-
-            if (isSucceed)
+            ProductWrapper product = new ProductWrapper();
+            product.Instance = null;
+            if (GetSpecificWeaponCount(productData) > 0)
             {
                 ProductWrapper cache = _weaponCargo[productData].Dequeue();
-                _spaceField.Add(cache.ProductData, cache);
+                _spaceField.Add(cache.Instance, cache);
 
-                // Some Code Add To Ship
-                //
-                //
+                cache.Instance.transform.SetParent(socket.transform);
+                cache.Instance.transform.localPosition = Vector3.zero;
+
+                ProjectionManager.PairOtherObject(cache.Instance, socket);
+
+                product = cache;
             }
 
-            return isSucceed;
+            return product;
         }
 
         public int GetSpecificWeaponCount(ProductionTask productData)
