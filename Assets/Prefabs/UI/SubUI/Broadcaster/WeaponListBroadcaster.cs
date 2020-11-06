@@ -8,11 +8,16 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<PlayerKingdom.P
     [SerializeField]
     private GameObject _weaponScrollContents = null;
 
-    private static List<ScrollRect> _scrollContentsBroadcaster = new List<ScrollRect>();
-    private static Dictionary<PlayerKingdom.ProductionTask, List<GameObject>> _objectUIContentsHash 
+    private static List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster
+        = new List<KeyValuePair<ScrollRect, IUIContentsCallbacks>>();
+
+    private static Dictionary<PlayerKingdom.ProductionTask, List<GameObject>> _objectUIContentsHash
         = new Dictionary<PlayerKingdom.ProductionTask, List<GameObject>>();
 
-    public static void ListenWeaponListChange(ScrollRect targetScrollRect) => _scrollContentsBroadcaster.Add(targetScrollRect);
+    public static void ListenWeaponListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
+    {
+        _scrollContentsBroadcaster.Add(new KeyValuePair<ScrollRect, IUIContentsCallbacks>(targetScrollRect, callback));
+    }
 
     protected override void LoadList()
     {
@@ -20,10 +25,14 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<PlayerKingdom.P
         {
             if(PawnBaseController.CompareType(pTask.Product, PawnBaseController.PawnType.Weapon))
             {
-                _scrollContentsBroadcaster.ForEach((ScrollRect sr) =>
+                _scrollContentsBroadcaster.ForEach((KeyValuePair<ScrollRect, IUIContentsCallbacks> keyPair) =>
                 {
-                    GameObject cache = Instantiate(_weaponScrollContents, sr.content);
+                    GameObject cache = Instantiate(_weaponScrollContents, keyPair.Key.content);
                     cache.GetComponent<UIProductContentsProperty>().SetUIContentsData(pTask);
+
+                    Button buttonCache = cache.GetComponent<Button>();
+                    buttonCache.onClick.AddListener(() 
+                        => keyPair.Value.OnClickProductContents(buttonCache, pTask));
 
                     if (!_objectUIContentsHash.ContainsKey(pTask))
                         _objectUIContentsHash[pTask] = new List<GameObject>();

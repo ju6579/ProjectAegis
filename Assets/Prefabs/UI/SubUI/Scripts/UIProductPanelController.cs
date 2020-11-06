@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIProductPanelController : MonoBehaviour
+public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
 {
     [SerializeField]
     private ScrollRect _shipScrollView = null;
@@ -29,30 +29,57 @@ public class UIProductPanelController : MonoBehaviour
     [SerializeField]
     private ScrollRect _currentTaskScrollView = null;
 
+    [SerializeField]
+    private UIInfoProductProperty _infoProperty = null;
+
+    private Button _selectedButton = null;
     private PlayerKingdom.ProductionTask _selectedTask = null;
     private PawnBaseController.PawnType _selectedProductType = PawnBaseController.PawnType.NotSet;
 
+    private void ClearSelectedData()
+    {
+        if (_selectedButton != null)
+            _selectedButton.image.color = Color.white;
+
+        _selectedTask = null;
+        _selectedProductType = PawnBaseController.PawnType.NotSet;
+    }
+
     private void Awake()
     {
-        ShipListBroadcaster.ListenShipListChange(_shipScrollView);
-        WeaponListBroadcaster.ListenWeaponListChange(_weaponScrollView);
+        ShipListBroadcaster.ListenShipListChanged(_shipScrollView, this);
+        WeaponListBroadcaster.ListenWeaponListChanged(_weaponScrollView, this);
 
         _createButton.onClick.AddListener(() =>
         {
             bool isTaskRun = false;
-            if (PlayerUIController.SelectedShipTask != null)
-                isTaskRun = PlayerKingdom.GetInstance().RequestTaskToKingdom(PlayerUIController.SelectedShipTask);
+            if (_selectedTask != null)
+                isTaskRun = PlayerKingdom.GetInstance().RequestTaskToKingdom(_selectedTask);
 
             if (isTaskRun)
             {
                 GameObject cache = Instantiate(_taskProceedContent, _currentTaskScrollView.content);
-                PlayerUIController.GetInstance().StartCoroutine(_ObserveTaskProceed(PlayerUIController.SelectedShipTask.TaskExecuteTime, cache));
+                PlayerUIController.GetInstance().StartCoroutine(_ObserveTaskProceed(_selectedTask.TaskExecuteTime, cache));
             }
         });
 
         _shipScrollButton.onClick.AddListener(() => OnClickShipScrollButton());
         _weaponScrollButton.onClick.AddListener(() => OnClickWeaponScrollButton());
         OnClickShipScrollButton();
+    }
+
+    private void OnEnable()
+    {
+        _selectedButton = null;
+        _selectedTask = null;
+        _selectedProductType = PawnBaseController.PawnType.NotSet;
+    }
+
+    private void OnDisable()
+    {
+        _selectedButton = null;
+        _selectedTask = null;
+        _selectedProductType = PawnBaseController.PawnType.NotSet;
     }
 
     private IEnumerator _ObserveTaskProceed(float totalTime, GameObject contents)
@@ -72,23 +99,35 @@ public class UIProductPanelController : MonoBehaviour
         Destroy(contents);
     }
 
-    private void OnClickProductionContents(PlayerKingdom.ProductionTask target)
-    {
-        PawnBaseController pbc = target.Product.GetComponent<PawnBaseController>();
-        _selectedTask = target;
-        PlayerUIController.SelectedWeaponTask = target;
-        _selectedProductType = pbc.PawnActionType;
-    }
-
     private void OnClickShipScrollButton()
     {
+        ClearSelectedData();
         _weaponScrollView.gameObject.SetActive(false);
         _shipScrollView.gameObject.SetActive(true);
     }
 
     private void OnClickWeaponScrollButton()
     {
+        ClearSelectedData();
         _weaponScrollView.gameObject.SetActive(true);
         _shipScrollView.gameObject.SetActive(false);
+    }
+
+    public void OnClickProductContents(Button clicked, PlayerKingdom.ProductionTask pTask)
+    {
+        ClearSelectedData();
+
+        clicked.image.color = Color.black;
+
+        _selectedButton = clicked;
+        _selectedTask = pTask;
+        _selectedProductType = pTask.ProductType;
+
+        _infoProperty.ReplaceProductInfo(pTask);
+    }
+
+    public void OnClickShipDataContents(Button clicked, PlayerKingdom.ProductWrapper pWrapper)
+    {
+        
     }
 }

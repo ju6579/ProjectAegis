@@ -5,6 +5,13 @@ using UnityEngine.UI;
 
 public class UIShipDataContentsProperty : MonoBehaviour
 {
+    public PlayerKingdom.ProductWrapper ShipProduct => _shipSet;
+
+    public void AttachWeaponToSocket(PlayerKingdom.ProductionTask pTask)
+    {
+        _selectedSocketProperty.AttachSocket(pTask);
+    }
+
     [SerializeField]
     private Image _shipImage = null;
 
@@ -20,16 +27,27 @@ public class UIShipDataContentsProperty : MonoBehaviour
     [SerializeField]
     private Text _arrivalTime = null;
 
+    [SerializeField]
+    private GameObject _socketUIContentsObject = null;
+
     private Button _contentsButton = null;
 
     private PlayerKingdom.ProductWrapper _shipSet;
     private ShipController.ShipProperty _shipProperty;
-    private List<GameObject> _shipSocketUIContents = new List<GameObject>();
+    private List<UISocketContentsProperty> _shipSocketUIContents = new List<UISocketContentsProperty>();
 
-    private void Awake()
+    private Button _selectedSocketButton = null;
+    private UISocketContentsProperty _selectedSocketProperty = null;
+
+    public void ClearSelectContents()
     {
-        _contentsButton = GetComponent<Button>();
-        _contentsButton.onClick.AddListener(() => OnClickShipData());
+        if (_selectedSocketButton)
+        {
+            _selectedSocketButton.image.color = Color.white;
+        }
+        
+        _selectedSocketButton = null;
+        _selectedSocketProperty = null;
     }
 
     public void SetUIContentsData(PlayerKingdom.ProductWrapper product)
@@ -46,21 +64,59 @@ public class UIShipDataContentsProperty : MonoBehaviour
             return;
         }
 
-        _shipProperty = _shipSet.Instance.GetComponent<ShipController>().ShipData;
+        ShipController ship = product.Instance.GetComponent<ShipController>();
+        _shipProperty = ship.ShipData;
+
+        ship.SocketList.ForEach((GameObject go) =>
+        {
+            GameObject cache = Instantiate(_socketUIContentsObject);
+            Button button = cache.GetComponent<Button>();
+            UISocketContentsProperty socketProperty = cache.GetComponent<UISocketContentsProperty>();
+
+            button.onClick.AddListener(() => OnClickSocketContents(button, socketProperty));
+            
+            _shipSocketUIContents.Add(socketProperty);
+            socketProperty.SetSocket(go);
+
+            cache.SetActive(false);
+        });
 
         PlayerUIController.GetInstance().StartCoroutine(_ObserveShipData());
     }
 
-    private void UpdateUIContents()
+    private void Awake()
     {
-        _shieldAmount.text = _shipProperty.ShieldPoint.ToString();
-        _armorAmount.text = _shipProperty.ArmorPoint.ToString();
-        _arrivalTime.text = _shipProperty.ArrivalTime.ToString();
+        _contentsButton = GetComponent<Button>();
     }
 
-    private void OnClickShipData()
+    private Vector3 _defaultLocalScale = new Vector3(1, 1, 0);
+    public void AddContentsToScrollRect(ScrollRect targetView)
     {
-        _shipSocketUIContents.ForEach((GameObject go) => go.SetActive(true));
+        _shipSocketUIContents.ForEach((UISocketContentsProperty socket) =>
+        {
+            socket.transform.SetParent(targetView.content);
+            socket.transform.localScale = _defaultLocalScale;
+            socket.gameObject.SetActive(true);
+        });
+    }
+
+    public void RemoveContentsToScrollRect(ScrollRect targetView)
+    {
+        _shipSocketUIContents.ForEach((UISocketContentsProperty socket) =>
+        {
+            socket.transform.SetParent(null);
+            socket.transform.localScale = _defaultLocalScale;
+            socket.gameObject.SetActive(false);
+        });
+    }
+
+    private void OnClickSocketContents(Button clicked, UISocketContentsProperty socket)
+    {
+        ClearSelectContents();
+
+        clicked.image.color = Color.red;
+        _selectedSocketButton = clicked;
+        _selectedSocketProperty = socket;
     }
 
     private IEnumerator _ObserveShipData()
@@ -75,8 +131,17 @@ public class UIShipDataContentsProperty : MonoBehaviour
         yield return null;
     }
 
+    private void UpdateUIContents()
+    {
+        _shieldAmount.text = _shipProperty.ShieldPoint.ToString();
+        _armorAmount.text = _shipProperty.ArmorPoint.ToString();
+        _arrivalTime.text = _shipProperty.ArrivalTime.ToString();
+    }
+
     private void OnDisable()
     {
         _contentsButton.image.color = Color.white;
+
+        ClearSelectContents();
     }
 }

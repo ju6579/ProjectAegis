@@ -29,7 +29,7 @@ public class UIInfoProductProperty : MonoBehaviour
 
         EnableTargetDataExceptCountText();
 
-        _selectedProductType = pTask.Product.GetComponent<PawnBaseController>().PawnActionType;
+        _selectedProductType = pTask.ProductType;
 
         _targetImage.sprite = pTask.TaskIcon;
         _targetName.text = pTask.TaskName;

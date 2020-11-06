@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UIBasePanelController : ListChangedObserveComponent<PlayerKingdom.ProductionTask, PlayerKingdom>
+public class UIBasePanelController : MonoBehaviour, IUIContentsCallbacks
 {
     [SerializeField]
     private ScrollRect _socketScrollRect = null;
@@ -20,42 +20,18 @@ public class UIBasePanelController : ListChangedObserveComponent<PlayerKingdom.P
     [SerializeField]
     private GameObject _socketAttachButton = null;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
+        WeaponListBroadcaster.ListenWeaponListChanged(_weaponScrollRect, this);
     }
 
-    protected override void LoadList()
+    public void OnClickProductContents(Button clicked, PlayerKingdom.ProductionTask pTask)
     {
-        PlayerKingdom.GetInstance().ProductList.ForEach((PlayerKingdom.ProductionTask pTask) =>
-        {
-            if (PawnBaseController.CompareType(pTask.Product, PawnBaseController.PawnType.Weapon))
-            {
-                GameObject cache = Instantiate(_productUIContents, _weaponScrollRect.content);
-                _ObjectUIContentsHash.Add(pTask, cache);
-
-                cache.GetComponent<UIProductContentsProperty>().SetUIContentsData(pTask);
-
-                cache.SetActive(false);
-            }
-        });
-
-        Singleton<PlayerBaseShipController>.ListenSingletonLoaded(() =>
-        {
-            PlayerBaseShipController.GetInstance().Sockets.ForEach((GameObject socket) =>
-            {
-                GameObject cache = Instantiate(_socketUIContents, _socketScrollRect.content);
-                UISocketContentsProperty contents = cache.GetComponent<UISocketContentsProperty>();
-
-                contents.SetSocket(socket);
-            });
-        });
+        
     }
 
-    protected override void OnListChanged(PlayerKingdom.ProductionTask changed, bool isAdd)
+    public void OnClickShipDataContents(Button clicked, PlayerKingdom.ProductWrapper pWrapper)
     {
-        base.OnListChanged(changed, isAdd);
-        if(PawnBaseController.CompareType(changed.Product, PawnBaseController.PawnType.Weapon))
-            _ObjectUIContentsHash[changed].SetActive(isAdd);
+        
     }
 }

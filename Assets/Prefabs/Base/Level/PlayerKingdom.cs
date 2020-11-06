@@ -220,6 +220,8 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     public class ProductionTask : PlayerTask
     {
         public GameObject Product = null;
+        public PawnBaseController.PawnType ProductType 
+            => Product.GetComponent<PawnBaseController>().PawnActionType;
 
         public Sprite TaskIcon = null;
 

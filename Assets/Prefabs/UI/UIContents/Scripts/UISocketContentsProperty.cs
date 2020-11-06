@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 public class UISocketContentsProperty : MonoBehaviour
 {
+    public Button UIButton => _contentsButton;
     public void SetSocket(GameObject socket) => _targetSocket = socket;
 
     [SerializeField]
@@ -20,13 +21,14 @@ public class UISocketContentsProperty : MonoBehaviour
     private void Awake()
     {
         ClearSocket();
-
         _contentsButton = GetComponent<Button>();
-        _contentsButton.onClick.AddListener(() => OnClickContentsButton());
     }
 
     public void AttachSocket(PlayerKingdom.ProductionTask productData)
     {
+        if (_socketedWeapon != null)
+            return;
+
         PlayerKingdom.ProductWrapper product =
             PlayerKingdom.GetInstance().WeaponToSocket(productData, _targetSocket);
 
@@ -48,17 +50,6 @@ public class UISocketContentsProperty : MonoBehaviour
         {
             PlayerKingdom.GetInstance().WeaponToCargo(_socketedWeapon);
         }
-    }
-
-    private void OnClickContentsButton()
-    {
-        if (PlayerUIController.SelectedUISocketContents != null)
-            PlayerUIController.SelectedSocketButton.image.color = Color.white;
-
-        _contentsButton.image.color = Color.black;
-
-        PlayerUIController.SelectedSocketButton = _contentsButton;
-        PlayerUIController.SelectedUISocketContents = this;
     }
 
     private void OnDisable()

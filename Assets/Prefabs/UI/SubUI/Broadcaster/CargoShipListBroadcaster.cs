@@ -8,11 +8,16 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<PlayerKingdo
     [SerializeField]
     private GameObject _shipScrollContents = null;
 
-    private static List<ScrollRect> _scrollContentsBroadcaster = new List<ScrollRect>();
+    private static List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster 
+        = new List<KeyValuePair<ScrollRect, IUIContentsCallbacks>>();
+
     private static Dictionary<PlayerKingdom.ProductWrapper, List<GameObject>> _objectUIContentsHash
         = new Dictionary<PlayerKingdom.ProductWrapper, List<GameObject>>();
 
-    public static void ListenCargoShipListChanged(ScrollRect targetScrollRect) => _scrollContentsBroadcaster.Add(targetScrollRect);
+    public static void ListenCargoShipListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
+    {
+        _scrollContentsBroadcaster.Add(new KeyValuePair<ScrollRect, IUIContentsCallbacks>(targetScrollRect, callback));
+    }
 
     protected override void LoadList()
     {
@@ -42,10 +47,14 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<PlayerKingdo
 
     private void AddContentsToAllScrollView(PlayerKingdom.ProductWrapper product)
     {
-        _scrollContentsBroadcaster.ForEach((ScrollRect sr) =>
+        _scrollContentsBroadcaster.ForEach((KeyValuePair<ScrollRect, IUIContentsCallbacks> keyPair) =>
         {
-            GameObject cache = Instantiate(_shipScrollContents, sr.content);
+            GameObject cache = Instantiate(_shipScrollContents, keyPair.Key.content);
             cache.GetComponent<UIShipDataContentsProperty>().SetUIContentsData(product);
+
+            Button buttonCache = cache.GetComponent<Button>();
+            buttonCache.onClick.AddListener(()
+                => keyPair.Value.OnClickShipDataContents(buttonCache, product));
 
             if (!_objectUIContentsHash.ContainsKey(product))
                 _objectUIContentsHash[product] = new List<GameObject>();

@@ -693,7 +693,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -770,6 +770,7 @@ MonoBehaviour:
   _shieldAmount: {fileID: 8827815885669065163}
   _armorAmount: {fileID: 1426807728508352982}
   _arrivalTime: {fileID: 3483027264802346296}
+  _socketUIContentsObject: {fileID: 7737238931521264135, guid: 1c9a20f252555974cbaf2a485a822a5c, type: 3}
 --- !u!1 &8458190313483369721
 GameObject:
   m_ObjectHideFlags: 0

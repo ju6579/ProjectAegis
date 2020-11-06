@@ -8,6 +8,7 @@ using UnityEngine;
 public class ShipController : MonoBehaviour
 {
     public ShipProperty ShipData => _shipProperty;
+    public List<GameObject> SocketList => _sockets;
 
     [Serializable]
     public class ShipProperty
@@ -56,11 +57,11 @@ public class ShipController : MonoBehaviour
 
     private void Awake()
     {
-        GameObject anchor = GetComponent<PawnBaseController>().TargetMeshAnchor;
+        GameObject anchor = GetComponent<PawnBaseController>().SocketAnchor;
         for (int i = 0; i < anchor.transform.childCount; i++)
         {
             Transform tr = anchor.transform.GetChild(i);
-            Debug.Log(tr.name);
+
             if (tr.CompareTag("Socket"))
                 _sockets.Add(tr.gameObject);
         }
