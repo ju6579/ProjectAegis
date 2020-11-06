@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8337708792484404374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7395160476708356790}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 882fc155314e8ec46b8afe4e1c3fb4cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _bulletSpeed: 5
+  _bulletDamage: 1
 --- !u!1 &7346319206374973401
 GameObject:
   m_ObjectHideFlags: 0
@@ -11,7 +25,6 @@ GameObject:
   - component: {fileID: 1022159574545710963}
   - component: {fileID: 6336807055633707905}
   - component: {fileID: 928619869170191377}
-  - component: {fileID: 576478465054399206}
   m_Layer: 9
   m_Name: Cylinder
   m_TagString: Untagged
@@ -82,34 +95,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &576478465054399206
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7346319206374973401}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &-8337708792484404374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7395160476708356790}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 882fc155314e8ec46b8afe4e1c3fb4cb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletSpeed: 2
-  bulletDamage: 1
 --- !u!1001 &254834759541116904
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -163,15 +148,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
       propertyPath: m_LocalScale.x
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
       propertyPath: m_LocalScale.z
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562142, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
       propertyPath: m_Name

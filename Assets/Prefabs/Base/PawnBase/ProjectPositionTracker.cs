@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class ProjectPositionTracker : MonoBehaviour
 {
+    private Transform _targetRootTransform = null;
+    private Transform _targetAnchor = null;
+
+    private Dictionary<Transform, Transform> _projectionHash = new Dictionary<Transform, Transform>();
+
     public void SetTargetTransform(Transform root, Transform targetAnchor, Material projectionMaterial)
     {
-        _targetTransform = root;
+        _targetRootTransform = root;
         _targetAnchor = targetAnchor;
 
-        List<Transform> followTargets = _targetAnchor.GetComponentsInChildren<Transform>().ToList<Transform>();
+        List<Transform> followTargets = targetAnchor.GetComponentsInChildren<Transform>().ToList<Transform>();
         followTargets.RemoveAt(0);
 
         List<Transform> followers = transform.GetComponentsInChildren<Transform>().ToList<Transform>();
@@ -22,22 +27,23 @@ public class ProjectPositionTracker : MonoBehaviour
         meshRenderers.ForEach((MeshRenderer mr) => mr.material = projectionMaterial);
     }
 
-    public Transform GetProjectionTarget(Transform projected) 
+    public Transform GetProjectedTransform(Transform worldTr) => _projectionHash[worldTr];
+
+    public void DetachRootTransform() => transform.SetParent(ProjectionManager.GetInstance().TableTransform);
+
+    public void ReplaceRootTransform(Transform root)
     {
-        return _projectionHash[projected];
+        ProjectPositionTracker ppt = root.GetComponentInParent<PawnBaseController>().ProjectedTarget;
+        Transform projectedRoot = ppt.GetProjectedTransform(root);
+        this.transform.SetParent(projectedRoot);
     }
-
-    private Transform _targetTransform = null;
-    private Transform _targetAnchor = null;
-
-    private Dictionary<Transform, Transform> _projectionHash = new Dictionary<Transform, Transform>();
 
     private void Update()
     {
-        if (_targetTransform != null)
+        if (_targetRootTransform != null)
         {
-            transform.localPosition = _targetTransform.localPosition;
-            transform.rotation = _targetTransform.rotation;
+            transform.localPosition = _targetRootTransform.localPosition;
+            transform.rotation = _targetRootTransform.rotation;
 
             var enumerator = _projectionHash.GetEnumerator();
             while(enumerator.MoveNext())

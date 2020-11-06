@@ -17,7 +17,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
     public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
 
-    public List<ProductWrapper> CargoList => _kingdomCargo.CargoList;
+    public List<ProductWrapper> ShipCargoList => _kingdomCargo.ShipCargoList;
     #endregion
 
     #region Kingdom Handler
@@ -65,7 +65,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
     public void RequestWarpToField(GameObject go)
     {
-
+        
     }
     #endregion
 
@@ -100,7 +100,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
     #region Player Kingdom Facilities
     private class PlayerKingdomCargo
     {
-        public List<ProductWrapper> CargoList => _shipCargo;
+        public List<ProductWrapper> ShipCargoList => _shipCargo;
 
         private List<ProductWrapper> _shipCargo = new List<ProductWrapper>();
 
@@ -160,6 +160,9 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
             product.Instance.transform.SetParent(ProjectionManager.GetInstance().WorldTransform);
             product.Instance.transform.localPosition = Vector3.back * 5f;
+
+            product.Instance.GetComponent<PawnBaseController>().ProjectedTarget.DetachRootTransform();
+
             _weaponCargo[product.ProductData].Enqueue(product);
         }
 
@@ -175,7 +178,8 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
                 cache.Instance.transform.SetParent(socket.transform);
                 cache.Instance.transform.localPosition = Vector3.zero;
 
-                ProjectionManager.PairOtherObject(cache.Instance, socket);
+                cache.Instance.GetComponent<PawnBaseController>()
+                    .ProjectedTarget.ReplaceRootTransform(socket.transform);
 
                 product = cache;
             }

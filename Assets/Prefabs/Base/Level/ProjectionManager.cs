@@ -7,6 +7,7 @@ public class ProjectionManager : Singleton<ProjectionManager>
 {
     public Vector3 TableWorldPosition => _tableSpace.transform.position;
     public Transform WorldTransform => _worldSpace.transform;
+    public Transform TableTransform => _tableSpace.transform;
 
     [SerializeField]
     private Material _projectionMaterial = null;
@@ -39,12 +40,14 @@ public class ProjectionManager : Singleton<ProjectionManager>
         PawnBaseController pbc = worldTr.GetComponent<PawnBaseController>();
 
         Transform tableTr = Instantiate(pbc.TargetMeshAnchor, _tableSpace.transform).transform;
+        tableTr.localPosition = worldTr.localPosition;
+        tableTr.rotation = worldTr.rotation;
         tableTr.localScale = worldTr.localScale;
 
         ProjectPositionTracker tracker = (ProjectPositionTracker)tableTr.gameObject
             .AddComponent(typeof(ProjectPositionTracker));
-        pbc.Projecter = tracker;
         tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform, _projectionMaterial);
+        pbc.ProjectedTarget = tracker;
 
         return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
     }
@@ -52,28 +55,6 @@ public class ProjectionManager : Singleton<ProjectionManager>
     public KeyValuePair<Transform,Transform> InstantiatePlayerBaseShip(GameObject playerBaseShip)
     {
         return InstantiateToWorld(playerBaseShip, _tableSpace.transform.position, _tableSpace.transform.rotation);
-    }
-
-    public static void PairOtherObject(GameObject child, GameObject parent)
-    {
-        GameObject childAnchor = GetTargetAnchorAtPawn(child);
-        GameObject parentAnchor = GetTargetAnchorAtPawn(parent);
-
-        Transform childProject = GetPositionTracker(child).GetProjectionTarget(childAnchor.transform);
-        Transform parentProject = GetPositionTracker(parent).GetProjectionTarget(parentAnchor.transform);
-
-        childProject.SetParent(parentProject);
-        childProject.localPosition = Vector3.zero;
-    }
-
-    public static GameObject GetTargetAnchorAtPawn(GameObject target)
-    {
-        return target.GetComponentInParent<PawnBaseController>().TargetMeshAnchor;
-    }
-
-    public static ProjectPositionTracker GetPositionTracker(GameObject target)
-    {
-        return target.GetComponentInParent<PawnBaseController>().Projecter;
     }
 
     /// <summary>

@@ -9,6 +9,9 @@ public class PlayerBaseShipController : Singleton<PlayerBaseShipController>
     [SerializeField]
     private GameObject _playerShipPrefab = null;
 
+    [SerializeField]
+    private Transform _socketAnchor = null;
+
     private GameObject _playerShipWorldObject;
 
 #pragma warning disable IDE0052 // 읽지 않은 private 멤버 제거
@@ -25,7 +28,8 @@ public class PlayerBaseShipController : Singleton<PlayerBaseShipController>
             _playerShipWorldObject = instances.Key.gameObject;
             _playerShipProjectedObject = instances.Value.gameObject;
 
-            GameObject anchor = _playerShipWorldObject.GetComponent<PawnBaseController>().TargetMeshAnchor;
+            GameObject anchor = _playerShipWorldObject.GetComponent<PawnBaseController>().SocketAnchor;
+            
             for (int i = 0; i < anchor.transform.childCount; i++)
             {
                 Transform tr = anchor.transform.GetChild(i);

@@ -7,14 +7,14 @@ public abstract class ListChangedObserveComponent<T, SingletonComponent> : MonoB
 {
     public delegate void AvailableTaskChangeListner(T changed, bool isAdd);
 
-    private static AvailableTaskChangeListner _broadcastAvailableTaskChanged = null;
+    public static AvailableTaskChangeListner BroadcastAvailableTaskChanged = null;
 
     public static void BroadcastListChange(T changed, bool isAdd) 
-        => _broadcastAvailableTaskChanged?.Invoke(changed, isAdd);
+        => BroadcastAvailableTaskChanged?.Invoke(changed, isAdd);
 
     protected virtual void Awake()
     {
-        _broadcastAvailableTaskChanged += OnListChanged;
+        BroadcastAvailableTaskChanged += OnListChanged;
         Singleton<SingletonComponent>.ListenSingletonLoaded(() => LoadList());
     }
 

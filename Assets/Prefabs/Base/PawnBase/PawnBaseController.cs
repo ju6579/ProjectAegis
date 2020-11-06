@@ -22,8 +22,10 @@ public class PawnBaseController : MonoBehaviour
 
     public PawnType PawnActionType = PawnType.NotSet;
     public GameObject TargetMeshAnchor = null;
+    public GameObject SocketAnchor = null;
     public PlayerKingdom.ProductWrapper PawnData;
-    public ProjectPositionTracker Projecter = null;
+
+    public ProjectPositionTracker ProjectedTarget = null;
 
     private void OnDestroy()
     {
