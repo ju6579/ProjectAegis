@@ -27,6 +27,13 @@ public class UIProductContentsProperty : MonoBehaviour
     private Text _productCounter = null;
 
     private PlayerKingdom.ProductionTask _taskData = null;
+    private Button _contentsButton = null;
+
+    private void Awake()
+    {
+        _contentsButton = GetComponent<Button>();
+        _contentsButton.onClick.AddListener(() => OnClickProductButton());
+    }
 
     public void SetUIContentsData(PlayerKingdom.ProductionTask pTask)
     {
@@ -63,5 +70,33 @@ public class UIProductContentsProperty : MonoBehaviour
             yield return frameWait;
         }
         yield return null;
+    }
+
+    private void OnClickProductButton()
+    {
+        if(PawnBaseController.CompareType(_taskData.Product, PawnBaseController.PawnType.SpaceShip))
+        {
+            if (PlayerUIController.SelectedShipTaskButton != null)
+                PlayerUIController.SelectedShipTaskButton.image.color = Color.white;
+            _contentsButton.image.color = Color.black;
+
+            PlayerUIController.SelectedShipTaskButton = _contentsButton;
+            PlayerUIController.SelectedShipTask = _taskData;
+        }
+
+        if(PawnBaseController.CompareType(_taskData.Product, PawnBaseController.PawnType.Weapon))
+        {
+            if (PlayerUIController.SelectedWeaponTaskButton != null)
+                PlayerUIController.SelectedWeaponTaskButton.image.color = Color.white;
+            _contentsButton.image.color = Color.black;
+
+            PlayerUIController.SelectedWeaponTaskButton = _contentsButton;
+            PlayerUIController.SelectedWeaponTask = _taskData;
+        }
+    }
+
+    private void OnDisable()
+    {
+        _contentsButton.image.color = Color.white;
     }
 }

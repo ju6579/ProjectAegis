@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Net.Sockets;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class UISocketContentsProperty : MonoBehaviour
@@ -14,24 +11,26 @@ public class UISocketContentsProperty : MonoBehaviour
     [SerializeField]
     private Image _socketWeaponImage = null;
 
-    [SerializeField]
-    private Button _socketDetachButton = null;
-
     private readonly string _socketDefaultName = "Empty Socket";
-    private PlayerKingdom.ProductWrapper _socketedWeapon;
+    private PlayerKingdom.ProductWrapper _socketedWeapon = null;
     private GameObject _targetSocket = null;
+
+    private Button _contentsButton = null;
 
     private void Awake()
     {
         ClearSocket();
-        _socketDetachButton.onClick.AddListener(() => ClearSocket());
+
+        _contentsButton = GetComponent<Button>();
+        _contentsButton.onClick.AddListener(() => OnClickContentsButton());
     }
 
     public void AttachSocket(PlayerKingdom.ProductionTask productData)
     {
         PlayerKingdom.ProductWrapper product =
             PlayerKingdom.GetInstance().WeaponToSocket(productData, _targetSocket);
-        if (product.Instance == null)
+
+        if (product == null)
             return;
 
         _socketedWeapon = product;
@@ -45,9 +44,25 @@ public class UISocketContentsProperty : MonoBehaviour
         _socketWeaponName.text = _socketDefaultName;
         _socketWeaponImage.sprite = null;
 
-        if (_socketedWeapon.Instance != null)
+        if (_socketedWeapon != null)
         {
             PlayerKingdom.GetInstance().WeaponToCargo(_socketedWeapon);
         }
+    }
+
+    private void OnClickContentsButton()
+    {
+        if (PlayerUIController.SelectedUISocketContents != null)
+            PlayerUIController.SelectedSocketButton.image.color = Color.white;
+
+        _contentsButton.image.color = Color.black;
+
+        PlayerUIController.SelectedSocketButton = _contentsButton;
+        PlayerUIController.SelectedUISocketContents = this;
+    }
+
+    private void OnDisable()
+    {
+        _contentsButton.image.color = Color.white;
     }
 }

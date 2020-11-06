@@ -25,5 +25,5 @@ public abstract class ListChangedObserveComponent<T, SingletonComponent> : MonoB
 
     protected abstract void LoadList();
 
-    protected Dictionary<T, GameObject> _objectUIContentsHash = new Dictionary<T, GameObject>();
+    protected Dictionary<T, GameObject> _ObjectUIContentsHash = new Dictionary<T, GameObject>();
 }

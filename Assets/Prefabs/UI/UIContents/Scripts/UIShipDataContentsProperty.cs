@@ -20,8 +20,17 @@ public class UIShipDataContentsProperty : MonoBehaviour
     [SerializeField]
     private Text _arrivalTime = null;
 
+    private Button _contentsButton = null;
+
     private PlayerKingdom.ProductWrapper _shipSet;
     private ShipController.ShipProperty _shipProperty;
+    private List<GameObject> _shipSocketUIContents = new List<GameObject>();
+
+    private void Awake()
+    {
+        _contentsButton = GetComponent<Button>();
+        _contentsButton.onClick.AddListener(() => OnClickShipData());
+    }
 
     public void SetUIContentsData(PlayerKingdom.ProductWrapper product)
     {
@@ -49,6 +58,11 @@ public class UIShipDataContentsProperty : MonoBehaviour
         _arrivalTime.text = _shipProperty.ArrivalTime.ToString();
     }
 
+    private void OnClickShipData()
+    {
+        _shipSocketUIContents.ForEach((GameObject go) => go.SetActive(true));
+    }
+
     private IEnumerator _ObserveShipData()
     {
         WaitForEndOfFrame frameWait = new WaitForEndOfFrame();
@@ -59,5 +73,10 @@ public class UIShipDataContentsProperty : MonoBehaviour
             yield return frameWait;
         }
         yield return null;
+    }
+
+    private void OnDisable()
+    {
+        _contentsButton.image.color = Color.white;
     }
 }

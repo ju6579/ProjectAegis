@@ -111,7 +111,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
         public void RemoveProduct(ProductWrapper product)
         {
-            if (product.ProductData == null)
+            if (product == null)
                 return;
 
             PawnBaseController.PawnType type = product.ProductData.Product
@@ -168,8 +168,8 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
 
         public ProductWrapper AddWeaponToSocket(ProductionTask productData, GameObject socket)
         {
-            ProductWrapper product = new ProductWrapper();
-            product.Instance = null;
+            ProductWrapper product = null;
+
             if (GetSpecificWeaponCount(productData) > 0)
             {
                 ProductWrapper cache = _weaponCargo[productData].Dequeue();
@@ -296,7 +296,7 @@ public class PlayerKingdom : Singleton<PlayerKingdom>
         }
     }
 
-    public struct ProductWrapper
+    public class ProductWrapper
     {
         public GameObject Instance;
         public ProductionTask ProductData;

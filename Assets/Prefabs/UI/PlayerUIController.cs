@@ -2,12 +2,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUIController : Singleton<PlayerUIController>
 {
     public delegate void UIActiveEvent();
     public static UIActiveEvent ActiveUIPanelEventCallbacks;
     public static UIActiveEvent DisableUIPanelEventCallbacks;
+
+    public static PlayerKingdom.ProductionTask SelectedWeaponTask = null;
+    public static PlayerKingdom.ProductionTask SelectedShipTask = null;
+
+    public static PlayerKingdom.ProductWrapper SelectedShip = null;
+    public static UISocketContentsProperty SelectedUISocketContents = null;
+
+    public static Button SelectedSocketButton = null;
+    public static Button SelectedWeaponTaskButton = null;
+    public static Button SelectedShipTaskButton = null;
+
+    public static void ClearSelect()
+    {
+        SelectedWeaponTask = null;
+        SelectedShipTask = null;
+        SelectedShip = null;
+
+        SelectedUISocketContents = null;
+
+        SelectedSocketButton = null;
+        SelectedWeaponTaskButton = null;
+        SelectedShipTask = null;
+    }
 
     [SerializeField]
     private GameObject _mainCanvas = null;
@@ -56,6 +80,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
     #region MonoBehaviour Callbacks
     protected override void Awake()
     {
+        ClearSelect();
         base.Awake();
         ActiveUIPanelEventCallbacks += ActiveMainPanel;
         DisableUIPanelEventCallbacks += DisableMainPanel;
@@ -105,6 +130,8 @@ public class PlayerUIController : Singleton<PlayerUIController>
 
     private void DisableAllSubPanel()
     {
+        ClearSelect();
+
         _mapUIPanel.SetActive(false);
         _teamUIPanel.SetActive(false);
         _shipUIPanel.SetActive(false);
