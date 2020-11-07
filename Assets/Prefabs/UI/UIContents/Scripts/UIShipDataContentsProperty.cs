@@ -3,54 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using PlayerKindom.PlayerKindomTypes;
+
 public class UIShipDataContentsProperty : MonoBehaviour
 {
-    public PlayerKingdom.ProductWrapper ShipProduct => _shipSet;
+    public ProductWrapper ShipProduct => _shipSet;
 
-    public void AttachWeaponToSocket(PlayerKingdom.ProductionTask pTask)
+    public void AttachWeaponToSocket(ProductionTask pTask)
     {
         _selectedSocketProperty.AttachSocket(pTask);
     }
 
-    [SerializeField]
-    private Image _shipImage = null;
-
-    [SerializeField]
-    private Text _shipName = null;
-
-    [SerializeField]
-    private Text _shieldAmount = null;
-
-    [SerializeField]
-    private Text _armorAmount = null;
-
-    [SerializeField]
-    private Text _arrivalTime = null;
-
-    [SerializeField]
-    private GameObject _socketUIContentsObject = null;
-
-    private Button _contentsButton = null;
-
-    private PlayerKingdom.ProductWrapper _shipSet;
-    private ShipController.ShipProperty _shipProperty;
-    private List<UISocketContentsProperty> _shipSocketUIContents = new List<UISocketContentsProperty>();
-
-    private Button _selectedSocketButton = null;
-    private UISocketContentsProperty _selectedSocketProperty = null;
-
-    public void ClearSelectContents()
-    {
-        if (_selectedSocketButton)
-        {
-            _selectedSocketButton.image.color = Color.white;
-        }
-        
-        _selectedSocketButton = null;
-        _selectedSocketProperty = null;
-    }
-
-    public void SetUIContentsData(PlayerKingdom.ProductWrapper product)
+    public void SetUIContentsData(ProductWrapper product)
     {
         _shipSet = product;
 
@@ -74,7 +38,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
             UISocketContentsProperty socketProperty = cache.GetComponent<UISocketContentsProperty>();
 
             button.onClick.AddListener(() => OnClickSocketContents(button, socketProperty));
-            
+
             _shipSocketUIContents.Add(socketProperty);
             socketProperty.SetSocket(go);
 
@@ -82,11 +46,6 @@ public class UIShipDataContentsProperty : MonoBehaviour
         });
 
         PlayerUIController.GetInstance().StartCoroutine(_ObserveShipData());
-    }
-
-    private void Awake()
-    {
-        _contentsButton = GetComponent<Button>();
     }
 
     private Vector3 _defaultLocalScale = new Vector3(1, 1, 0);
@@ -100,7 +59,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
         });
     }
 
-    public void RemoveContentsToScrollRect(ScrollRect targetView)
+    public void RemoveContentsToScrollRect()
     {
         _shipSocketUIContents.ForEach((UISocketContentsProperty socket) =>
         {
@@ -109,6 +68,65 @@ public class UIShipDataContentsProperty : MonoBehaviour
             socket.gameObject.SetActive(false);
         });
     }
+
+    #region Serialize Field
+    [SerializeField]
+    private Image _shipImage = null;
+
+    [SerializeField]
+    private Text _shipName = null;
+
+    [SerializeField]
+    private Text _shieldAmount = null;
+
+    [SerializeField]
+    private Text _armorAmount = null;
+
+    [SerializeField]
+    private Text _arrivalTime = null;
+
+    [SerializeField]
+    private GameObject _socketUIContentsObject = null;
+    #endregion
+
+    #region Private Field
+    private Button _contentsButton = null;
+    #endregion
+
+    #region Selected Data Field
+    private ProductWrapper _shipSet;
+    private ShipController.ShipProperty _shipProperty;
+    private List<UISocketContentsProperty> _shipSocketUIContents = new List<UISocketContentsProperty>();
+
+    private Button _selectedSocketButton = null;
+    private UISocketContentsProperty _selectedSocketProperty = null;
+
+    public void ClearSelectContents()
+    {
+        if (_selectedSocketButton)
+        {
+            _selectedSocketButton.image.color = Color.white;
+        }
+
+        _selectedSocketButton = null;
+        _selectedSocketProperty = null;
+    }
+    #endregion
+
+    #region MonoBehaviour Callbacks
+    private void Awake()
+    {
+        _contentsButton = GetComponent<Button>();
+    }
+
+    private void OnDisable()
+    {
+        _contentsButton.image.color = Color.white;
+
+        ClearSelectContents();
+        RemoveContentsToScrollRect();
+    }
+    #endregion
 
     private void OnClickSocketContents(Button clicked, UISocketContentsProperty socket)
     {
@@ -136,12 +154,5 @@ public class UIShipDataContentsProperty : MonoBehaviour
         _shieldAmount.text = _shipProperty.ShieldPoint.ToString();
         _armorAmount.text = _shipProperty.ArmorPoint.ToString();
         _arrivalTime.text = _shipProperty.ArrivalTime.ToString();
-    }
-
-    private void OnDisable()
-    {
-        _contentsButton.image.color = Color.white;
-
-        ClearSelectContents();
     }
 }

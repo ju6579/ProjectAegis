@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
+
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
 
 public class UIInfoProductProperty : MonoBehaviour
 {
@@ -20,10 +21,10 @@ public class UIInfoProductProperty : MonoBehaviour
     [SerializeField]
     private Text _targetInformation = null;
 
-    private PlayerKingdom.ProductionTask _selectedTask = null;
+    private ProductionTask _selectedTask = null;
     private PawnBaseController.PawnType _selectedProductType = PawnBaseController.PawnType.NotSet;
 
-    public void ReplaceProductInfo(PlayerKingdom.ProductionTask pTask)
+    public void ReplaceProductInfo(ProductionTask pTask)
     {
         _selectedTask = pTask;
 

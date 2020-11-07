@@ -1,7 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
 
 public class UIProductContentsProperty : MonoBehaviour
 {
@@ -26,7 +28,7 @@ public class UIProductContentsProperty : MonoBehaviour
     [SerializeField]
     private Text _productCounter = null;
 
-    public PlayerKingdom.ProductionTask TaskData = null;
+    public ProductionTask TaskData = null;
     
     private Button _contentsButton = null;
 
@@ -35,7 +37,7 @@ public class UIProductContentsProperty : MonoBehaviour
         _contentsButton = GetComponent<Button>();
     }
 
-    public void SetUIContentsData(PlayerKingdom.ProductionTask pTask)
+    public void SetUIContentsData(ProductionTask pTask)
     {
         if (_productImage == null &&
             _productName == null &&

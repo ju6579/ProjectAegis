@@ -1,9 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WeaponListBroadcaster : ListChangedObserveComponent<PlayerKingdom.ProductionTask, PlayerKingdom>
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
+
+public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask, PlayerKingdom>
 {
     [SerializeField]
     private GameObject _weaponScrollContents = null;
@@ -11,8 +13,8 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<PlayerKingdom.P
     private static List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster
         = new List<KeyValuePair<ScrollRect, IUIContentsCallbacks>>();
 
-    private static Dictionary<PlayerKingdom.ProductionTask, List<GameObject>> _objectUIContentsHash
-        = new Dictionary<PlayerKingdom.ProductionTask, List<GameObject>>();
+    private static Dictionary<ProductionTask, List<GameObject>> _objectUIContentsHash
+        = new Dictionary<ProductionTask, List<GameObject>>();
 
     public static void ListenWeaponListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
     {
@@ -21,7 +23,7 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<PlayerKingdom.P
 
     protected override void LoadList()
     {
-        PlayerKingdom.GetInstance().ProductList.ForEach((PlayerKingdom.ProductionTask pTask) =>
+        PlayerKingdom.GetInstance().ProductList.ForEach((ProductionTask pTask) =>
         {
             if(PawnBaseController.CompareType(pTask.Product, PawnBaseController.PawnType.Weapon))
             {
@@ -44,7 +46,7 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<PlayerKingdom.P
         });
     }
 
-    protected override void OnListChanged(PlayerKingdom.ProductionTask changed, bool isAdd)
+    protected override void OnListChanged(ProductionTask changed, bool isAdd)
     {
         base.OnListChanged(changed, isAdd);
         if(PawnBaseController.CompareType(changed.Product, PawnBaseController.PawnType.Weapon))

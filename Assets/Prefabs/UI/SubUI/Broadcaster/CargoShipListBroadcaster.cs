@@ -1,9 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CargoShipListBroadcaster : ListChangedObserveComponent<PlayerKingdom.ProductWrapper, PlayerKingdom>
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
+
+public class CargoShipListBroadcaster : ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
 {
     [SerializeField]
     private GameObject _shipScrollContents = null;
@@ -11,8 +13,8 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<PlayerKingdo
     private static List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster 
         = new List<KeyValuePair<ScrollRect, IUIContentsCallbacks>>();
 
-    private static Dictionary<PlayerKingdom.ProductWrapper, List<GameObject>> _objectUIContentsHash
-        = new Dictionary<PlayerKingdom.ProductWrapper, List<GameObject>>();
+    private static Dictionary<ProductWrapper, List<GameObject>> _objectUIContentsHash
+        = new Dictionary<ProductWrapper, List<GameObject>>();
 
     public static void ListenCargoShipListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
     {
@@ -21,13 +23,13 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<PlayerKingdo
 
     protected override void LoadList()
     {
-        PlayerKingdom.GetInstance().ShipCargoList.ForEach((PlayerKingdom.ProductWrapper product) =>
+        PlayerKingdom.GetInstance().ShipCargoList.ForEach((ProductWrapper product) =>
         {
             AddContentsToAllScrollView(product);
         });
     }
 
-    protected override void OnListChanged(PlayerKingdom.ProductWrapper changed, bool isAdd)
+    protected override void OnListChanged(ProductWrapper changed, bool isAdd)
     {
         base.OnListChanged(changed, isAdd);
         if(PawnBaseController.CompareType(changed.ProductData.Product, PawnBaseController.PawnType.SpaceShip))
@@ -45,7 +47,7 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<PlayerKingdo
         }
     }
 
-    private void AddContentsToAllScrollView(PlayerKingdom.ProductWrapper product)
+    private void AddContentsToAllScrollView(ProductWrapper product)
     {
         _scrollContentsBroadcaster.ForEach((KeyValuePair<ScrollRect, IUIContentsCallbacks> keyPair) =>
         {

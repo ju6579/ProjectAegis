@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
+
 public class PawnBaseController : MonoBehaviour
 {
     public static bool CompareType(GameObject pawn, PawnType type)
@@ -23,7 +26,7 @@ public class PawnBaseController : MonoBehaviour
     public PawnType PawnActionType = PawnType.NotSet;
     public GameObject TargetMeshAnchor = null;
     public GameObject SocketAnchor = null;
-    public PlayerKingdom.ProductWrapper PawnData;
+    public ProductWrapper PawnData;
 
     public ProjectPositionTracker ProjectedTarget = null;
 

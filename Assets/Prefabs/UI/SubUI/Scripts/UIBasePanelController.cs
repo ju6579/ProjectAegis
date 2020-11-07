@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+using PlayerKindom.PlayerKindomTypes;
+
 public class UIBasePanelController : MonoBehaviour, IUIContentsCallbacks
 {
     [SerializeField]
@@ -25,12 +27,12 @@ public class UIBasePanelController : MonoBehaviour, IUIContentsCallbacks
         WeaponListBroadcaster.ListenWeaponListChanged(_weaponScrollRect, this);
     }
 
-    public void OnClickProductContents(Button clicked, PlayerKingdom.ProductionTask pTask)
+    public void OnClickProductContents(Button clicked, ProductionTask pTask)
     {
         
     }
 
-    public void OnClickShipDataContents(Button clicked, PlayerKingdom.ProductWrapper pWrapper)
+    public void OnClickShipDataContents(Button clicked, ProductWrapper pWrapper)
     {
         
     }

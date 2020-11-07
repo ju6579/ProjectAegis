@@ -1,8 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+
+using PlayerKindom.PlayerKindomTypes;
 
 public class MapSystem : Singleton<MapSystem>
 {
@@ -86,7 +87,7 @@ public class MapSystem : Singleton<MapSystem>
 
     private class SingleTile
     {
-        public PlayerKingdom.SpendableResource TileResource;
+        public SpendableResource TileResource;
 
         public struct TileProperties
         {

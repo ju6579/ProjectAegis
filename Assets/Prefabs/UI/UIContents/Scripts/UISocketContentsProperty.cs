@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
+
 public class UISocketContentsProperty : MonoBehaviour
 {
     public Button UIButton => _contentsButton;
@@ -13,7 +16,7 @@ public class UISocketContentsProperty : MonoBehaviour
     private Image _socketWeaponImage = null;
 
     private readonly string _socketDefaultName = "Empty Socket";
-    private PlayerKingdom.ProductWrapper _socketedWeapon = null;
+    private ProductWrapper _socketedWeapon = null;
     private GameObject _targetSocket = null;
 
     private Button _contentsButton = null;
@@ -24,12 +27,12 @@ public class UISocketContentsProperty : MonoBehaviour
         _contentsButton = GetComponent<Button>();
     }
 
-    public void AttachSocket(PlayerKingdom.ProductionTask productData)
+    public void AttachSocket(ProductionTask productData)
     {
         if (_socketedWeapon != null)
             return;
 
-        PlayerKingdom.ProductWrapper product =
+        ProductWrapper product =
             PlayerKingdom.GetInstance().WeaponToSocket(productData, _targetSocket);
 
         if (product == null)

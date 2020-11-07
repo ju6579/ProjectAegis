@@ -1,7 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
 
 public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
 {
@@ -33,7 +35,7 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
     private UIInfoProductProperty _infoProperty = null;
 
     private Button _selectedButton = null;
-    private PlayerKingdom.ProductionTask _selectedTask = null;
+    private ProductionTask _selectedTask = null;
     private PawnBaseController.PawnType _selectedProductType = PawnBaseController.PawnType.NotSet;
 
     private void ClearSelectedData()
@@ -113,7 +115,7 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
         _shipScrollView.gameObject.SetActive(false);
     }
 
-    public void OnClickProductContents(Button clicked, PlayerKingdom.ProductionTask pTask)
+    public void OnClickProductContents(Button clicked, ProductionTask pTask)
     {
         ClearSelectedData();
 
@@ -126,7 +128,7 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
         _infoProperty.ReplaceProductInfo(pTask);
     }
 
-    public void OnClickShipDataContents(Button clicked, PlayerKingdom.ProductWrapper pWrapper)
+    public void OnClickShipDataContents(Button clicked, ProductWrapper pWrapper)
     {
         
     }

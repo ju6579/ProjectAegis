@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
+
 public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 {
     [SerializeField]
@@ -28,11 +31,11 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
     private Button _shipLaunchButton = null;
 
     private Button _selectedWeaponButton = null;
-    private PlayerKingdom.ProductionTask _selectedWeapon = null;
+    private ProductionTask _selectedWeapon = null;
 
     private Button _selectedShipDataButton = null;
     private UIShipDataContentsProperty _selectedShipData = null;
-    private PlayerKingdom.ProductWrapper _selectedShip = null;
+    private ProductWrapper _selectedShip = null;
 
     private void OnDisable()
     {
@@ -72,7 +75,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
         if (_selectedShipDataButton != null)
         {
             _selectedShipDataButton.image.color = Color.white;
-            _selectedShipData.RemoveContentsToScrollRect(_socketScrollView);
+            _selectedShipData.RemoveContentsToScrollRect();
 
             _selectedShipDataButton = null;
             _selectedShipData = null;
@@ -80,7 +83,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
         }
     }
 
-    public void OnClickProductContents(Button clicked, PlayerKingdom.ProductionTask pTask)
+    public void OnClickProductContents(Button clicked, ProductionTask pTask)
     {
         ClearWeaponData();
 
@@ -90,7 +93,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
         _selectedWeapon = pTask;
     }
 
-    public void OnClickShipDataContents(Button clicked, PlayerKingdom.ProductWrapper pWrapper)
+    public void OnClickShipDataContents(Button clicked, ProductWrapper pWrapper)
     {
         ClearShipData();
 

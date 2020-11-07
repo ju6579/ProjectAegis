@@ -3,311 +3,323 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerKingdom : Singleton<PlayerKingdom>
+using PlayerKindom.PlayerKindomTypes;
+
+namespace PlayerKindom
 {
-    #region Facility Handler
-    private PlayerKingdomCargo _kingdomCargo = new PlayerKingdomCargo();
-
-    public void ShipToCargo(ProductWrapper product) => _kingdomCargo.AddShipToCargo(product);
-    public void ShipToField(ProductWrapper product) => _kingdomCargo.LaunchShip(product);
-
-    public void WeaponToCargo(ProductWrapper product) => _kingdomCargo.AddWeaponToCargo(product);
-    public ProductWrapper WeaponToSocket(ProductionTask productData, GameObject socket)
-        => _kingdomCargo.AddWeaponToSocket(productData, socket);
-
-    public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
-
-    public List<ProductWrapper> ShipCargoList => _kingdomCargo.ShipCargoList;
-    #endregion
-
-    #region Kingdom Handler
-    public int CurrentAvailableTaskCount => _availableTaskCount;
-    public void EndTask() => _availableTaskCount++;
-    public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveProduct(product);
-
-    public List<ProductionTask> ProductList => _productionTaskCatalog;
-    public List<ResearchTask> ResearchList => _researchTaskCatalog;
-    #endregion
-
-    #region Inspector Field
-    [SerializeField]
-    private List<ProductionTask> _productionTaskCatalog = null;
-
-    [SerializeField]
-    private List<ResearchTask> _researchTaskCatalog = null;
-
-    [SerializeField]
-    private SpendableResource _kingdomResource = new SpendableResource();
-
-    [SerializeField]
-    private int _kingdomHuman = 1;
-
-    [SerializeField]
-    private int _availableTaskCount = 3;
-    #endregion
-
-    #region Private Field
-    private List<ResearchTask> _availableResearch = new List<ResearchTask>();
-    private List<ProductionTask> _availableProduction = new List<ProductionTask>();
-    #endregion
-
-    #region Kingdom Command
-    public bool RequestTaskToKingdom(PlayerTask pTask)
+    public class PlayerKingdom : Singleton<PlayerKingdom>
     {
-        bool isAvailable = _availableTaskCount > 0 && _kingdomResource.IsSpendable(pTask.TaskCost);
-        if (isAvailable)
+        #region Facility Handler
+        private PlayerKingdomCargo _kingdomCargo = new PlayerKingdomCargo();
+
+        public void ShipToCargo(ProductWrapper product) => _kingdomCargo.AddShipToCargo(product);
+        public void ShipToField(ProductWrapper product) => _kingdomCargo.LaunchShip(product);
+
+        public void WeaponToCargo(ProductWrapper product) => _kingdomCargo.AddWeaponToCargo(product);
+        public ProductWrapper WeaponToSocket(ProductionTask productData, GameObject socket)
+            => _kingdomCargo.AddWeaponToSocket(productData, socket);
+
+        public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
+
+        public List<ProductWrapper> ShipCargoList => _kingdomCargo.ShipCargoList;
+        #endregion
+
+        #region Kingdom Handler
+        public int CurrentAvailableTaskCount => _availableTaskCount;
+        public void EndTask() => _availableTaskCount++;
+        public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveProduct(product);
+
+        public List<ProductionTask> ProductList => _productionTaskCatalog;
+        public List<ResearchTask> ResearchList => _researchTaskCatalog;
+        #endregion
+
+        #region Inspector Field
+        [SerializeField]
+        private List<ProductionTask> _productionTaskCatalog = null;
+
+        [SerializeField]
+        private List<ResearchTask> _researchTaskCatalog = null;
+
+        [SerializeField]
+        private SpendableResource _kingdomResource = new SpendableResource();
+
+        [SerializeField]
+        private int _kingdomHuman = 1;
+
+        [SerializeField]
+        private int _availableTaskCount = 3;
+        #endregion
+
+        #region Private Field
+        private List<ResearchTask> _availableResearch = new List<ResearchTask>();
+        private List<ProductionTask> _availableProduction = new List<ProductionTask>();
+        #endregion
+
+        #region Kingdom Command
+        public bool RequestTaskToKingdom(PlayerTask pTask)
         {
-            _availableTaskCount--;
-            StartCoroutine(pTask._Run());
-        }
-        return isAvailable;
-    }
-
-    public void RequestWarpToField(GameObject go)
-    {
-        
-    }
-    #endregion
-
-    #region MonoBehaviour Callbacks
-    protected override void Awake()
-    {
-        base.Awake();
-    }
-
-    private void Start()
-    {
-        _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
-        _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
-    }
-    #endregion
-
-    #region Private Method Area
-    private void AddAvailableResearch(ResearchTask rTask)
-    {
-        _availableResearch.Add(rTask);
-
-        ListChangedObserveComponent<ResearchTask, PlayerKingdom>.BroadcastListChange(rTask, true);
-    }
-    private void AddAvailableProduction(ProductionTask pTask)
-    {
-        _availableProduction.Add(pTask);
-
-        ListChangedObserveComponent<ProductionTask, PlayerKingdom>.BroadcastListChange(pTask, true);
-    }
-    #endregion
-
-    #region Player Kingdom Facilities
-    private class PlayerKingdomCargo
-    {
-        public List<ProductWrapper> ShipCargoList => _shipCargo;
-
-        private List<ProductWrapper> _shipCargo = new List<ProductWrapper>();
-
-        private Dictionary<ProductionTask, Queue<ProductWrapper>> _weaponCargo
-            = new Dictionary<ProductionTask, Queue<ProductWrapper>>();
-
-        private Dictionary<GameObject, ProductWrapper> _spaceField = new Dictionary<GameObject, ProductWrapper>();
-
-        public void RemoveProduct(ProductWrapper product)
-        {
-            if (product == null)
-                return;
-
-            PawnBaseController.PawnType type = product.ProductData.Product
-                .GetComponent<PawnBaseController>().PawnActionType;
-
-            if (_spaceField.ContainsKey(product.Instance)) 
-                _spaceField.Remove(product.Instance);
-
-            if(type == PawnBaseController.PawnType.SpaceShip)
+            bool isAvailable = _availableTaskCount > 0 && _kingdomResource.IsSpendable(pTask.TaskCost);
+            if (isAvailable)
             {
-                int shipIndex = _shipCargo.IndexOf(product);
-                if (shipIndex >= 0)
-                    _shipCargo.RemoveAt(shipIndex);
+                _availableTaskCount--;
+                StartCoroutine(pTask._Run());
             }
+            return isAvailable;
         }
 
-        public void AddShipToCargo(ProductWrapper product) 
+        public void RequestWarpToField(GameObject go)
         {
-            if (_spaceField.ContainsKey(product.Instance)) 
-                _spaceField.Remove(product.Instance);
 
-            _shipCargo.Add(product);
+        }
+        #endregion
 
-            ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
-                .BroadcastListChange(product, true);
+        #region MonoBehaviour Callbacks
+        protected override void Awake()
+        {
+            base.Awake();
         }
 
-        public void LaunchShip(ProductWrapper product)
+        private void Start()
         {
-            _shipCargo.Remove(product);
-            _spaceField.Add(product.Instance, product);
-
-            ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
-                .BroadcastListChange(product, false);
-
-            product.Instance.GetComponent<ShipController>().WarpToPosition();
+            _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
+            _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
         }
+        #endregion
 
-        public void AddWeaponToCargo(ProductWrapper product) 
+        #region Private Method Area
+        private void AddAvailableResearch(ResearchTask rTask)
         {
-            if (_spaceField.ContainsKey(product.Instance)) 
-                _spaceField.Remove(product.Instance);
+            _availableResearch.Add(rTask);
 
-            if (!_weaponCargo.ContainsKey(product.ProductData))
-                _weaponCargo[product.ProductData] = new Queue<ProductWrapper>();
-
-            product.Instance.transform.SetParent(ProjectionManager.GetInstance().WorldTransform);
-            product.Instance.transform.localPosition = Vector3.back * 5f;
-
-            product.Instance.GetComponent<PawnBaseController>().ProjectedTarget.DetachRootTransform();
-
-            _weaponCargo[product.ProductData].Enqueue(product);
+            ListChangedObserveComponent<ResearchTask, PlayerKingdom>.BroadcastListChange(rTask, true);
         }
-
-        public ProductWrapper AddWeaponToSocket(ProductionTask productData, GameObject socket)
+        private void AddAvailableProduction(ProductionTask pTask)
         {
-            ProductWrapper product = null;
+            _availableProduction.Add(pTask);
 
-            if (GetSpecificWeaponCount(productData) > 0)
+            ListChangedObserveComponent<ProductionTask, PlayerKingdom>.BroadcastListChange(pTask, true);
+        }
+        #endregion
+
+        #region Player Kingdom Facilities
+        private class PlayerKingdomCargo
+        {
+            public List<ProductWrapper> ShipCargoList => _shipCargo;
+
+            private List<ProductWrapper> _shipCargo = new List<ProductWrapper>();
+
+            private Dictionary<ProductionTask, Queue<ProductWrapper>> _weaponCargo
+                = new Dictionary<ProductionTask, Queue<ProductWrapper>>();
+
+            private Dictionary<GameObject, ProductWrapper> _spaceField = new Dictionary<GameObject, ProductWrapper>();
+
+            public void RemoveProduct(ProductWrapper product)
             {
-                ProductWrapper cache = _weaponCargo[productData].Dequeue();
-                _spaceField.Add(cache.Instance, cache);
+                if (product == null)
+                    return;
 
-                cache.Instance.transform.SetParent(socket.transform);
-                cache.Instance.transform.localPosition = Vector3.zero;
+                PawnBaseController.PawnType type = product.ProductData.Product
+                    .GetComponent<PawnBaseController>().PawnActionType;
 
-                cache.Instance.GetComponent<PawnBaseController>()
-                    .ProjectedTarget.ReplaceRootTransform(socket.transform);
+                if (_spaceField.ContainsKey(product.Instance))
+                    _spaceField.Remove(product.Instance);
 
-                product = cache;
+                if (type == PawnBaseController.PawnType.SpaceShip)
+                {
+                    int shipIndex = _shipCargo.IndexOf(product);
+                    if (shipIndex >= 0)
+                        _shipCargo.RemoveAt(shipIndex);
+                }
             }
 
-            return product;
-        }
-
-        public int GetSpecificWeaponCount(ProductionTask productData)
-        {
-            return _weaponCargo.ContainsKey(productData) ? _weaponCargo[productData].Count : 0;
-        }
-
-        public GameObject MaintenanceTarget = null;
-    }
-    #endregion
-
-    #region Player Task Type
-    [Serializable]
-    public class PlayerTask
-    {
-        public string TaskName = "";
-        public string TaskInformation = "";
-        public float TaskExecuteTime = 0;
-        public SpendableResource TaskCost;
-
-        public IEnumerator _Run()
-        {
-            yield return new WaitForSeconds(TaskExecuteTime);
-            TaskAction();
-
-            PlayerKingdom.GetInstance().EndTask();
-        }
-
-        protected virtual void TaskAction() { }
-    }
-
-    [Serializable]
-    public class ProductionTask : PlayerTask
-    {
-        public GameObject Product = null;
-        public PawnBaseController.PawnType ProductType 
-            => Product.GetComponent<PawnBaseController>().PawnActionType;
-
-        public Sprite TaskIcon = null;
-
-        protected override void TaskAction()
-        {
-            base.TaskAction();
-
-            PawnBaseController pawn = Product.GetComponent<PawnBaseController>();
-            if (pawn == null) GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-            ProductWrapper product;
-
-            switch (pawn.PawnActionType)
+            public void AddShipToCargo(ProductWrapper product)
             {
-                case PawnBaseController.PawnType.SpaceShip:
-                    GameObject ship = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
-                    if (ship.GetComponent<ShipController>() == null)
+                if (_spaceField.ContainsKey(product.Instance))
+                    _spaceField.Remove(product.Instance);
+
+                _shipCargo.Add(product);
+
+                ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
+                    .BroadcastListChange(product, true);
+            }
+
+            public void LaunchShip(ProductWrapper product)
+            {
+                _shipCargo.Remove(product);
+                _spaceField.Add(product.Instance, product);
+
+                ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
+                    .BroadcastListChange(product, false);
+
+                product.Instance.GetComponent<ShipController>().WarpToPosition();
+            }
+
+            public void AddWeaponToCargo(ProductWrapper product)
+            {
+                if (_spaceField.ContainsKey(product.Instance))
+                    _spaceField.Remove(product.Instance);
+
+                if (!_weaponCargo.ContainsKey(product.ProductData))
+                    _weaponCargo[product.ProductData] = new Queue<ProductWrapper>();
+
+                product.Instance.transform.SetParent(ProjectionManager.GetInstance().WorldTransform);
+                product.Instance.transform.localPosition = Vector3.back * 5f;
+
+                product.Instance.GetComponent<PawnBaseController>().ProjectedTarget.DetachRootTransform();
+
+                _weaponCargo[product.ProductData].Enqueue(product);
+            }
+
+            public ProductWrapper AddWeaponToSocket(ProductionTask productData, GameObject socket)
+            {
+                ProductWrapper product = null;
+
+                if (GetSpecificWeaponCount(productData) > 0)
+                {
+                    ProductWrapper cache = _weaponCargo[productData].Dequeue();
+                    _spaceField.Add(cache.Instance, cache);
+
+                    cache.Instance.transform.SetParent(socket.transform);
+                    cache.Instance.transform.localPosition = Vector3.zero;
+
+                    cache.Instance.GetComponent<PawnBaseController>()
+                        .ProjectedTarget.ReplaceRootTransform(socket.transform);
+
+                    product = cache;
+                }
+
+                return product;
+            }
+
+            public int GetSpecificWeaponCount(ProductionTask productData)
+            {
+                return _weaponCargo.ContainsKey(productData) ? _weaponCargo[productData].Count : 0;
+            }
+
+            public GameObject MaintenanceTarget = null;
+        }
+        #endregion
+
+
+
+    }
+
+    namespace PlayerKindomTypes
+    {
+        #region Player Task Type
+
+        [Serializable]
+        public class PlayerTask
+        {
+            public string TaskName = "";
+            public string TaskInformation = "";
+            public float TaskExecuteTime = 0;
+            public SpendableResource TaskCost;
+
+            public IEnumerator _Run()
+            {
+                yield return new WaitForSeconds(TaskExecuteTime);
+                TaskAction();
+
+                PlayerKingdom.GetInstance().EndTask();
+            }
+
+            protected virtual void TaskAction() { }
+        }
+
+        [Serializable]
+        public class ProductionTask : PlayerTask
+        {
+            public GameObject Product = null;
+            public PawnBaseController.PawnType ProductType
+                => Product.GetComponent<PawnBaseController>().PawnActionType;
+
+            public Sprite TaskIcon = null;
+
+            protected override void TaskAction()
+            {
+                base.TaskAction();
+
+                PawnBaseController pawn = Product.GetComponent<PawnBaseController>();
+                if (pawn == null) GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
+                ProductWrapper product;
+
+                switch (pawn.PawnActionType)
+                {
+                    case PawnBaseController.PawnType.SpaceShip:
+                        GameObject ship = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
+                        if (ship.GetComponent<ShipController>() == null)
+                            GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
+
+                        product = new ProductWrapper(ship, this);
+                        pawn.PawnData = product;
+                        PlayerKingdom.GetInstance().ShipToCargo(product);
+                        break;
+
+                    case PawnBaseController.PawnType.Weapon:
+                        GameObject weapon = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
+                        if (weapon.GetComponent<WeaponController>() == null)
+                            GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
+
+                        product = new ProductWrapper(weapon, this);
+                        pawn.PawnData = product;
+                        PlayerKingdom.GetInstance().WeaponToCargo(product);
+                        break;
+
+                    default:
                         GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-
-                    product = new ProductWrapper(ship, this);
-                    pawn.PawnData = product;
-                    PlayerKingdom.GetInstance().ShipToCargo(product);
-                    break;
-
-                case PawnBaseController.PawnType.Weapon:
-                    GameObject weapon = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
-                    if (weapon.GetComponent<WeaponController>() == null)
-                        GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-
-                    product = new ProductWrapper(weapon, this);
-                    pawn.PawnData = product;
-                    PlayerKingdom.GetInstance().WeaponToCargo(product);
-                    break;
-
-                default:
-                    GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-                    break;
+                        break;
+                }
             }
         }
-    }
 
-    [Serializable]
-    public class ResearchTask : PlayerTask
-    {
-        protected override void TaskAction()
+        [Serializable]
+        public class ResearchTask : PlayerTask
         {
-            base.TaskAction();
+            protected override void TaskAction()
+            {
+                base.TaskAction();
+            }
         }
-    }
-    #endregion
+        #endregion
 
-    #region CustomType
-    [Serializable]
-    public struct SpendableResource
-    {
-        public int Crystal;
-        public int Explosive;
-        public int Metal;
-        public int Electronic;
-
-        public SpendableResource(int crystal, int explosive, int metal, int electornic)
+        #region CustomType
+        [Serializable]
+        public struct SpendableResource
         {
-            this.Crystal = crystal;
-            this.Explosive = explosive;
-            this.Metal = metal;
-            this.Electronic = electornic;
+            public int Crystal;
+            public int Explosive;
+            public int Metal;
+            public int Electronic;
+
+            public SpendableResource(int crystal, int explosive, int metal, int electornic)
+            {
+                this.Crystal = crystal;
+                this.Explosive = explosive;
+                this.Metal = metal;
+                this.Electronic = electornic;
+            }
+
+            public bool IsSpendable(SpendableResource target)
+            {
+                return (this.Crystal >= target.Crystal) &&
+                      (this.Explosive >= target.Explosive) &&
+                      (this.Metal >= target.Metal) &&
+                      (this.Electronic >= target.Electronic);
+            }
         }
 
-        public bool IsSpendable(SpendableResource target)
+        public class ProductWrapper
         {
-            return (this.Crystal >= target.Crystal) &&
-                  (this.Explosive >= target.Explosive) &&
-                  (this.Metal >= target.Metal) &&
-                  (this.Electronic >= target.Electronic);
-        }
-    }
+            public GameObject Instance;
+            public ProductionTask ProductData;
 
-    public class ProductWrapper
-    {
-        public GameObject Instance;
-        public ProductionTask ProductData;
-
-        public ProductWrapper(GameObject instance, ProductionTask productData)
-        {
-            Instance = instance;
-            ProductData = productData;
+            public ProductWrapper(GameObject instance, ProductionTask productData)
+            {
+                Instance = instance;
+                ProductData = productData;
+            }
         }
+        #endregion
     }
-    #endregion
 }
