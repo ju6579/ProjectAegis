@@ -11,7 +11,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
 
     public void AttachWeaponToSocket(ProductionTask pTask)
     {
-        _selectedSocketProperty.AttachSocket(pTask);
+        _selectedSocketProperty.AttachSocket(pTask, _shipSet.Instance.GetComponent<ShipController>());
     }
 
     public void SetUIContentsData(ProductWrapper product)
@@ -33,7 +33,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
 
         ship.SocketList.ForEach((GameObject go) =>
         {
-            GameObject cache = Instantiate(_socketUIContentsObject);
+            GameObject cache = Instantiate(_socketUIContentsObject, PlayerUIController.GetInstance().Dummy);
             Button button = cache.GetComponent<Button>();
             UISocketContentsProperty socketProperty = cache.GetComponent<UISocketContentsProperty>();
 
@@ -53,9 +53,14 @@ public class UIShipDataContentsProperty : MonoBehaviour
     {
         _shipSocketUIContents.ForEach((UISocketContentsProperty socket) =>
         {
-            socket.transform.SetParent(targetView.content);
-            socket.transform.localScale = _defaultLocalScale;
-            socket.gameObject.SetActive(true);
+            if(socket != null)
+            {
+                socket.transform.SetParent(targetView.content);
+                socket.transform.localScale = _defaultLocalScale;
+                socket.transform.localPosition = Vector3.zero;
+                socket.transform.localRotation = Quaternion.identity;
+                socket.gameObject.SetActive(true);
+            }
         });
     }
 
@@ -63,9 +68,12 @@ public class UIShipDataContentsProperty : MonoBehaviour
     {
         _shipSocketUIContents.ForEach((UISocketContentsProperty socket) =>
         {
-            socket.transform.SetParent(null);
-            socket.transform.localScale = _defaultLocalScale;
-            socket.gameObject.SetActive(false);
+            if(socket != null)
+            {
+                socket.transform.SetParent(PlayerUIController.GetInstance().Dummy);
+                socket.transform.localScale = _defaultLocalScale;
+                socket.gameObject.SetActive(false);
+            }
         });
     }
 
@@ -107,7 +115,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
         {
             _selectedSocketButton.image.color = Color.white;
         }
-
+        
         _selectedSocketButton = null;
         _selectedSocketProperty = null;
     }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class ProjectPositionTracker : MonoBehaviour
 {
-    private Transform _targetRootTransform = null;
-    private Transform _targetAnchor = null;
+    public Transform _targetRootTransform = null;
+    public Transform _targetAnchor = null;
 
     private Dictionary<Transform, Transform> _projectionHash = new Dictionary<Transform, Transform>();
 

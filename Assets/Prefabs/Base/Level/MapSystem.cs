@@ -75,11 +75,16 @@ public class MapSystem : Singleton<MapSystem>
                 // For Debug
                 Button buttonCache = Instantiate(mapButtonSample, mapScrollView.content).GetComponent<Button>();
                 RectTransform buttonTransform = buttonCache.GetComponent<RectTransform>();
+
                 Vector3 targetPosition = anchor.localPosition;
                 targetPosition.x += _hexagonalMap[i][j].Properties.Position.x * buttonTransform.sizeDelta.x + 1f * 9 / 16;
                 targetPosition.y -= _hexagonalMap[i][j].Properties.Position.y * buttonTransform.sizeDelta.y - (i % 2 + 1) * buttonTransform.sizeDelta.y / 2f - 1f;
-                targetPosition.z -= 1f;
+                targetPosition.z = 0f;
+                
                 buttonTransform.localPosition = targetPosition;
+
+                buttonTransform.localRotation = Quaternion.identity;
+
                 _hexagonalMap[i][j].SetDebugButton(buttonCache);
             }
         }

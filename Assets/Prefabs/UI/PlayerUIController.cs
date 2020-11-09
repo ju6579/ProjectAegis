@@ -10,11 +10,10 @@ public class PlayerUIController : Singleton<PlayerUIController>
     public static UIActiveEvent ActiveUIPanelEventCallbacks;
     public static UIActiveEvent DisableUIPanelEventCallbacks;
 
-    [SerializeField]
-    private GameObject _mainCanvas = null;
+    public Transform Dummy => _dummyCanvas.transform;
 
     [SerializeField]
-    private GameObject _screenSaver = null;
+    private GameObject _mainCanvas = null;
 
     [SerializeField]
     private GameObject _mapUIPanel = null;
@@ -34,6 +33,9 @@ public class PlayerUIController : Singleton<PlayerUIController>
     [SerializeField]
     private GameObject _productUIPanel = null;
 
+    [SerializeField]
+    private GameObject _dummyCanvas = null;
+
     private bool _isMainPanelActive = false;
     
     #region Public Method Area
@@ -41,7 +43,6 @@ public class PlayerUIController : Singleton<PlayerUIController>
     {
         MainMenuButtonType actionType = (MainMenuButtonType)actionNumber;
         DisableAllSubPanel();
-        DisableScreenSaver();
         switch (actionType)
         {
             case MainMenuButtonType.Map: _mapUIPanel.SetActive(true); break;
@@ -60,11 +61,14 @@ public class PlayerUIController : Singleton<PlayerUIController>
         base.Awake();
         ActiveUIPanelEventCallbacks += ActiveMainPanel;
         DisableUIPanelEventCallbacks += DisableMainPanel;
+
+        _dummyCanvas.SetActive(false);
     }
 
     private void Start()
     {
         DisableUIPanelEventCallbacks();
+        ActiveUIPanelEventCallbacks();
     }
 
     private void Update()
@@ -89,8 +93,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
         _mainCanvas.SetActive(true);
-        DisableAllSubPanel();
-        ActiveScreenSaver();
+        //DisableAllSubPanel();
 
         _isMainPanelActive = true;
     }
@@ -113,9 +116,6 @@ public class PlayerUIController : Singleton<PlayerUIController>
         _upgradeUIPanel.SetActive(false);
         _productUIPanel.SetActive(false);
     }
-
-    private void ActiveScreenSaver() { _screenSaver.SetActive(true); }
-    private void DisableScreenSaver() { _screenSaver.SetActive(false); }
     #endregion
 
     #region Custom Type

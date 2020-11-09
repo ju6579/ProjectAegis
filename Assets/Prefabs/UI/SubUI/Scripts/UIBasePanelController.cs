@@ -24,7 +24,7 @@ public class UIBasePanelController : MonoBehaviour, IUIContentsCallbacks
 
     private void Awake()
     {
-        WeaponListBroadcaster.ListenWeaponListChanged(_weaponScrollRect, this);
+        
     }
 
     public void OnClickProductContents(Button clicked, ProductionTask pTask)

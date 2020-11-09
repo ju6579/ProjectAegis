@@ -3,11 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using PlayerKindom;
+
 [RequireComponent(typeof(Rigidbody))]
 public class ShipController : MonoBehaviour
 {
     public ShipProperty ShipData => _shipProperty;
     public List<GameObject> SocketList => _sockets;
+
+    public Collider[] Target => _searchedTarget;
+    public int TargetCount => _searchedTarget.Length;
 
     [Serializable]
     public class ShipProperty
@@ -22,7 +27,16 @@ public class ShipController : MonoBehaviour
     [SerializeField]
     private ShipProperty _shipProperty = null;
 
+    [SerializeField]
+    private LayerMask _targetLayerMask = -1;
+
+    [SerializeField]
+    private float _searchDistance = 1000f;
+
     private List<GameObject> _sockets = new List<GameObject>();
+    private Collider[] _searchedTarget = new Collider[0];
+
+    private WaitForSeconds _searchRate = new WaitForSeconds(0.333f);
 
     public void SetWeaponOnSocket(GameObject weapon)
     {
@@ -40,14 +54,8 @@ public class ShipController : MonoBehaviour
 
     private Rigidbody shipPhysics = null;
     private Vector3 _targetPosition;
-#pragma warning disable IDE0044 // 읽기 전용 한정자 추가
-#pragma warning disable IDE0051 // 사용되지 않는 private 멤버 제거
     private float _currentSpeed = 0f;
-#pragma warning restore IDE0051 // 사용되지 않는 private 멤버 제거
-#pragma warning restore IDE0044 // 읽기 전용 한정자 추가
-
     private WaitForSeconds _arrivalWait;
-    
 
     public void WarpToPosition()
     {
@@ -72,18 +80,31 @@ public class ShipController : MonoBehaviour
         warpPower = warpPower * shipPhysics.mass;
     }
 
-#pragma warning disable IDE0051 // 사용되지 않는 private 멤버 제거
+    private void Start()
+    {
+        StartCoroutine(_SearchAttackTarget());
+    }
+
     private void ShipMovement()
-#pragma warning restore IDE0051 // 사용되지 않는 private 멤버 제거
     {
 
+    }
+
+    private IEnumerator _SearchAttackTarget()
+    {
+        while(this != null)
+        {
+            _searchedTarget = Physics.OverlapSphere(transform.position, _searchDistance, _targetLayerMask);
+            yield return _searchRate;
+        }
+
+        yield return null;
     }
 
     private IEnumerator _WarpToPosition()
     {
         yield return _arrivalWait;
-        GameObject go = GlobalObjectManager.GetInstance().GetShipAnchor();
-        _targetPosition = go.transform.localPosition;
+        _targetPosition = PlayerKingdom.GetInstance().NextWarpPoint;
 
         transform.localPosition = _targetPosition - transform.forward * 0.1f;
         shipPhysics.AddForce(transform.forward * warpPower, ForceMode.Impulse);

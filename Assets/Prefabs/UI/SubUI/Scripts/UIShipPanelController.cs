@@ -108,7 +108,8 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 
     public void OnClickLaunchButton()
     {
-        PlayerKingdom.GetInstance().ShipToField(_selectedShip);
+        if(_selectedShip != null)
+            PlayerKingdom.GetInstance().ShipToField(_selectedShip);
         ClearShipData();
     }
 }

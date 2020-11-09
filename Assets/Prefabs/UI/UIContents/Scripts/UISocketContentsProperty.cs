@@ -27,7 +27,7 @@ public class UISocketContentsProperty : MonoBehaviour
         _contentsButton = GetComponent<Button>();
     }
 
-    public void AttachSocket(ProductionTask productData)
+    public void AttachSocket(ProductionTask productData, ShipController ship)
     {
         if (_socketedWeapon != null)
             return;
@@ -37,6 +37,8 @@ public class UISocketContentsProperty : MonoBehaviour
 
         if (product == null)
             return;
+
+        product.Instance.GetComponent<WeaponController>().SetAttachedShip(ship);
 
         _socketedWeapon = product;
 
@@ -51,7 +53,10 @@ public class UISocketContentsProperty : MonoBehaviour
 
         if (_socketedWeapon != null)
         {
+            _socketedWeapon.Instance.GetComponent<WeaponController>().DetachWeaponToShip();
+
             PlayerKingdom.GetInstance().WeaponToCargo(_socketedWeapon);
+            _socketedWeapon = null;
         }
     }
 

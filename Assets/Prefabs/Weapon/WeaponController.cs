@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
+    public void SetAttachedShip(ShipController ship) => _attachedShip = ship;
+    public void DetachWeaponToShip() => _attachedShip = null;
+
     [Serializable]
     public class WeaponProperty
     {
@@ -21,12 +24,12 @@ public class WeaponController : MonoBehaviour
     [SerializeField]
     private GameObject _muzzle = null;
 
-    private WaitForSeconds _attackWait;
-    private WaitForSeconds _reloadWait;
-
     private bool _isAttack = false;
 
-    private GameObject _attackTarget = null;
+    private ShipController _attachedShip = null;
+
+    private WaitForSeconds _attackWait;
+    private WaitForSeconds _reloadWait;
 
     private void Awake()
     {
@@ -36,18 +39,24 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        if (_attackTarget != null)
+        if(_attachedShip != null)
         {
-            if (!_isAttack)
+            if (_attachedShip.TargetCount > 0)
             {
-                _isAttack = true;
-                StartCoroutine(_AttackTarget());
+                Debug.Log("Enemy Found");
+                transform.LookAt(GetTargetEnemy(_attachedShip.Target));
+                if (!_isAttack)
+                {
+                    _isAttack = true;
+                    StartCoroutine(_AttackTarget());
+                }
             }
-
-            transform.LookAt(_attackTarget.transform);
         }
-        else
-            _attackTarget = EnemyKingdom.GetInstance().GetCurrentEnemy();
+    }
+
+    private Transform GetTargetEnemy(Collider[] enemySet)
+    {
+        return enemySet[0].transform;
     }
 
     private void ShootTarget()
@@ -59,6 +68,7 @@ public class WeaponController : MonoBehaviour
 
     private IEnumerator _AttackTarget()
     {
+        yield return new WaitForSeconds(UnityEngine.Random.Range(0f, 0.5f));
         for(int i = 0; i < _weaponProperty.AttackCount; i++)
         {
             ShootTarget();
