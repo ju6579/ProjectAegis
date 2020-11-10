@@ -36,6 +36,37 @@ Transform:
   m_Father: {fileID: 2022921885224482993}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &174099141101704942
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1267074884001841770}
+  m_Layer: 10
+  m_Name: Part
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1267074884001841770
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 174099141101704942}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3493699296685093836}
+  m_Father: {fileID: 3763352825025767770}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3700449560305444625
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -65,15 +96,59 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _shipProperty:
-    ShieldPoint: 0
-    ArmorPoint: 0
-    MaxMoveSpeed: 1
+    ShieldPoint: 1
+    ArmorPoint: 1
+    MaxMoveSpeed: 30
     Accelation: 1
     ArrivalTime: 1
   _targetLayerMask:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 2048
   _searchDistance: 3000
+--- !u!1 &5240491715204590668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3493699296685093836}
+  - component: {fileID: 3562359520012547472}
+  m_Layer: 10
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3493699296685093836
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5240491715204590668}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.5, y: 1, z: 3}
+  m_Children: []
+  m_Father: {fileID: 1267074884001841770}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3562359520012547472
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5240491715204590668}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7046419963631616163
 GameObject:
   m_ObjectHideFlags: 0
@@ -85,10 +160,10 @@ GameObject:
   - component: {fileID: 3013508088054218804}
   - component: {fileID: 7067991959043843844}
   - component: {fileID: 1353266654550645270}
-  - component: {fileID: 6950820684067325336}
+  - component: {fileID: 1555127588522477962}
   m_Layer: 9
   m_Name: Cube
-  m_TagString: Untagged
+  m_TagString: Pawn
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -156,7 +231,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6950820684067325336
+--- !u!65 &1555127588522477962
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -164,7 +239,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7046419963631616163}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
@@ -480,6 +555,14 @@ PrefabInstance:
       propertyPath: SocketAnchor
       value: 
       objectReference: {fileID: 53164003276013499}
+    - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
+      propertyPath: _pawnProperty.ShieldPoint
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
+      propertyPath: _pawnProperty.ArmorPoint
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -546,6 +629,11 @@ PrefabInstance:
 --- !u!1 &3763352825025767769 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7289561537078562142, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
+  m_PrefabInstance: {fileID: 5842194475919909895}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3763352825025767770 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
   m_PrefabInstance: {fileID: 5842194475919909895}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &2022921885224482993 stripped

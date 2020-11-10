@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 using PlayerKindom;
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 public class CargoShipListBroadcaster : ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
 {
@@ -32,7 +33,7 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<ProductWrapp
     protected override void OnListChanged(ProductWrapper changed, bool isAdd)
     {
         base.OnListChanged(changed, isAdd);
-        if(PawnBaseController.CompareType(changed.ProductData.Product, PawnBaseController.PawnType.SpaceShip))
+        if(PawnBaseController.CompareType(changed.ProductData.Product, PawnType.SpaceShip))
         {
             if (isAdd)
             {

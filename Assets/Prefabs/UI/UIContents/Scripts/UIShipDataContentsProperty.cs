@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 public class UIShipDataContentsProperty : MonoBehaviour
 {
@@ -21,7 +22,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
         _shipName.text = product.ProductData.TaskName;
         _shipImage.sprite = product.ProductData.TaskIcon;
 
-        if (!PawnBaseController.CompareType(_shipSet.Instance, PawnBaseController.PawnType.SpaceShip))
+        if (!PawnBaseController.CompareType(_shipSet.Instance, PawnType.SpaceShip))
         {
             GlobalLogger.CallLogError(_shipSet.ProductData.TaskName, GErrorType.InspectorValueException);
             this.gameObject.SetActive(false);
@@ -103,7 +104,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
 
     #region Selected Data Field
     private ProductWrapper _shipSet;
-    private ShipController.ShipProperty _shipProperty;
+    private SpaceShipProperty _shipProperty;
     private List<UISocketContentsProperty> _shipSocketUIContents = new List<UISocketContentsProperty>();
 
     private Button _selectedSocketButton = null;

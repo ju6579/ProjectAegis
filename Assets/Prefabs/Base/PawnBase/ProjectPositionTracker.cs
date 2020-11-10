@@ -2,12 +2,20 @@
 using System.Linq;
 using UnityEngine;
 
+using Pawn;
+
 public class ProjectPositionTracker : MonoBehaviour
 {
+    public PawnType ProjectedType = PawnType.NotSet;
+
+    public void SetTargetShipContoller(ShipController ship) => _projectedShipController = ship;
+    public void InputShipControl(Vector3 inputVector) => _projectedShipController.MoveShipByDirection(inputVector);
+
     public Transform _targetRootTransform = null;
     public Transform _targetAnchor = null;
 
     private Dictionary<Transform, Transform> _projectionHash = new Dictionary<Transform, Transform>();
+    private ShipController _projectedShipController = null;
 
     public void SetTargetTransform(Transform root, Transform targetAnchor, Material projectionMaterial)
     {

@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+
+using Pawn;
 
 public class PCCameraController : BaseCameraController
 {
@@ -26,26 +26,45 @@ public class PCCameraController : BaseCameraController
     //
     public GameObject TestShip = null;
     public GameObject TestWeapon = null;
+    private ProjectPositionTracker _targetShipProjector = null;
     //
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            //RaycastHit rayInfo = RaycastOnMiddlePoint(5f);
+            RaycastHit rayInfo = RaycastOnMiddlePoint(10f);
             
-            //if(rayInfo.collider != null)
-            //{
-            //    if(rayInfo.collider.tag == InteractTag)
-            //    {
-            //        ObjectButtonAction oba = rayInfo.collider.GetComponent<ObjectButtonAction>();
-            //        if (oba != null) oba.OnButtonInteract(TestShip);
-            //    }
-            //    else if(rayInfo.collider.tag == SocketTag)
-            //    {
+            if (rayInfo.collider != null)
+            {
+                Debug.Log("temp");
+
+                if (rayInfo.collider.CompareTag("Pawn"))
+                {
+                    ProjectPositionTracker ppt 
+                        = rayInfo.collider.gameObject.GetComponentInParent<ProjectPositionTracker>();
                     
-            //    }
-            //}
+                    if(ppt.ProjectedType == PawnType.SpaceShip)
+                    {
+                        _targetShipProjector = ppt;
+                    }
+                }
+            }
         }
+
+        if (Input.GetKey(KeyCode.Mouse0))
+        {
+            if(_targetShipProjector != null)
+            {
+                Vector3 inputVector = Vector3.zero;
+                inputVector += Input.GetAxis("Vertical") * Vector3.forward;
+                inputVector += Input.GetAxis("Horizontal") * Vector3.right;
+                inputVector += Input.GetAxis("Height") * Vector3.up;
+
+                _targetShipProjector.InputShipControl(inputVector.normalized);
+            }    
+        }
+        else
+            _targetShipProjector = null;
     }
 
     private void LateUpdate()

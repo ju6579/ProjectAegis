@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 using PlayerKindom;
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, PlayerKingdom>
 {
@@ -26,7 +27,7 @@ public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, P
     {
         PlayerKingdom.GetInstance().ProductList.ForEach((ProductionTask pTask) =>
         {
-            if (PawnBaseController.CompareType(pTask.Product, PawnBaseController.PawnType.SpaceShip))
+            if (PawnBaseController.CompareType(pTask.Product, PawnType.SpaceShip))
             {
                 _scrollContentsBroadcaster.ForEach((KeyValuePair<ScrollRect, IUIContentsCallbacks> keyPair) =>
                 {
@@ -50,7 +51,7 @@ public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, P
     protected override void OnListChanged(ProductionTask changed, bool isAdd)
     {
         base.OnListChanged(changed, isAdd);
-        if (PawnBaseController.CompareType(changed.Product, PawnBaseController.PawnType.SpaceShip))
+        if (PawnBaseController.CompareType(changed.Product, PawnType.SpaceShip))
             _objectUIContentsHash[changed].ForEach((GameObject go) => go.SetActive(true));
     }
 

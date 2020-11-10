@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 using PlayerKindom;
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask, PlayerKingdom>
 {
@@ -25,7 +26,7 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
     {
         PlayerKingdom.GetInstance().ProductList.ForEach((ProductionTask pTask) =>
         {
-            if(PawnBaseController.CompareType(pTask.Product, PawnBaseController.PawnType.Weapon))
+            if(PawnBaseController.CompareType(pTask.Product, PawnType.Weapon))
             {
                 _scrollContentsBroadcaster.ForEach((KeyValuePair<ScrollRect, IUIContentsCallbacks> keyPair) =>
                 {
@@ -49,7 +50,7 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
     protected override void OnListChanged(ProductionTask changed, bool isAdd)
     {
         base.OnListChanged(changed, isAdd);
-        if(PawnBaseController.CompareType(changed.Product, PawnBaseController.PawnType.Weapon))
+        if(PawnBaseController.CompareType(changed.Product, PawnType.Weapon))
             _objectUIContentsHash[changed].ForEach((GameObject go) => go.SetActive(true));
     }
 

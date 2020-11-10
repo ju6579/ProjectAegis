@@ -2,16 +2,81 @@
 
 using PlayerKindom;
 using PlayerKindom.PlayerKindomTypes;
+using System;
+using System.Collections;
 
-public class PawnBaseController : MonoBehaviour
+namespace Pawn
 {
-    public static bool CompareType(GameObject pawn, PawnType type)
+    public class PawnBaseController : MonoBehaviour
     {
-        PawnBaseController pbc = pawn.GetComponent<PawnBaseController>();
-        if (pbc == null) 
-            return false;
+        public static bool CompareType(GameObject pawn, PawnType type)
+        {
+            PawnBaseController pbc = pawn.GetComponent<PawnBaseController>();
+            if (pbc == null)
+                return false;
 
-        return pbc.PawnActionType == type;
+            return pbc.PawnActionType == type;
+        }
+
+        public PawnType PawnActionType = PawnType.NotSet;
+        public GameObject TargetMeshAnchor = null;
+        public GameObject SocketAnchor = null;
+        public ProductWrapper PawnData;
+
+        public ProjectPositionTracker ProjectedTarget = null;
+        public bool bIsAttack = false;
+
+        [SerializeField]
+        private PawnProperty _pawnProperty = new PawnProperty();
+
+        private WaitForSeconds _attackRestoreWait;
+
+        public void ApplyDamage(BulletMovement bullet)
+        {
+            int damage = bullet.Damage;
+            damage = _pawnProperty.ShieldPoint - damage;
+
+            if (damage < 0)
+                _pawnProperty.ArmorPoint += damage;
+            else
+                _pawnProperty.ShieldPoint = damage;
+
+            if (_pawnProperty.ArmorPoint < 0)
+                Destroy(this.gameObject);
+
+            if (bullet.StoppingPower > Mathf.Epsilon && !bIsAttack)
+            {
+                bIsAttack = true;
+                StartCoroutine(_RestoreAttack(bullet.StoppingPower));
+            }
+        }
+
+        private void Awake()
+        {
+            _attackRestoreWait = new WaitForSeconds(_pawnProperty.AttackRestoreTime);
+        }
+
+        private void OnDestroy()
+        {
+            if (PawnActionType == PawnType.SpaceShip || PawnActionType == PawnType.Weapon)
+                PlayerKingdom.GetInstance().ProductDestoryed(PawnData);
+        }
+
+        private IEnumerator _RestoreAttack(float stoppingPower)
+        {
+            yield return new WaitForSeconds(stoppingPower);
+            bIsAttack = false;
+            yield return null;
+        }
+    }
+
+
+    [Serializable]
+    public struct PawnProperty
+    {
+        public int ShieldPoint;
+        public int ArmorPoint;
+        public float AttackRestoreTime;
     }
 
     public enum PawnType
@@ -23,16 +88,22 @@ public class PawnBaseController : MonoBehaviour
         NotSet
     }
 
-    public PawnType PawnActionType = PawnType.NotSet;
-    public GameObject TargetMeshAnchor = null;
-    public GameObject SocketAnchor = null;
-    public ProductWrapper PawnData;
-
-    public ProjectPositionTracker ProjectedTarget = null;
-
-    private void OnDestroy()
+    [Serializable]
+    public class SpaceShipProperty
     {
-        if (PawnActionType == PawnType.SpaceShip || PawnActionType == PawnType.Weapon)
-            PlayerKingdom.GetInstance().ProductDestoryed(PawnData);
+        public float ShieldPoint;
+        public float ArmorPoint;
+        public float MaxMoveSpeed;
+        public float Accelation;
+        public float ArrivalTime;
+    }
+
+    [Serializable]
+    public class WeaponProperty
+    {
+        public GameObject BulletObject;
+        public int AttackCount;
+        public float AttackDelay;
+        public float ReloadDelay;
     }
 }

@@ -4,28 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using PlayerKindom;
+using Pawn;
 
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Rigidbody), typeof(PawnBaseController))]
 public class ShipController : MonoBehaviour
 {
-    public ShipProperty ShipData => _shipProperty;
+    public SpaceShipProperty ShipData => _shipProperty;
     public List<GameObject> SocketList => _sockets;
-
-    public Collider[] Target => _searchedTarget;
-    public int TargetCount => _searchedTarget.Length;
-
-    [Serializable]
-    public class ShipProperty
-    {
-        public float ShieldPoint;
-        public float ArmorPoint;
-        public float MaxMoveSpeed;
-        public float Accelation;
-        public float ArrivalTime;
-    }
+    public void MoveShipByDirection(Vector3 inputVector) => _currentInput = inputVector;
 
     [SerializeField]
-    private ShipProperty _shipProperty = null;
+    private SpaceShipProperty _shipProperty = null;
 
     [SerializeField]
     private LayerMask _targetLayerMask = -1;
@@ -35,8 +24,10 @@ public class ShipController : MonoBehaviour
 
     private List<GameObject> _sockets = new List<GameObject>();
     private Collider[] _searchedTarget = new Collider[0];
+    private Rigidbody _shipRigidBody = null;
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.333f);
+    private Vector3 _currentInput = Vector3.zero;
 
     public void SetWeaponOnSocket(GameObject weapon)
     {
@@ -48,6 +39,32 @@ public class ShipController : MonoBehaviour
 
             _sockets.RemoveAt(0);
         }
+    }
+
+    public Transform GetEnemyTarget(Transform weapon)
+    {
+        if (_searchedTarget.Length > 0)
+        {
+            Transform nearest = null;
+            float minDistance = float.MaxValue;
+            float cache;
+
+            for(int i = 0; i < _searchedTarget.Length; i++)
+            {
+                if (_searchedTarget[i] == null) continue;
+
+                cache = Vector3.Distance(_searchedTarget[i].transform.position, transform.position);
+                if (minDistance > cache)
+                {
+                    minDistance = cache;
+                    nearest = _searchedTarget[i].transform;
+                }
+            }
+
+            return nearest;
+        }
+
+        return null;
     }
 
     private float warpPower = 100f;
@@ -64,6 +81,7 @@ public class ShipController : MonoBehaviour
 
     private void Awake()
     {
+        _shipRigidBody = GetComponent<Rigidbody>();
         GameObject anchor = GetComponent<PawnBaseController>().SocketAnchor;
         for (int i = 0; i < anchor.transform.childCount; i++)
         {
@@ -85,9 +103,18 @@ public class ShipController : MonoBehaviour
         StartCoroutine(_SearchAttackTarget());
     }
 
+    private void Update()
+    {
+        ShipMovement();
+    }
+
     private void ShipMovement()
     {
-
+        if(_currentInput != Vector3.zero)
+        {
+            _shipRigidBody.velocity = _currentInput * _shipProperty.MaxMoveSpeed;
+            _currentInput = Vector3.zero;
+        }
     }
 
     private IEnumerator _SearchAttackTarget()
@@ -106,7 +133,7 @@ public class ShipController : MonoBehaviour
         yield return _arrivalWait;
         _targetPosition = PlayerKingdom.GetInstance().NextWarpPoint;
 
-        transform.localPosition = _targetPosition - transform.forward * 0.1f;
+        transform.localPosition = _targetPosition;
         shipPhysics.AddForce(transform.forward * warpPower, ForceMode.Impulse);
     }
 }

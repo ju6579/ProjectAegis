@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class PlayerUIController : Singleton<PlayerUIController>
 {
@@ -90,21 +86,22 @@ public class PlayerUIController : Singleton<PlayerUIController>
     #region Private Method Area
     private void ActiveMainPanel()
     {
-        UnityEngine.Cursor.lockState = CursorLockMode.None;
-        UnityEngine.Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
         _mainCanvas.SetActive(true);
-        //DisableAllSubPanel();
-
         _isMainPanelActive = true;
+
+        ActiveAllSubPanel();
     }
 
     private void DisableMainPanel()
     {
-        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
         _mainCanvas.SetActive(false);
-
         _isMainPanelActive = false;
+
+        DisableAllSubPanel();
     }
 
     private void DisableAllSubPanel()
@@ -115,6 +112,16 @@ public class PlayerUIController : Singleton<PlayerUIController>
         _cargoUIPanel.SetActive(false);
         _upgradeUIPanel.SetActive(false);
         _productUIPanel.SetActive(false);
+    }
+
+    private void ActiveAllSubPanel()
+    {
+        _mapUIPanel.SetActive(true);
+        _teamUIPanel.SetActive(true);
+        _shipUIPanel.SetActive(true);
+        _cargoUIPanel.SetActive(true);
+        _upgradeUIPanel.SetActive(true);
+        _productUIPanel.SetActive(true);
     }
     #endregion
 

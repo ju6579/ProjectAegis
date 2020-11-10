@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 using PlayerKindom;
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 public class UIProductContentsProperty : MonoBehaviour
 {
@@ -57,10 +58,12 @@ public class UIProductContentsProperty : MonoBehaviour
         _metalCost.text = TaskData.TaskCost.Metal.ToString();
         _electronicCost.text = TaskData.TaskCost.Electronic.ToString();
 
-        if (pTask.Product.GetComponent<PawnBaseController>().PawnActionType == PawnBaseController.PawnType.SpaceShip)
+        if (PawnBaseController.CompareType(pTask.Product, PawnType.SpaceShip))
             _productCounter.gameObject.SetActive(false);
         else
-            PlayerUIController.GetInstance().StartCoroutine(_ObserveWeaponCount());
+            Singleton<PlayerUIController>.ListenSingletonLoaded(() => {
+                PlayerUIController.GetInstance().StartCoroutine(_ObserveWeaponCount());
+            });
     }
 
     private IEnumerator _ObserveWeaponCount()

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Pawn;
+
 public class PlayerBaseShipController : Singleton<PlayerBaseShipController>
 {
     public List<GameObject> Sockets = new List<GameObject>();

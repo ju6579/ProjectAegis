@@ -1,22 +1,12 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class WeaponController : MonoBehaviour
+using Pawn;
+
+public class EnemyWeaponController : MonoBehaviour
 {
-    public void SetAttachedShip(ShipController ship) => _attachedShip = ship;
-    public void DetachWeaponToShip() => _attachedShip = null;
-
-    [Serializable]
-    public class WeaponProperty
-    {
-        public GameObject BulletObject;
-        public int AttackCount;
-        public float AttackDelay;
-        public float ReloadDelay;
-    }
-
-    public WeaponProperty WeaponData => _weaponProperty;
+    public void SetEnemyController(EnemyController ec) => _attachedEnemyController = ec;
 
     [SerializeField]
     private WeaponProperty _weaponProperty;
@@ -24,9 +14,9 @@ public class WeaponController : MonoBehaviour
     [SerializeField]
     private GameObject _muzzle = null;
 
-    private bool _isAttack = false;
+    private EnemyController _attachedEnemyController = null;
 
-    private ShipController _attachedShip = null;
+    private bool _isAttack = false;
 
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
@@ -39,9 +29,9 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        if(_attachedShip != null)
+        if (_attachedEnemyController != null)
         {
-            Transform nextTarget = _attachedShip.GetEnemyTarget(transform);
+            Transform nextTarget = _attachedEnemyController.GetTargetTransform(transform);
 
             if (nextTarget != null)
             {
@@ -60,13 +50,13 @@ public class WeaponController : MonoBehaviour
         ProjectionManager.GetInstance().InstantiateBullet(_weaponProperty.BulletObject,
                                                 _muzzle.transform.position,
                                                 transform.rotation,
-                                                true);
+                                                false);
     }
 
     private IEnumerator _AttackTarget()
     {
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0f, 0.5f));
-        for(int i = 0; i < _weaponProperty.AttackCount; i++)
+        yield return new WaitForSeconds(Random.Range(0f, 0.5f));
+        for (int i = 0; i < _weaponProperty.AttackCount; i++)
         {
             ShootTarget();
             yield return _attackWait;

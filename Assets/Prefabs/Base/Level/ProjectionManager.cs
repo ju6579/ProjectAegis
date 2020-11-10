@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+using Pawn;
+
 public class ProjectionManager : Singleton<ProjectionManager>
 {
     public Vector3 TableWorldPosition => _tableSpace.transform.position;
@@ -44,7 +46,12 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
         ProjectPositionTracker tracker = (ProjectPositionTracker)tableTr.gameObject
             .AddComponent(typeof(ProjectPositionTracker));
+
         tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform, _projectionMaterial);
+        tracker.ProjectedType = pbc.PawnActionType;
+        if (tracker.ProjectedType == PawnType.SpaceShip)
+            tracker.SetTargetShipContoller(worldTr.gameObject.GetComponent<ShipController>());
+
         pbc.ProjectedTarget = tracker;
 
         return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
@@ -72,15 +79,46 @@ public class ProjectionManager : Singleton<ProjectionManager>
                              Quaternion.Euler(0, 180, 0)).Key.gameObject;
     }
 
-    public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation)
+    public GameObject InstantiateEnemyUnit(GameObject unit, PawnBaseController pawn, EnemyController ec)
+    {
+        GameObject instance = InstantiateToWorld(unit, 
+                                           ec.transform.localPosition, 
+                                           ec.transform.localRotation).Key.gameObject;
+
+        instance.GetComponent<EnemyUnitController>().SetMotherShip(pawn, ec);
+        
+        return instance;
+    }
+
+    public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation, bool isShootByPlayer)
     {
         Vector3 localPosition = _worldSpace.transform.InverseTransformPoint(worldPosition);
-        InstantiateToWorld(bullet, localPosition, rotation);
+        KeyValuePair<Transform, Transform> instance = InstantiateToWorld(bullet, localPosition, rotation);
+
+        BulletMovement bulletComponent = instance.Key.GetComponent<BulletMovement>();
+        bulletComponent.IsShootByPlayer = isShootByPlayer;
+        bulletComponent.SetTargetLayer(isShootByPlayer ? CustomLibrary.GetInstance().PlayerBulletTargetLayer
+                                                 : CustomLibrary.GetInstance().EnemyBulletTargetLayer);
     }
 
     public KeyValuePair<Transform, Transform> InstantiateWeapon(GameObject weapon)
     {
         return InstantiateToWorld(weapon, Vector3.back * 5f, Quaternion.identity);
+    }
+
+    public KeyValuePair<Transform, Transform> InstantiateWeaponOnSocket(GameObject weapon, GameObject socket)
+    {
+        KeyValuePair<Transform, Transform> instance = InstantiateToWorld(weapon, Vector3.back * 5f, Quaternion.identity);
+
+        PawnBaseController pbc = instance.Key.GetComponent<PawnBaseController>();
+        ProjectPositionTracker ppt = instance.Value.GetComponent<ProjectPositionTracker>();
+
+        instance.Key.SetParent(socket.transform);
+        instance.Key.localPosition = Vector3.zero;
+
+        ppt.ReplaceRootTransform(socket.transform);
+
+        return instance;
     }
     #endregion
 

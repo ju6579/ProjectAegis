@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 namespace PlayerKindom
 {
@@ -50,6 +51,9 @@ namespace PlayerKindom
         private int _availableTaskCount = 3;
 
         [SerializeField]
+        private Transform _warpBaseTransform = null;
+
+        [SerializeField]
         private int _warpPointCutCount = 12;
 
         [SerializeField, Range(0.1f, 0.5f)]
@@ -85,12 +89,16 @@ namespace PlayerKindom
         #region MonoBehaviour Callbacks
         protected override void Awake()
         {
-            _warpPointManager = new WarpPointManager(_warpPointCutCount, _warpPointBoundary);
+            _warpPointManager = new WarpPointManager(_warpBaseTransform,
+                                                   _warpPointCutCount, 
+                                                   _warpPointBoundary);
             base.Awake();
         }
 
         private void Start()
         {
+            
+
             _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
             _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
         }
@@ -128,13 +136,13 @@ namespace PlayerKindom
                 if (product == null)
                     return;
 
-                PawnBaseController.PawnType type = product.ProductData.Product
+                PawnType type = product.ProductData.Product
                     .GetComponent<PawnBaseController>().PawnActionType;
 
                 if (_spaceField.ContainsKey(product.Instance))
                     _spaceField.Remove(product.Instance);
 
-                if (type == PawnBaseController.PawnType.SpaceShip)
+                if (type == PawnType.SpaceShip)
                 {
                     int shipIndex = _shipCargo.IndexOf(product);
                     if (shipIndex >= 0)
@@ -209,51 +217,6 @@ namespace PlayerKindom
             public GameObject MaintenanceTarget = null;
         }
         #endregion
-
-        #region Player Object Warp Point Manager
-        private class WarpPointManager
-        {
-            private Queue<Vector3> _shipWarpPointQueue = new Queue<Vector3>();
-            private Queue<Vector3> _usedShipWarpPoint = new Queue<Vector3>();
-
-            private float _warpBoundary = 0.2f;
-
-            // Generate Random Point By Cut Count
-            public WarpPointManager(int cutCount, float warpPointBoundary)
-            {
-                List<Vector3> randomPositionSeed = new List<Vector3>();
-                float degreeOffset = Mathf.PI * 2f / cutCount;
-
-                for(int i = 0; i < cutCount; i++)
-                {
-                    float degree = i * degreeOffset;
-                    Vector3 direction = new Vector3(Mathf.Cos(degree), Mathf.Sin(degree), 0);
-                    randomPositionSeed.Add(direction);
-                }
-
-                while(randomPositionSeed.Count != 0)
-                {
-                    int randomIndex = UnityEngine.Random.Range(0, randomPositionSeed.Count - 1);
-                    _shipWarpPointQueue.Enqueue(randomPositionSeed[randomIndex]);
-                    randomPositionSeed.RemoveAt(randomIndex);
-                }
-
-                _warpBoundary = warpPointBoundary;
-            }
-
-            public Vector3 GetNextShipWarpPoint()
-            {
-                if (_shipWarpPointQueue.Count <= 0)
-                    for (int i = 0; i < _usedShipWarpPoint.Count; i++)
-                        _shipWarpPointQueue.Enqueue(_usedShipWarpPoint.Dequeue());
-
-                Vector3 pointCache = _shipWarpPointQueue.Dequeue();
-                _usedShipWarpPoint.Enqueue(pointCache);
-
-                return pointCache * _warpBoundary;
-            }
-        }
-        #endregion
     }
 
     namespace PlayerKindomTypes
@@ -283,7 +246,7 @@ namespace PlayerKindom
         public class ProductionTask : PlayerTask
         {
             public GameObject Product = null;
-            public PawnBaseController.PawnType ProductType
+            public PawnType ProductType
                 => Product.GetComponent<PawnBaseController>().PawnActionType;
 
             public Sprite TaskIcon = null;
@@ -298,7 +261,7 @@ namespace PlayerKindom
 
                 switch (pawn.PawnActionType)
                 {
-                    case PawnBaseController.PawnType.SpaceShip:
+                    case PawnType.SpaceShip:
                         GameObject ship = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
                         if (ship.GetComponent<ShipController>() == null)
                             GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
@@ -308,7 +271,7 @@ namespace PlayerKindom
                         PlayerKingdom.GetInstance().ShipToCargo(product);
                         break;
 
-                    case PawnBaseController.PawnType.Weapon:
+                    case PawnType.Weapon:
                         GameObject weapon = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
                         if (weapon.GetComponent<WeaponController>() == null)
                             GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);

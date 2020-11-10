@@ -8,6 +8,7 @@ TagManager:
   - ShipAnchor
   - Socket
   - Interact
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -19,9 +20,9 @@ TagManager:
   - 
   - PostProcessing
   - Pawn
+  - Player
   - Enemy
-  - 
-  - 
+  - Collidable
   - 
   - 
   - 

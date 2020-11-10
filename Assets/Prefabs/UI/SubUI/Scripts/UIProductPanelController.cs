@@ -4,6 +4,7 @@ using UnityEngine.UI;
 
 using PlayerKindom;
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
 {
@@ -36,7 +37,7 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
 
     private Button _selectedButton = null;
     private ProductionTask _selectedTask = null;
-    private PawnBaseController.PawnType _selectedProductType = PawnBaseController.PawnType.NotSet;
+    private PawnType _selectedProductType = PawnType.NotSet;
 
     private void ClearSelectedData()
     {
@@ -44,7 +45,7 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
             _selectedButton.image.color = Color.white;
 
         _selectedTask = null;
-        _selectedProductType = PawnBaseController.PawnType.NotSet;
+        _selectedProductType = PawnType.NotSet;
     }
 
     private void Awake()
@@ -74,14 +75,14 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
     {
         _selectedButton = null;
         _selectedTask = null;
-        _selectedProductType = PawnBaseController.PawnType.NotSet;
+        _selectedProductType = PawnType.NotSet;
     }
 
     private void OnDisable()
     {
         _selectedButton = null;
         _selectedTask = null;
-        _selectedProductType = PawnBaseController.PawnType.NotSet;
+        _selectedProductType = PawnType.NotSet;
     }
 
     private IEnumerator _ObserveTaskProceed(float totalTime, GameObject contents)

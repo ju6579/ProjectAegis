@@ -3,6 +3,7 @@ using UnityEngine.UI;
 
 using PlayerKindom;
 using PlayerKindom.PlayerKindomTypes;
+using Pawn;
 
 public class UIInfoProductProperty : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class UIInfoProductProperty : MonoBehaviour
     private Text _targetInformation = null;
 
     private ProductionTask _selectedTask = null;
-    private PawnBaseController.PawnType _selectedProductType = PawnBaseController.PawnType.NotSet;
+    private PawnType _selectedProductType = PawnType.NotSet;
 
     public void ReplaceProductInfo(ProductionTask pTask)
     {
@@ -37,7 +38,7 @@ public class UIInfoProductProperty : MonoBehaviour
         _targetType.text = _selectedProductType.ToString();
         _targetInformation.text = pTask.TaskInformation;
 
-        if (_selectedProductType == PawnBaseController.PawnType.Weapon)
+        if (_selectedProductType == PawnType.Weapon)
         {
             _targetCount.gameObject.SetActive(true);
             _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(pTask).ToString();
@@ -54,7 +55,7 @@ public class UIInfoProductProperty : MonoBehaviour
 
     private void Update()
     {
-        if (_selectedProductType == PawnBaseController.PawnType.Weapon)
+        if (_selectedProductType == PawnType.Weapon)
             _targetCount.text = PlayerKingdom.GetInstance().WeaponCount(_selectedTask).ToString();
     }
 
