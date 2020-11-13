@@ -32,6 +32,9 @@ namespace PlayerKindom
 
         public List<ProductionTask> ProductList => _productionTaskCatalog;
         public List<ResearchTask> ResearchList => _researchTaskCatalog;
+
+        public float EscapeTime => _escapeSpendTime;
+        public void ExecuteEscape() => StartCoroutine(_ExecuteEscape());
         #endregion
 
         #region Inspector Field
@@ -42,7 +45,7 @@ namespace PlayerKindom
         private List<ResearchTask> _researchTaskCatalog = null;
 
         [SerializeField]
-        private SpendableResource _kingdomResource = new SpendableResource();
+        private SpendableResource _kingdomResource = null;
 
         [SerializeField]
         private int _kingdomHuman = 1;
@@ -58,6 +61,9 @@ namespace PlayerKindom
 
         [SerializeField, Range(0.1f, 0.5f)]
         private float _warpPointBoundary = 0.2f;
+
+        [SerializeField]
+        private float _escapeSpendTime = 3f;
         #endregion
 
         #region Private Field
@@ -66,6 +72,8 @@ namespace PlayerKindom
 
         private PlayerKingdomCargo _kingdomCargo = new PlayerKingdomCargo();
         private WarpPointManager _warpPointManager;
+
+        private float _harvestTimeStamp = 0f;
         #endregion
 
         #region Kingdom Command
@@ -97,10 +105,20 @@ namespace PlayerKindom
 
         private void Start()
         {
-            
-
             _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
             _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
+
+            _harvestTimeStamp = Time.time;
+        }
+
+        
+        private void Update()
+        {
+            if(Time.time - _harvestTimeStamp > 1f)
+            {
+                MapSystem.GetInstance().HarvestResourceAtCurrentTile(_kingdomResource);
+                _harvestTimeStamp = Time.time;
+            }
         }
         #endregion
 
@@ -116,6 +134,19 @@ namespace PlayerKindom
             _availableProduction.Add(pTask);
 
             ListChangedObserveComponent<ProductionTask, PlayerKingdom>.BroadcastListChange(pTask, true);
+        }
+
+        private IEnumerator _ExecuteEscape()
+        {
+            WaitForSeconds escapeWait = new WaitForSeconds(_escapeSpendTime / 2f);
+            yield return escapeWait;
+
+            EnemyKingdom.GetInstance().DestroyCurrentEnemyOnEscape();
+            _kingdomCargo.HandleFieldShipOnEscape();
+
+            yield return escapeWait;
+            
+            yield return null;
         }
         #endregion
 
@@ -133,12 +164,14 @@ namespace PlayerKindom
 
             public void RemoveProduct(ProductWrapper product)
             {
-                if (product == null)
+                if (product.ProductData == null)
+                {
+                    Debug.Log("Product is Null");
                     return;
+                }
 
-                PawnType type = product.ProductData.Product
-                    .GetComponent<PawnBaseController>().PawnActionType;
-
+                PawnType type = product.Instance.GetComponent<PawnBaseController>().PawnActionType;
+                
                 if (_spaceField.ContainsKey(product.Instance))
                     _spaceField.Remove(product.Instance);
 
@@ -148,6 +181,8 @@ namespace PlayerKindom
                     if (shipIndex >= 0)
                         _shipCargo.RemoveAt(shipIndex);
                 }
+
+                product.ClearProductWrapper();
             }
 
             public void AddShipToCargo(ProductWrapper product)
@@ -190,7 +225,7 @@ namespace PlayerKindom
 
             public ProductWrapper AddWeaponToSocket(ProductionTask productData, GameObject socket)
             {
-                ProductWrapper product = null;
+                ProductWrapper product = new ProductWrapper();
 
                 if (GetSpecificWeaponCount(productData) > 0)
                 {
@@ -214,7 +249,20 @@ namespace PlayerKindom
                 return _weaponCargo.ContainsKey(productData) ? _weaponCargo[productData].Count : 0;
             }
 
-            public GameObject MaintenanceTarget = null;
+            public void HandleFieldShipOnEscape()
+            {
+                var fieldEnum = _spaceField.GetEnumerator();
+
+                while (fieldEnum.MoveNext())
+                {
+                    ShipController ship = fieldEnum.Current.Key.GetComponent<ShipController>();
+                    if(ship != null)
+                    {
+                        ship.transform.localPosition = Vector3.back * 5f;
+                        ship.WarpToPosition();
+                    }
+                }
+            }
         }
         #endregion
     }
@@ -255,30 +303,23 @@ namespace PlayerKindom
             {
                 base.TaskAction();
 
-                PawnBaseController pawn = Product.GetComponent<PawnBaseController>();
-                if (pawn == null) GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
-                ProductWrapper product;
+                PawnBaseController productPawn = Product.GetComponent<PawnBaseController>();
+                if (productPawn == null) GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
 
-                switch (pawn.PawnActionType)
+                switch (productPawn.PawnActionType)
                 {
                     case PawnType.SpaceShip:
-                        GameObject ship = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
-                        if (ship.GetComponent<ShipController>() == null)
+                        if (Product.GetComponent<ShipController>() == null)
                             GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
 
-                        product = new ProductWrapper(ship, this);
-                        pawn.PawnData = product;
-                        PlayerKingdom.GetInstance().ShipToCargo(product);
+                        PlayerKingdom.GetInstance().ShipToCargo(new ProductWrapper(this));
                         break;
 
                     case PawnType.Weapon:
-                        GameObject weapon = ProjectionManager.GetInstance().InstantiateShip(Product).Key.gameObject;
-                        if (weapon.GetComponent<WeaponController>() == null)
+                        if (Product.GetComponent<WeaponController>() == null)
                             GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
 
-                        product = new ProductWrapper(weapon, this);
-                        pawn.PawnData = product;
-                        PlayerKingdom.GetInstance().WeaponToCargo(product);
+                        PlayerKingdom.GetInstance().WeaponToCargo(new ProductWrapper(this));
                         break;
 
                     default:
@@ -300,7 +341,7 @@ namespace PlayerKindom
 
         #region CustomType
         [Serializable]
-        public struct SpendableResource
+        public class SpendableResource
         {
             public int Crystal;
             public int Explosive;
@@ -315,6 +356,14 @@ namespace PlayerKindom
                 this.Electronic = electornic;
             }
 
+            public void AddResourceByData(SpendableResource data)
+            {
+                this.Crystal += data.Crystal;
+                this.Explosive += data.Explosive;
+                this.Metal += data.Metal;
+                this.Electronic += data.Electronic;
+            }
+
             public bool IsSpendable(SpendableResource target)
             {
                 return (this.Crystal >= target.Crystal) &&
@@ -324,15 +373,33 @@ namespace PlayerKindom
             }
         }
 
-        public class ProductWrapper
+        public struct ProductWrapper
         {
             public GameObject Instance;
             public ProductionTask ProductData;
 
-            public ProductWrapper(GameObject instance, ProductionTask productData)
+            public ProductWrapper(ProductionTask productData)
             {
-                Instance = instance;
+                Instance = null;
                 ProductData = productData;
+            }
+
+            public GameObject ActiveProductInstance()
+            {
+                Instance = GlobalObjectManager.GetObject(ProductData.Product);
+                return Instance;
+            }
+
+            public void DisableProductInstance()
+            {
+                GlobalObjectManager.ReturnToObjectPool(Instance);
+                Instance = null;
+            }
+
+            public void ClearProductWrapper()
+            {
+                Instance = null;
+                ProductData = null;
             }
         }
         #endregion

@@ -17,8 +17,10 @@ public class ProjectPositionTracker : MonoBehaviour
     private Dictionary<Transform, Transform> _projectionHash = new Dictionary<Transform, Transform>();
     private ShipController _projectedShipController = null;
 
-    public void SetTargetTransform(Transform root, Transform targetAnchor, Material projectionMaterial)
+    public void SetTargetTransform(Transform root, Transform targetAnchor)
     {
+        _projectionHash.Clear();
+
         _targetRootTransform = root;
         _targetAnchor = targetAnchor;
 
@@ -30,9 +32,6 @@ public class ProjectPositionTracker : MonoBehaviour
 
         for (int i = 0; i < followTargets.Count; i++)
             _projectionHash.Add(followTargets[i], followers[i]);
-
-        List<MeshRenderer> meshRenderers = GetComponentsInChildren<MeshRenderer>().ToList<MeshRenderer>();
-        meshRenderers.ForEach((MeshRenderer mr) => mr.material = projectionMaterial);
     }
 
     public Transform GetProjectedTransform(Transform worldTr) => _projectionHash[worldTr];
@@ -46,15 +45,21 @@ public class ProjectPositionTracker : MonoBehaviour
         this.transform.SetParent(projectedRoot);
     }
 
+    private void Awake()
+    {
+        List<MeshRenderer> meshRenderers = GetComponentsInChildren<MeshRenderer>().ToList<MeshRenderer>();
+        meshRenderers.ForEach((MeshRenderer mr) => mr.material = ProjectionManager.GetInstance().ProjectionMaterial);
+    }
+
     private void Update()
     {
-        if (_targetRootTransform != null)
+        if (_targetRootTransform.gameObject.activeSelf)
         {
             transform.localPosition = _targetRootTransform.localPosition;
             transform.rotation = _targetRootTransform.rotation;
 
             var enumerator = _projectionHash.GetEnumerator();
-            while(enumerator.MoveNext())
+            while (enumerator.MoveNext())
             {
                 var pair = enumerator.Current;
                 pair.Value.localPosition = pair.Key.localPosition;
@@ -62,6 +67,6 @@ public class ProjectPositionTracker : MonoBehaviour
             }
         }
         else
-            Destroy(this.gameObject);
+            GlobalObjectManager.ReturnToObjectPool(gameObject);
     }
 }

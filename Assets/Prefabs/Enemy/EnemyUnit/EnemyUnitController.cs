@@ -12,8 +12,10 @@ public class EnemyUnitController : MonoBehaviour
         _motherPawn = motherPawn;
         _motherShip = motherShip;
 
-        ProjectionManager.GetInstance().InstantiateWeaponOnSocket(_unitWeapon, _socket)
-            .Key.GetComponent<EnemyWeaponController>().SetEnemyController(motherShip);
+        GameObject weapon = ProjectionManager.GetInstance().InstantiateWeapon(_unitWeapon).Key.gameObject;
+        weapon.GetComponent<EnemyWeaponController>().SetEnemyController(motherShip, _socket.transform);
+
+        _weapon = weapon;
     }
 
     [SerializeField]
@@ -33,6 +35,7 @@ public class EnemyUnitController : MonoBehaviour
 
     private Transform _targetTransform = null;
     private Quaternion _randomForwardAngle;
+    private GameObject _weapon = null;
 
     private float ActionStartTimeStamp = 0f;
 
@@ -48,9 +51,13 @@ public class EnemyUnitController : MonoBehaviour
         ActionStartTimeStamp = Time.time;
     }
 
-    private void Start()
+    private void OnDisable()
     {
-
+        if(_weapon != null)
+        {
+            GlobalObjectManager.ReturnToObjectPool(_weapon);
+            _weapon = null;
+        }
     }
 
     private void Update()
@@ -66,17 +73,24 @@ public class EnemyUnitController : MonoBehaviour
     private void UnitMovement()
     {
         Transform target = _motherShip.GetTargetTransform(transform);
-        Vector3 direction;
 
-        if (Time.time - ActionStartTimeStamp < 3f)
+        if(target != null)
         {
-            direction = Vector3.Slerp(transform.position, target.position, Time.deltaTime) - transform.position;
-            direction = (_randomForwardAngle * direction).normalized * 2f;
-        }
-        else
-            direction = (target.position - transform.position).normalized;
+            Vector3 direction;
 
-        _unitPhysics.AddForce(direction * _unitProperty.MaxMoveSpeed);
+            if(Vector3.Distance(transform.position, target.position) > 200f)
+            {
+                if (Time.time - ActionStartTimeStamp < 3f)
+                {
+                    direction = Vector3.Slerp(transform.position, target.position, Time.deltaTime) - transform.position;
+                    direction = (_randomForwardAngle * direction).normalized * 2f;
+                }
+                else
+                    direction = (target.position - transform.position).normalized;
+
+                _unitPhysics.AddForce(direction * _unitProperty.MaxMoveSpeed);
+            }
+        }
     }
 
     private void OnLoseControl()

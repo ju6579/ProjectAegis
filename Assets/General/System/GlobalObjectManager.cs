@@ -4,20 +4,59 @@ using UnityEngine;
 
 public class GlobalObjectManager : Singleton<GlobalObjectManager>
 {
+    private static int _objectPoolStartSize = 5;
 
+    private static Dictionary<GameObject, Queue<GameObject>> _globalObjectPool 
+        = new Dictionary<GameObject, Queue<GameObject>>();
 
-    // Debug Feature
-    private Queue<GameObject> _shipAnchor = new Queue<GameObject>();
+    private static Dictionary<GameObject, Queue<GameObject>> _instanceCachePool 
+        = new Dictionary<GameObject, Queue<GameObject>>();
 
-    public GameObject GetShipAnchor() { return _shipAnchor.Count != 0 ? _shipAnchor.Dequeue() : null; }
+    private static Dictionary<GameObject, int> _globalObjectPoolSizeHash = new Dictionary<GameObject, int>();
 
-    protected override void Awake()
+    public static GameObject GetObject(GameObject prefab)
     {
-        base.Awake();
-        // Debug Feature
-        GameObject.FindGameObjectsWithTag("ShipAnchor")
-            .ToList<GameObject>().ForEach((GameObject go) => _shipAnchor.Enqueue(go));
-        //
+        if (!_globalObjectPool.ContainsKey(prefab)) 
+        {
+            _globalObjectPool[prefab] = new Queue<GameObject>();
+
+            ExtendObjectPool(prefab, _objectPoolStartSize);
+            _globalObjectPoolSizeHash[prefab] = _objectPoolStartSize;
+        }
+
+        if(_globalObjectPool[prefab].Count == 0)
+        {
+            ExtendObjectPool(prefab, _globalObjectPoolSizeHash[prefab]);
+            _globalObjectPoolSizeHash[prefab] *= 2;
+        }
+
+        GameObject instance = _globalObjectPool[prefab].Dequeue();
+        _instanceCachePool[instance] = _globalObjectPool[prefab];
+
+        instance.SetActive(true);
+
+        return instance;
     }
-    //
+
+    public static void ReturnToObjectPool(GameObject instance)
+    {
+        instance.SetActive(false);
+
+        _instanceCachePool[instance].Enqueue(instance);
+        _instanceCachePool.Remove(instance);
+    }
+
+    private static void ExtendObjectPool(GameObject prefab, int targetSize)
+    {
+        GameObject instance = null;
+        for (int i = 0; i < targetSize; i++)
+        {
+            instance = Instantiate(prefab);
+            instance.SetActive(false);
+
+            _globalObjectPool[prefab].Enqueue(instance);
+        }
+    }
+
+ 
 }

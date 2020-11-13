@@ -38,7 +38,7 @@ public class UISocketContentsProperty : MonoBehaviour
         if (product == null)
             return;
 
-        product.Instance.GetComponent<WeaponController>().SetAttachedShip(ship);
+        product.Instance.GetComponent<WeaponController>().SetAttachedShip(ship, _targetSocket.transform);
 
         _socketedWeapon = product;
 

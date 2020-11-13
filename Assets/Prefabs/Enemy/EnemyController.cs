@@ -8,6 +8,13 @@ using Pawn;
 public class EnemyController : MonoBehaviour
 {
     public PawnBaseController Pawn => _enemyPawn;
+
+    public void OnPlayerEscape()
+    { 
+        _spawnedUnitList.ForEach((GameObject unit) => GlobalObjectManager.ReturnToObjectPool(unit));
+        _spawnedUnitList.Clear();
+    }
+
     public Transform GetTargetTransform(Transform callerTransform)
     {
         if (_searchedTarget.Length > 0)
@@ -45,6 +52,8 @@ public class EnemyController : MonoBehaviour
     private WaitForSeconds _arrivalWait;
     private Vector3 _targetPosition = Vector3.zero;
     private Collider[] _searchedTarget = new Collider[0];
+    private List<GameObject> _spawnedUnitList = new List<GameObject>();
+    private List<GameObject> _attachedWeaponList = new List<GameObject>();
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.5f);
 
@@ -66,16 +75,27 @@ public class EnemyController : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        _targetPosition = EnemyKingdom.GetInstance().NextWarpPoint;
-        StartCoroutine(_WarpToPosition());
-
         _sockets.ForEach((GameObject go) =>
         {
-            ProjectionManager.GetInstance().InstantiateWeaponOnSocket(_enemyWeaponFactory[0], go)
-            .Key.GetComponent<EnemyWeaponController>().SetEnemyController(this);
+            GameObject weapon = ProjectionManager.GetInstance().InstantiateWeapon(_enemyWeaponFactory[0]).Key.gameObject;
+
+            weapon.GetComponent<EnemyWeaponController>().SetEnemyController(this, go.transform);
+            _attachedWeaponList.Add(weapon);
         });
+
+        _targetPosition = EnemyKingdom.GetInstance().NextWarpPoint;
+        StartCoroutine(_WarpToPosition());
+    }
+
+    private void OnDisable()
+    {
+        if(_attachedWeaponList.Count > 0)
+        {
+            _attachedWeaponList.ForEach((GameObject go) => GlobalObjectManager.ReturnToObjectPool(go));
+            _attachedWeaponList.Clear();
+        }
     }
 
     private void Update()
@@ -88,7 +108,7 @@ public class EnemyController : MonoBehaviour
         yield return _arrivalWait;
 
         transform.localPosition = _targetPosition;
-        _enemyPhysics.AddForce(transform.forward * _warpPower, ForceMode.Impulse);
+        _enemyPhysics.AddForce(transform.forward * _warpPower * 100f, ForceMode.Impulse);
 
         StartCoroutine(_SearchTarget());
         StartCoroutine(_CallShip());
@@ -108,11 +128,11 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator _CallShip()
     {
-        WaitForSeconds callrate = new WaitForSeconds(1f);
+        WaitForSeconds callrate = new WaitForSeconds(2f);
 
         while (this != null)
         {
-            ProjectionManager.GetInstance().InstantiateEnemyUnit(_unitFactory[0], _enemyPawn, this);
+            _spawnedUnitList.Add(ProjectionManager.GetInstance().InstantiateEnemyUnit(_unitFactory[0], _enemyPawn, this));
 
             yield return callrate;
         }
@@ -122,7 +142,7 @@ public class EnemyController : MonoBehaviour
     {
         if (!_enemyPawn.bIsAttack)
         {
-            _enemyPhysics.velocity = transform.forward * _enemyProperties.MaxMoveSpeed;
+            _enemyPhysics.AddForce(transform.forward * _enemyProperties.MaxMoveSpeed);
         }
     }
 }

@@ -6,7 +6,11 @@ using Pawn;
 
 public class EnemyWeaponController : MonoBehaviour
 {
-    public void SetEnemyController(EnemyController ec) => _attachedEnemyController = ec;
+    public void SetEnemyController(EnemyController ec, Transform socket) 
+    {
+        _attachedEnemyController = ec;
+        _attachedSocketTransform = socket;
+    }
 
     [SerializeField]
     private WeaponProperty _weaponProperty;
@@ -15,6 +19,7 @@ public class EnemyWeaponController : MonoBehaviour
     private GameObject _muzzle = null;
 
     private EnemyController _attachedEnemyController = null;
+    private Transform _attachedSocketTransform = null;
 
     private bool _isAttack = false;
 
@@ -29,6 +34,8 @@ public class EnemyWeaponController : MonoBehaviour
 
     private void Update()
     {
+        transform.position = _attachedSocketTransform.position;
+
         if (_attachedEnemyController != null)
         {
             Transform nextTarget = _attachedEnemyController.GetTargetTransform(transform);

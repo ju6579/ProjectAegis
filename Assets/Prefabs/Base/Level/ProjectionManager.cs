@@ -8,6 +8,7 @@ public class ProjectionManager : Singleton<ProjectionManager>
     public Vector3 TableWorldPosition => _tableSpace.transform.position;
     public Transform WorldTransform => _worldSpace.transform;
     public Transform TableTransform => _tableSpace.transform;
+    public Material ProjectionMaterial => _projectionMaterial;
 
     [SerializeField]
     private Material _projectionMaterial = null;
@@ -21,6 +22,14 @@ public class ProjectionManager : Singleton<ProjectionManager>
     private float _worldScaleRatio = 1f;
 
     #region Public Method
+    private GameObject InstantiateByObjectPool(GameObject original, Transform parent)
+    {
+        GameObject result = GlobalObjectManager.GetObject(original);
+        result.transform.SetParent(parent);
+
+        return result;
+    }
+
     /// <summary>
     /// 
     /// </summary>
@@ -32,22 +41,25 @@ public class ProjectionManager : Singleton<ProjectionManager>
                                                         Vector3 targetPosition, 
                                                         Quaternion targetRotation)
     {
-        Transform worldTr = Instantiate(origin, _worldSpace.transform).transform;
+        Transform worldTr = InstantiateByObjectPool(origin, _worldSpace.transform).transform;
         worldTr.localPosition = targetPosition;
         worldTr.rotation = targetRotation;
-        worldTr.localScale *= _worldScaleRatio;
+        //worldTr.localScale *= _worldScaleRatio;
 
-        PawnBaseController pbc = worldTr.GetComponent<PawnBaseController>();
+        PawnBaseController prefabPawn = origin.GetComponent<PawnBaseController>();
 
-        Transform tableTr = Instantiate(pbc.TargetMeshAnchor, _tableSpace.transform).transform;
+        Transform tableTr = InstantiateByObjectPool(prefabPawn.TargetMeshAnchor, _tableSpace.transform).transform;
         tableTr.localPosition = worldTr.localPosition;
         tableTr.rotation = worldTr.rotation;
         tableTr.localScale = worldTr.localScale;
 
-        ProjectPositionTracker tracker = (ProjectPositionTracker)tableTr.gameObject
-            .AddComponent(typeof(ProjectPositionTracker));
+        PawnBaseController pbc = worldTr.GetComponent<PawnBaseController>();
+        ProjectPositionTracker tracker = tableTr.GetComponent<ProjectPositionTracker>();
+        if (tracker == null)
+            tracker = (ProjectPositionTracker)tableTr.gameObject
+                .AddComponent(typeof(ProjectPositionTracker));
 
-        tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform, _projectionMaterial);
+        tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform);
         tracker.ProjectedType = pbc.PawnActionType;
         if (tracker.ProjectedType == PawnType.SpaceShip)
             tracker.SetTargetShipContoller(worldTr.gameObject.GetComponent<ShipController>());
@@ -67,7 +79,7 @@ public class ProjectionManager : Singleton<ProjectionManager>
     /// </summary>
     /// <param name="ship"></param>
     /// <returns> Return Key Value Pair of World Transform and Table Projected Transform </returns>
-    public KeyValuePair<Transform,Transform> InstantiateShip(GameObject ship)
+    public KeyValuePair<Transform,Transform> InstantiateProduct(GameObject ship)
     {
         return InstantiateToWorld(ship, Vector3.back * 5f, Quaternion.identity);
     }
@@ -104,21 +116,6 @@ public class ProjectionManager : Singleton<ProjectionManager>
     public KeyValuePair<Transform, Transform> InstantiateWeapon(GameObject weapon)
     {
         return InstantiateToWorld(weapon, Vector3.back * 5f, Quaternion.identity);
-    }
-
-    public KeyValuePair<Transform, Transform> InstantiateWeaponOnSocket(GameObject weapon, GameObject socket)
-    {
-        KeyValuePair<Transform, Transform> instance = InstantiateToWorld(weapon, Vector3.back * 5f, Quaternion.identity);
-
-        PawnBaseController pbc = instance.Key.GetComponent<PawnBaseController>();
-        ProjectPositionTracker ppt = instance.Value.GetComponent<ProjectPositionTracker>();
-
-        instance.Key.SetParent(socket.transform);
-        instance.Key.localPosition = Vector3.zero;
-
-        ppt.ReplaceRootTransform(socket.transform);
-
-        return instance;
     }
     #endregion
 

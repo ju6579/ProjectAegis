@@ -29,8 +29,6 @@ namespace Pawn
         [SerializeField]
         private PawnProperty _pawnProperty = new PawnProperty();
 
-        private WaitForSeconds _attackRestoreWait;
-
         public void ApplyDamage(BulletMovement bullet)
         {
             int damage = bullet.Damage;
@@ -41,25 +39,19 @@ namespace Pawn
             else
                 _pawnProperty.ShieldPoint = damage;
 
-            if (_pawnProperty.ArmorPoint < 0)
-                Destroy(this.gameObject);
-
             if (bullet.StoppingPower > Mathf.Epsilon && !bIsAttack)
             {
                 bIsAttack = true;
                 StartCoroutine(_RestoreAttack(bullet.StoppingPower));
             }
-        }
 
-        private void Awake()
-        {
-            _attackRestoreWait = new WaitForSeconds(_pawnProperty.AttackRestoreTime);
-        }
+            if (_pawnProperty.ArmorPoint < 0)
+            {
+                if (PawnActionType == PawnType.SpaceShip || PawnActionType == PawnType.Weapon)
+                    PlayerKingdom.GetInstance().ProductDestoryed(PawnData);
 
-        private void OnDestroy()
-        {
-            if (PawnActionType == PawnType.SpaceShip || PawnActionType == PawnType.Weapon)
-                PlayerKingdom.GetInstance().ProductDestoryed(PawnData);
+                GlobalObjectManager.ReturnToObjectPool(gameObject);
+            }
         }
 
         private IEnumerator _RestoreAttack(float stoppingPower)
@@ -72,7 +64,7 @@ namespace Pawn
 
 
     [Serializable]
-    public struct PawnProperty
+    public class PawnProperty
     {
         public int ShieldPoint;
         public int ArmorPoint;

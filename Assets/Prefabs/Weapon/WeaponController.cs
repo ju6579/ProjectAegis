@@ -4,8 +4,19 @@ using UnityEngine;
 
 public class WeaponController : MonoBehaviour
 {
-    public void SetAttachedShip(ShipController ship) => _attachedShip = ship;
-    public void DetachWeaponToShip() => _attachedShip = null;
+    public void SetAttachedShip(ShipController ship, Transform socket) 
+    {
+        _attachedShip = ship;
+        _attachedSocketTransform = socket;
+    }
+
+    public void DetachWeaponToShip() 
+    {
+        _attachedSocketTransform = null;
+        _attachedShip = null;
+
+        GlobalObjectManager.ReturnToObjectPool(gameObject);
+    }
 
     [Serializable]
     public class WeaponProperty
@@ -27,6 +38,7 @@ public class WeaponController : MonoBehaviour
     private bool _isAttack = false;
 
     private ShipController _attachedShip = null;
+    private Transform _attachedSocketTransform = null;
 
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
@@ -39,7 +51,9 @@ public class WeaponController : MonoBehaviour
 
     private void Update()
     {
-        if(_attachedShip != null)
+        transform.position = _attachedSocketTransform.position;
+
+        if(_attachedShip != null && !_isAttack)
         {
             Transform nextTarget = _attachedShip.GetEnemyTarget(transform);
 

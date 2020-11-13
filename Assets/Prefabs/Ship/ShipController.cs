@@ -5,6 +5,7 @@ using UnityEngine;
 
 using PlayerKindom;
 using Pawn;
+using System.Linq;
 
 [RequireComponent(typeof(Rigidbody), typeof(PawnBaseController))]
 public class ShipController : MonoBehaviour
@@ -23,7 +24,6 @@ public class ShipController : MonoBehaviour
     private float _searchDistance = 1000f;
 
     private List<GameObject> _sockets = new List<GameObject>();
-    private Collider[] _searchedTarget = new Collider[0];
     private Rigidbody _shipRigidBody = null;
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.333f);
@@ -41,7 +41,28 @@ public class ShipController : MonoBehaviour
         }
     }
 
-    public Transform GetEnemyTarget(Transform weapon)
+    #region Experimental
+    private Queue<Collider> _searchedQueue = new Queue<Collider>();
+    private Collider[] _searchedTarget = new Collider[0];
+
+    private Transform GetTargetByVolley()
+    {
+        Transform target = null;
+        Collider cache;
+
+        if(_searchedQueue.Count > 0)
+        {
+            cache = _searchedQueue.Dequeue();
+            if (cache != null)
+                target = cache.transform;
+
+            _searchedQueue.Enqueue(cache);
+        }
+
+        return target;
+    }
+
+    private Transform GetTargetByNearest(Transform weapon)
     {
         if (_searchedTarget.Length > 0)
         {
@@ -49,11 +70,11 @@ public class ShipController : MonoBehaviour
             float minDistance = float.MaxValue;
             float cache;
 
-            for(int i = 0; i < _searchedTarget.Length; i++)
+            for (int i = 0; i < _searchedTarget.Length; i++)
             {
                 if (_searchedTarget[i] == null) continue;
 
-                cache = Vector3.Distance(_searchedTarget[i].transform.position, transform.position);
+                cache = Vector3.Distance(_searchedTarget[i].transform.position, weapon.position);
                 if (minDistance > cache)
                 {
                     minDistance = cache;
@@ -67,12 +88,18 @@ public class ShipController : MonoBehaviour
         return null;
     }
 
+    #endregion
+
+    public Transform GetEnemyTarget(Transform weapon)
+    {
+        return GetTargetByVolley();
+    }
+
     private float warpPower = 100f;
 
     private Rigidbody shipPhysics = null;
     private Vector3 _targetPosition;
     private float _currentSpeed = 0f;
-    private WaitForSeconds _arrivalWait;
 
     public void WarpToPosition()
     {
@@ -94,7 +121,6 @@ public class ShipController : MonoBehaviour
         shipPhysics = GetComponent<Rigidbody>();
 
         _targetPosition = transform.position;
-        _arrivalWait = new WaitForSeconds(_shipProperty.ArrivalTime);
         warpPower = warpPower * shipPhysics.mass;
     }
 
@@ -122,6 +148,10 @@ public class ShipController : MonoBehaviour
         while(this != null)
         {
             _searchedTarget = Physics.OverlapSphere(transform.position, _searchDistance, _targetLayerMask);
+
+            _searchedQueue.Clear();
+            _searchedTarget.ToList().ForEach((Collider co) => _searchedQueue.Enqueue(co));
+
             yield return _searchRate;
         }
 
@@ -130,7 +160,7 @@ public class ShipController : MonoBehaviour
 
     private IEnumerator _WarpToPosition()
     {
-        yield return _arrivalWait;
+        yield return new WaitForSeconds(_shipProperty.ArrivalTime + UnityEngine.Random.Range(0.5f, 1.5f));
         _targetPosition = PlayerKingdom.GetInstance().NextWarpPoint;
 
         transform.localPosition = _targetPosition;

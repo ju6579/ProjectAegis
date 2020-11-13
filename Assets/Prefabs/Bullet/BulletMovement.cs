@@ -47,20 +47,13 @@ public class BulletMovement : MonoBehaviour
             PawnBaseController pbc = _hitInfo.collider.gameObject.GetComponentInParent<PawnBaseController>();
             pbc.ApplyDamage(this);
 
-            PlayerKindom.PlayerKingdom.GetInstance().StartCoroutine(_KillWait());
-            gameObject.SetActive(false);
+            GlobalObjectManager.ReturnToObjectPool(gameObject);
         }
-    }
-
-    private IEnumerator _KillWait()
-    {
-        yield return new WaitForSeconds(Time.deltaTime);
-        Destroy(this.gameObject);
     }
 
     private IEnumerator _Lifetime()
     {
         yield return new WaitForSeconds(0.5f);
-        Destroy(this.gameObject);
+        GlobalObjectManager.ReturnToObjectPool(gameObject);
     }
 }

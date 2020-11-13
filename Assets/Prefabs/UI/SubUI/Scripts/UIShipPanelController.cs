@@ -35,7 +35,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 
     private Button _selectedShipDataButton = null;
     private UIShipDataContentsProperty _selectedShipData = null;
-    private ProductWrapper _selectedShip = null;
+    private ProductWrapper _selectedShip;
 
     private void OnDisable()
     {
@@ -79,7 +79,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 
             _selectedShipDataButton = null;
             _selectedShipData = null;
-            _selectedShip = null;
+            _selectedShip = new ProductWrapper();
         }
     }
 
@@ -108,7 +108,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 
     public void OnClickLaunchButton()
     {
-        if(_selectedShip != null)
+        if(_selectedShip.ProductData != null)
             PlayerKingdom.GetInstance().ShipToField(_selectedShip);
         ClearShipData();
     }

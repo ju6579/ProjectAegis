@@ -36,10 +36,10 @@ public class PCCameraController : BaseCameraController
             
             if (rayInfo.collider != null)
             {
-                Debug.Log("temp");
-
                 if (rayInfo.collider.CompareTag("Pawn"))
                 {
+                    Debug.Log("temp");
+
                     ProjectPositionTracker ppt 
                         = rayInfo.collider.gameObject.GetComponentInParent<ProjectPositionTracker>();
                     
