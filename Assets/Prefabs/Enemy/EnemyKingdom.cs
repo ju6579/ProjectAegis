@@ -8,14 +8,29 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
 {
     public Vector3 NextWarpPoint => _enemyWarpPointManager.GetNextShipWarpPoint();
 
+    public void RequestCreateUnit(GameObject prefab, EnemyController mother)
+    {
+        _launchedEnemyUnit.Add(ProjectionManager.GetInstance().InstantiateEnemyUnit(prefab, mother));
+    }
+
     public void DestroyCurrentEnemyOnEscape()
     {
         _launchedEnemyMotherShips.ForEach((GameObject mother) => {
-            mother.GetComponent<EnemyController>().OnPlayerEscape();
-            GlobalObjectManager.ReturnToObjectPool(mother);
+            if (mother.activeSelf)
+            {
+                GlobalObjectManager.ReturnToObjectPool(mother);
+            }
         });
-
         _launchedEnemyMotherShips.Clear();
+
+        _launchedEnemyUnit.ForEach((GameObject unit) =>
+        {
+            if (unit.activeSelf)
+            {
+                GlobalObjectManager.ReturnToObjectPool(unit);
+            }
+        });
+        _launchedEnemyUnit.Clear();
     }
 
     [SerializeField]
@@ -33,12 +48,16 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
     [SerializeField]
     private List<GameObject> _enemyFactory = null;
 
+    [SerializeField]
+    private float _enemySpawnTime = 20f;
+
     private WarpPointManager _enemyWarpPointManager = null;
+
     private List<GameObject> _launchedEnemyMotherShips = new List<GameObject>();
+    private List<GameObject> _launchedEnemyUnit = new List<GameObject>();
 
     private float _enemySpawnTimeStamp = 0f;
-    private float _enemySpawnTime = 3f;
-
+    
     protected override void Awake()
     {
         _enemyWarpPointManager = new WarpPointManager(_enemyGate,

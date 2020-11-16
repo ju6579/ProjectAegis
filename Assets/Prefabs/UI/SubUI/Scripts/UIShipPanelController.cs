@@ -6,6 +6,8 @@ using PlayerKindom.PlayerKindomTypes;
 
 public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 {
+    public ProductionTask SelectedWeapon => _selectedWeapon;
+
     [SerializeField]
     private ScrollRect _shipCargoScrollView = null;
 
@@ -25,9 +27,6 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
     private GameObject _socketScrollViewContents = null;
 
     [SerializeField]
-    private Button _socketAttachButton = null;
-
-    [SerializeField]
     private Button _shipLaunchButton = null;
 
     private Button _selectedWeaponButton = null;
@@ -43,20 +42,11 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
         ClearWeaponData();
     }
 
-    public void OnClickAttachButton()
-    {
-        if(_selectedShipData != null && _selectedWeapon != null)
-        {
-            _selectedShipData.AttachWeaponToSocket(_selectedWeapon);
-        }
-    }
-
     private void Awake()
     {
         WeaponListBroadcaster.ListenWeaponListChanged(_weaponScrollView, this);
         CargoShipListBroadcaster.ListenCargoShipListChanged(_shipCargoScrollView, this);
 
-        _socketAttachButton.onClick.AddListener(() => OnClickAttachButton());
         _shipLaunchButton.onClick.AddListener(() => OnClickLaunchButton());
     }
 
@@ -79,7 +69,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 
             _selectedShipDataButton = null;
             _selectedShipData = null;
-            _selectedShip = new ProductWrapper();
+            _selectedShip = null;
         }
     }
 
@@ -102,6 +92,7 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
         clicked.image.color = Color.red;
         _selectedShipData = clicked.GetComponent<UIShipDataContentsProperty>();
         _selectedShip = _selectedShipData.ShipProduct;
+        _selectedShipData.SetTargetShipPanel(this);
 
         _selectedShipData.AddContentsToScrollRect(_socketScrollView);
     }

@@ -9,12 +9,6 @@ public class EnemyController : MonoBehaviour
 {
     public PawnBaseController Pawn => _enemyPawn;
 
-    public void OnPlayerEscape()
-    { 
-        _spawnedUnitList.ForEach((GameObject unit) => GlobalObjectManager.ReturnToObjectPool(unit));
-        _spawnedUnitList.Clear();
-    }
-
     public Transform GetTargetTransform(Transform callerTransform)
     {
         if (_searchedTarget.Length > 0)
@@ -52,7 +46,6 @@ public class EnemyController : MonoBehaviour
     private WaitForSeconds _arrivalWait;
     private Vector3 _targetPosition = Vector3.zero;
     private Collider[] _searchedTarget = new Collider[0];
-    private List<GameObject> _spawnedUnitList = new List<GameObject>();
     private List<GameObject> _attachedWeaponList = new List<GameObject>();
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.5f);
@@ -128,11 +121,11 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator _CallShip()
     {
-        WaitForSeconds callrate = new WaitForSeconds(2f);
+        WaitForSeconds callrate = new WaitForSeconds(8f);
 
         while (this != null)
         {
-            _spawnedUnitList.Add(ProjectionManager.GetInstance().InstantiateEnemyUnit(_unitFactory[0], _enemyPawn, this));
+            EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
 
             yield return callrate;
         }
@@ -142,7 +135,7 @@ public class EnemyController : MonoBehaviour
     {
         if (!_enemyPawn.bIsAttack)
         {
-            _enemyPhysics.AddForce(transform.forward * _enemyProperties.MaxMoveSpeed);
+            _enemyPhysics.AddForce(transform.forward * _enemyProperties.MaxMoveSpeed * _enemyPhysics.mass);
         }
     }
 }

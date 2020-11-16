@@ -46,25 +46,34 @@ public class ProjectionManager : Singleton<ProjectionManager>
         worldTr.rotation = targetRotation;
         //worldTr.localScale *= _worldScaleRatio;
 
-        PawnBaseController prefabPawn = origin.GetComponent<PawnBaseController>();
+        
+        PawnBaseController worldPawn = worldTr.GetComponent<PawnBaseController>();
 
-        Transform tableTr = InstantiateByObjectPool(prefabPawn.TargetMeshAnchor, _tableSpace.transform).transform;
-        tableTr.localPosition = worldTr.localPosition;
-        tableTr.rotation = worldTr.rotation;
-        tableTr.localScale = worldTr.localScale;
+        Transform tableTr = null;
 
-        PawnBaseController pbc = worldTr.GetComponent<PawnBaseController>();
-        ProjectPositionTracker tracker = tableTr.GetComponent<ProjectPositionTracker>();
-        if (tracker == null)
-            tracker = (ProjectPositionTracker)tableTr.gameObject
-                .AddComponent(typeof(ProjectPositionTracker));
+        if (worldPawn.ProjectedTarget == null)
+        {
+            PawnBaseController prefabPawn = origin.GetComponent<PawnBaseController>();
 
-        tracker.SetTargetTransform(worldTr, pbc.TargetMeshAnchor.transform);
-        tracker.ProjectedType = pbc.PawnActionType;
-        if (tracker.ProjectedType == PawnType.SpaceShip)
-            tracker.SetTargetShipContoller(worldTr.gameObject.GetComponent<ShipController>());
+            tableTr = InstantiateByObjectPool(prefabPawn.TargetMeshAnchor, _tableSpace.transform).transform;
+            tableTr.localPosition = worldTr.localPosition;
+            tableTr.rotation = worldTr.rotation;
+            tableTr.localScale = worldTr.localScale;
 
-        pbc.ProjectedTarget = tracker;
+            ProjectPositionTracker tracker = tableTr.GetComponent<ProjectPositionTracker>();
+            if (tracker == null)
+                tracker = (ProjectPositionTracker)tableTr.gameObject
+                    .AddComponent(typeof(ProjectPositionTracker));
+
+            tracker.SetTargetTransform(worldTr, worldPawn.TargetMeshAnchor.transform);
+            tracker.ProjectedType = worldPawn.PawnActionType;
+            if (tracker.ProjectedType == PawnType.SpaceShip)
+                tracker.SetTargetShipContoller(worldTr.gameObject.GetComponent<ShipController>());
+
+            worldPawn.ProjectedTarget = tracker;
+        }
+        else
+            tableTr = worldPawn.ProjectedTarget.transform;
 
         return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
     }
@@ -91,13 +100,13 @@ public class ProjectionManager : Singleton<ProjectionManager>
                              Quaternion.Euler(0, 180, 0)).Key.gameObject;
     }
 
-    public GameObject InstantiateEnemyUnit(GameObject unit, PawnBaseController pawn, EnemyController ec)
+    public GameObject InstantiateEnemyUnit(GameObject unit, EnemyController ec)
     {
         GameObject instance = InstantiateToWorld(unit, 
                                            ec.transform.localPosition, 
                                            ec.transform.localRotation).Key.gameObject;
 
-        instance.GetComponent<EnemyUnitController>().SetMotherShip(pawn, ec);
+        instance.GetComponent<EnemyUnitController>().SetMotherShip(ec);
         
         return instance;
     }

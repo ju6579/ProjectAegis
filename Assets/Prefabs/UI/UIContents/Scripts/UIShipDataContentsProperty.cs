@@ -9,10 +9,11 @@ using Pawn;
 public class UIShipDataContentsProperty : MonoBehaviour
 {
     public ProductWrapper ShipProduct => _shipSet;
+    public void SetTargetShipPanel(UIShipPanelController shipPanel) => _targetShipPanelController = shipPanel;
 
-    public void AttachWeaponToSocket(ProductionTask pTask)
+    public void AttachWeaponToSocket(ProductionTask pTask, UISocketContentsProperty targetSocket)
     {
-        _selectedSocketProperty.AttachSocket(pTask, _shipSet.Instance.GetComponent<ShipController>());
+        targetSocket.AttachSocket(pTask, _shipController);
     }
 
     public void SetUIContentsData(ProductWrapper product)
@@ -29,10 +30,10 @@ public class UIShipDataContentsProperty : MonoBehaviour
             return;
         }
 
-        ShipController ship = product.Instance.GetComponent<ShipController>();
-        _shipProperty = ship.ShipData;
+        _shipController = product.Instance.GetComponent<ShipController>();
+        _shipProperty = _shipController.ShipData;
 
-        ship.SocketList.ForEach((GameObject go) =>
+        _shipController.SocketList.ForEach((GameObject go) =>
         {
             GameObject cache = Instantiate(_socketUIContentsObject, PlayerUIController.GetInstance().Dummy);
             Button button = cache.GetComponent<Button>();
@@ -45,6 +46,8 @@ public class UIShipDataContentsProperty : MonoBehaviour
 
             cache.SetActive(false);
         });
+
+        _shipController.ShipProduct = product;
 
         PlayerUIController.GetInstance().StartCoroutine(_ObserveShipData());
     }
@@ -99,6 +102,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
     #endregion
 
     #region Private Field
+    private UIShipPanelController _targetShipPanelController = null;
     private Button _contentsButton = null;
     #endregion
 
@@ -109,6 +113,7 @@ public class UIShipDataContentsProperty : MonoBehaviour
 
     private Button _selectedSocketButton = null;
     private UISocketContentsProperty _selectedSocketProperty = null;
+    private ShipController _shipController;
 
     public void ClearSelectContents()
     {
@@ -144,6 +149,9 @@ public class UIShipDataContentsProperty : MonoBehaviour
         clicked.image.color = Color.red;
         _selectedSocketButton = clicked;
         _selectedSocketProperty = socket;
+
+        if(_targetShipPanelController.SelectedWeapon != null)
+            AttachWeaponToSocket(_targetShipPanelController.SelectedWeapon, socket);
     }
 
     private IEnumerator _ObserveShipData()

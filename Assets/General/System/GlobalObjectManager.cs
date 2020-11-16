@@ -6,11 +6,13 @@ public class GlobalObjectManager : Singleton<GlobalObjectManager>
 {
     private static int _objectPoolStartSize = 5;
 
+    // Prefab, instance
     private static Dictionary<GameObject, Queue<GameObject>> _globalObjectPool 
         = new Dictionary<GameObject, Queue<GameObject>>();
 
-    private static Dictionary<GameObject, Queue<GameObject>> _instanceCachePool 
-        = new Dictionary<GameObject, Queue<GameObject>>();
+    // instance, Prefab
+    private static Dictionary<GameObject, GameObject> _instanceCachePool 
+        = new Dictionary<GameObject, GameObject>();
 
     private static Dictionary<GameObject, int> _globalObjectPoolSizeHash = new Dictionary<GameObject, int>();
 
@@ -31,7 +33,7 @@ public class GlobalObjectManager : Singleton<GlobalObjectManager>
         }
 
         GameObject instance = _globalObjectPool[prefab].Dequeue();
-        _instanceCachePool[instance] = _globalObjectPool[prefab];
+        _instanceCachePool.Add(instance, prefab);
 
         instance.SetActive(true);
 
@@ -42,7 +44,7 @@ public class GlobalObjectManager : Singleton<GlobalObjectManager>
     {
         instance.SetActive(false);
 
-        _instanceCachePool[instance].Enqueue(instance);
+        _globalObjectPool[_instanceCachePool[instance]].Enqueue(instance);
         _instanceCachePool.Remove(instance);
     }
 

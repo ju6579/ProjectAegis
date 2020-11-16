@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -27,6 +28,7 @@ MonoBehaviour:
     Softness: 0.705
     Density: 0.399
     Dissolve: 0
+    FarDissolve: 0
     Transparency: 0
     Scale: 10
     ScrollVelocity: {x: 1000, y: 0, z: 1000}
@@ -55,8 +57,8 @@ MonoBehaviour:
     HorizontalSoftnessTop: 1
     HorizontalSoftnessBottom: 0.554
     HorizontalSoftnessFigure: 0.466
-    FromHeight: 58.99
-    ToHeight: 1144
+    FromHeight: -250
+    ToHeight: -50
     Thickness: 1048
     FromDistance: 0
     MaxDistance: 15855
@@ -67,3 +69,5 @@ MonoBehaviour:
     GroundHeight: -1000
     HeightFogFromDistance: 1191
     HeightFogRange: 984
+    FarHeightFogRange: 0
+    HeightFogDensity: 0

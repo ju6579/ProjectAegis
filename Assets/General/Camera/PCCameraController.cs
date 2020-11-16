@@ -33,12 +33,12 @@ public class PCCameraController : BaseCameraController
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
             RaycastHit rayInfo = RaycastOnMiddlePoint(10f);
-            
             if (rayInfo.collider != null)
             {
+                Debug.Log(rayInfo.collider.tag);
                 if (rayInfo.collider.CompareTag("Pawn"))
                 {
-                    Debug.Log("temp");
+                    Debug.Log("temp3");
 
                     ProjectPositionTracker ppt 
                         = rayInfo.collider.gameObject.GetComponentInParent<ProjectPositionTracker>();

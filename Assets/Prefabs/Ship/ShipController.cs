@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using PlayerKindom;
+using PlayerKindom.PlayerKindomTypes;
 using Pawn;
 using System.Linq;
 
@@ -13,6 +14,47 @@ public class ShipController : MonoBehaviour
     public SpaceShipProperty ShipData => _shipProperty;
     public List<GameObject> SocketList => _sockets;
     public void MoveShipByDirection(Vector3 inputVector) => _currentInput = inputVector;
+    public ProductWrapper ShipProduct = null;
+
+    public void SetWeaponOnSocket(ProductWrapper weapon, GameObject socket)
+    {
+        if(weapon.Instance == null)
+        {
+            _attachedWeaponHash.Add(socket, weapon);
+            _sockets.Remove(socket);
+        }
+    }
+
+    public void DetachWeaponOnSocket(GameObject socket)
+    {
+        ProductWrapper weapon = _attachedWeaponHash[socket];
+
+        PlayerKingdom.GetInstance().WeaponToCargo(weapon);
+        _attachedWeaponHash.Remove(socket);
+    }
+
+    public void OnShipDestroy()
+    {
+        var weaponSet = _attachedWeaponHash.GetEnumerator();
+
+        while (weaponSet.MoveNext())
+        {
+            PlayerKingdom.GetInstance().ProductDestoryed(weaponSet.Current.Value);
+        }
+    }
+
+    private bool _flag = false;
+    public Transform GetEnemyTarget(Transform weapon)
+    {
+        _flag = !_flag;
+        return _flag ? GetTargetByNearest(weapon) : GetTargetByVolley();
+    }
+
+    public void WarpToPosition()
+    {
+        StartCoroutine(_WarpToPosition());
+    }
+
 
     [SerializeField]
     private SpaceShipProperty _shipProperty = null;
@@ -25,21 +67,10 @@ public class ShipController : MonoBehaviour
 
     private List<GameObject> _sockets = new List<GameObject>();
     private Rigidbody _shipRigidBody = null;
+    private Dictionary<GameObject, ProductWrapper> _attachedWeaponHash = new Dictionary<GameObject, ProductWrapper>();
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.333f);
     private Vector3 _currentInput = Vector3.zero;
-
-    public void SetWeaponOnSocket(GameObject weapon)
-    {
-        if(_sockets.Count != 0)
-        {
-            weapon.transform.SetParent(_sockets[0].transform);
-            weapon.transform.localPosition = new Vector3(0f, 0.5f, 0f);
-            weapon.transform.rotation = Quaternion.identity;
-
-            _sockets.RemoveAt(0);
-        }
-    }
 
     #region Experimental
     private Queue<Collider> _searchedQueue = new Queue<Collider>();
@@ -89,22 +120,11 @@ public class ShipController : MonoBehaviour
     }
 
     #endregion
-
-    public Transform GetEnemyTarget(Transform weapon)
-    {
-        return GetTargetByVolley();
-    }
-
     private float warpPower = 100f;
 
     private Rigidbody shipPhysics = null;
     private Vector3 _targetPosition;
     private float _currentSpeed = 0f;
-
-    public void WarpToPosition()
-    {
-        StartCoroutine(_WarpToPosition());
-    }
 
     private void Awake()
     {
@@ -124,8 +144,16 @@ public class ShipController : MonoBehaviour
         warpPower = warpPower * shipPhysics.mass;
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        var weaponSet = _attachedWeaponHash.GetEnumerator();
+
+        while (weaponSet.MoveNext())
+        {
+            weaponSet.Current.Value.ActiveProductInstance().GetComponent<WeaponController>()
+                .SetAttachedShip(this, weaponSet.Current.Key.transform);
+        }
+
         StartCoroutine(_SearchAttackTarget());
     }
 
@@ -138,7 +166,7 @@ public class ShipController : MonoBehaviour
     {
         if(_currentInput != Vector3.zero)
         {
-            _shipRigidBody.velocity = _currentInput * _shipProperty.MaxMoveSpeed;
+            _shipRigidBody.AddForce(_currentInput * _shipProperty.MaxMoveSpeed * _shipRigidBody.mass);
             _currentInput = Vector3.zero;
         }
     }

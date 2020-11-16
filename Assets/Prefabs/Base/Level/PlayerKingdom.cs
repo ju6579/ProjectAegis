@@ -15,8 +15,8 @@ namespace PlayerKindom
         public void ShipToField(ProductWrapper product) => _kingdomCargo.LaunchShip(product);
 
         public void WeaponToCargo(ProductWrapper product) => _kingdomCargo.AddWeaponToCargo(product);
-        public ProductWrapper WeaponToSocket(ProductionTask productData, GameObject socket)
-            => _kingdomCargo.AddWeaponToSocket(productData, socket);
+        public ProductWrapper WeaponToField(ProductionTask productData, ShipController ship, GameObject socket)
+            => _kingdomCargo.GetWeaponProduct(productData, ship, socket);
 
         public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
 
@@ -160,26 +160,32 @@ namespace PlayerKindom
             private Dictionary<ProductionTask, Queue<ProductWrapper>> _weaponCargo
                 = new Dictionary<ProductionTask, Queue<ProductWrapper>>();
 
-            private Dictionary<GameObject, ProductWrapper> _spaceField = new Dictionary<GameObject, ProductWrapper>();
+            private Dictionary<GameObject, ProductWrapper> _fieldShipHash = new Dictionary<GameObject, ProductWrapper>();
 
             public void RemoveProduct(ProductWrapper product)
             {
-                if (product.ProductData == null)
+                if (product.Instance == null)
                 {
                     Debug.Log("Product is Null");
                     return;
                 }
 
                 PawnType type = product.Instance.GetComponent<PawnBaseController>().PawnActionType;
-                
-                if (_spaceField.ContainsKey(product.Instance))
-                    _spaceField.Remove(product.Instance);
-
-                if (type == PawnType.SpaceShip)
+                if(type == PawnType.SpaceShip)
                 {
-                    int shipIndex = _shipCargo.IndexOf(product);
-                    if (shipIndex >= 0)
-                        _shipCargo.RemoveAt(shipIndex);
+                    if (_shipCargo.Contains(product))
+                        _shipCargo.Remove(product);
+
+                    if (_fieldShipHash.ContainsKey(product.Instance))
+                        _fieldShipHash.Remove(product.Instance);
+                }
+                else if(type == PawnType.Weapon)
+                {
+                    product.DisableProductInstance();
+                }
+                else
+                {
+                    GlobalLogger.CallLogError(product.ProductData.Product.name, GErrorType.InspectorValueException);
                 }
 
                 product.ClearProductWrapper();
@@ -187,8 +193,8 @@ namespace PlayerKindom
 
             public void AddShipToCargo(ProductWrapper product)
             {
-                if (_spaceField.ContainsKey(product.Instance))
-                    _spaceField.Remove(product.Instance);
+                if (_fieldShipHash.ContainsKey(product.Instance))
+                    _fieldShipHash.Remove(product.Instance);
 
                 _shipCargo.Add(product);
 
@@ -199,7 +205,10 @@ namespace PlayerKindom
             public void LaunchShip(ProductWrapper product)
             {
                 _shipCargo.Remove(product);
-                _spaceField.Add(product.Instance, product);
+                _fieldShipHash.Add(product.Instance, product);
+
+                product.Instance.transform.localPosition = Vector3.back * 5f;
+                product.Instance.SetActive(true);
 
                 ListChangedObserveComponent<ProductWrapper, PlayerKingdom>
                     .BroadcastListChange(product, false);
@@ -209,34 +218,21 @@ namespace PlayerKindom
 
             public void AddWeaponToCargo(ProductWrapper product)
             {
-                if (_spaceField.ContainsKey(product.Instance))
-                    _spaceField.Remove(product.Instance);
-
                 if (!_weaponCargo.ContainsKey(product.ProductData))
                     _weaponCargo[product.ProductData] = new Queue<ProductWrapper>();
 
-                product.Instance.transform.SetParent(ProjectionManager.GetInstance().WorldTransform);
-                product.Instance.transform.localPosition = Vector3.back * 5f;
-
-                product.Instance.GetComponent<PawnBaseController>().ProjectedTarget.DetachRootTransform();
+                product.DisableProductInstance();
 
                 _weaponCargo[product.ProductData].Enqueue(product);
             }
 
-            public ProductWrapper AddWeaponToSocket(ProductionTask productData, GameObject socket)
+            public ProductWrapper GetWeaponProduct(ProductionTask productData, ShipController ship, GameObject socket)
             {
-                ProductWrapper product = new ProductWrapper();
+                ProductWrapper product = null;
 
                 if (GetSpecificWeaponCount(productData) > 0)
                 {
                     ProductWrapper cache = _weaponCargo[productData].Dequeue();
-                    _spaceField.Add(cache.Instance, cache);
-
-                    cache.Instance.transform.SetParent(socket.transform);
-                    cache.Instance.transform.localPosition = Vector3.zero;
-
-                    cache.Instance.GetComponent<PawnBaseController>()
-                        .ProjectedTarget.ReplaceRootTransform(socket.transform);
 
                     product = cache;
                 }
@@ -251,16 +247,13 @@ namespace PlayerKindom
 
             public void HandleFieldShipOnEscape()
             {
-                var fieldEnum = _spaceField.GetEnumerator();
+                var fieldEnum = _fieldShipHash.GetEnumerator();
 
                 while (fieldEnum.MoveNext())
                 {
                     ShipController ship = fieldEnum.Current.Key.GetComponent<ShipController>();
-                    if(ship != null)
-                    {
-                        ship.transform.localPosition = Vector3.back * 5f;
-                        ship.WarpToPosition();
-                    }
+                    ship.transform.localPosition = Vector3.back * 5f;
+                    ship.WarpToPosition();
                 }
             }
         }
@@ -373,26 +366,38 @@ namespace PlayerKindom
             }
         }
 
-        public struct ProductWrapper
+        public class ProductWrapper
         {
             public GameObject Instance;
             public ProductionTask ProductData;
+            public PawnType ProductType;
 
             public ProductWrapper(ProductionTask productData)
             {
-                Instance = null;
                 ProductData = productData;
+                ProductType = productData.Product.GetComponent<PawnBaseController>().PawnActionType;
+                Instance = null;
+
+                if(ProductType == PawnType.SpaceShip)
+                {
+                    Instance = ActiveProductInstance();
+                    Instance.SetActive(false);
+                }                
             }
 
             public GameObject ActiveProductInstance()
             {
-                Instance = GlobalObjectManager.GetObject(ProductData.Product);
+                this.Instance = ProjectionManager.GetInstance().InstantiateProduct(ProductData.Product).Key.gameObject;
                 return Instance;
             }
 
             public void DisableProductInstance()
             {
-                GlobalObjectManager.ReturnToObjectPool(Instance);
+                if(Instance != null)
+                {
+                    GlobalObjectManager.ReturnToObjectPool(Instance);
+                }
+
                 Instance = null;
             }
 

@@ -1,30 +1,28 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &4388316352333382265
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7903357277551011886}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8f20fc5a047adf4497b3dea63936725, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _weaponProperty:
-    BulletObject: {fileID: 2906851056946311601, guid: f478607258711b24585a84472ed6adb9, type: 3}
-    AttackCount: 3
-    AttackDelay: 0.3
-    ReloadDelay: 0.7
-  _muzzle: {fileID: 5835874641827851624}
---- !u!1001 &6450175311656683081
+--- !u!1001 &2226989946495529894
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
+      propertyPath: _weaponProperty.AttackCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
+      propertyPath: _weaponProperty.AttackDelay
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
+      propertyPath: _weaponProperty.ReloadDelay
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
+      propertyPath: _weaponProperty.BulletObject
+      value: 
+      objectReference: {fileID: 7174167696313747441, guid: b0e2eaaf30f71a942b62ab6a601a0d5f, type: 3}
     - target: {fileID: 3759940353233759844, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -71,18 +69,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3759940353233759847, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
       propertyPath: m_Name
-      value: Enemy Weapon Base
+      value: Laser
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
---- !u!1 &7903357277551011886 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3759940353233759847, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
-  m_PrefabInstance: {fileID: 6450175311656683081}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5835874641827851624 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 684143984939985697, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}
-  m_PrefabInstance: {fileID: 6450175311656683081}
-  m_PrefabAsset: {fileID: 0}

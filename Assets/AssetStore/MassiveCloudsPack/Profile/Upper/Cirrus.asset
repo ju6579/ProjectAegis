@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -24,9 +25,10 @@ MonoBehaviour:
     RampScale: 0
     RampOffset: 0
     RampStrength: 0
-    Softness: 0.357
-    Density: 0.46
+    Softness: 0.7
+    Density: 0.35
     Dissolve: 0
+    FarDissolve: 0
     Transparency: 0
     Scale: 10
     ScrollVelocity: {x: 500, y: 0, z: 500}
@@ -48,15 +50,15 @@ MonoBehaviour:
     VolumetricShadow: 0
     VolumetricShadowDensity: 0
     VolumetricShadowStrength: 0
-    Brightness: -0.09
-    Contrast: -0.11
+    Brightness: -0.95
+    Contrast: 0.31
     Horizontal: 1
     RelativeHeight: 0
     HorizontalSoftnessTop: 0.216
     HorizontalSoftnessBottom: 0
     HorizontalSoftnessFigure: 0
-    FromHeight: 2500
-    ToHeight: 2720.06
+    FromHeight: -1250
+    ToHeight: -1000
     Thickness: 1048
     FromDistance: 0
     MaxDistance: 60000
@@ -67,3 +69,5 @@ MonoBehaviour:
     GroundHeight: 49
     HeightFogFromDistance: 2412
     HeightFogRange: 1000
+    FarHeightFogRange: 0
+    HeightFogDensity: 0

@@ -42,11 +42,13 @@ public class WeaponController : MonoBehaviour
 
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
+    private WaitForSeconds _randomWait;
 
     private void Awake()
     {
         _attackWait = new WaitForSeconds(_weaponProperty.AttackDelay);
         _reloadWait = new WaitForSeconds(_weaponProperty.ReloadDelay);
+        _randomWait = new WaitForSeconds(UnityEngine.Random.Range(0f, 0.05f));
     }
 
     private void Update()
@@ -79,11 +81,11 @@ public class WeaponController : MonoBehaviour
 
     private IEnumerator _AttackTarget()
     {
-        yield return new WaitForSeconds(UnityEngine.Random.Range(0f, 0.5f));
         for(int i = 0; i < _weaponProperty.AttackCount; i++)
         {
             ShootTarget();
             yield return _attackWait;
+            yield return _randomWait;
         }
         yield return _reloadWait;
         _isAttack = false;

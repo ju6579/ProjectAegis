@@ -67,6 +67,6 @@ public class ProjectPositionTracker : MonoBehaviour
             }
         }
         else
-            GlobalObjectManager.ReturnToObjectPool(gameObject);
+            gameObject.SetActive(false);
     }
 }

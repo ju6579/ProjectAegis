@@ -1572,7 +1572,7 @@ MonoBehaviour:
         enabled: 1
         targetColorBuffer: 0
         targetDepthBuffer: 0
-        clearFlags: 0
+        clearFlags: 3
         passFoldout: 0
         m_Version: 0
         MassiveClouds: {fileID: 999394076}

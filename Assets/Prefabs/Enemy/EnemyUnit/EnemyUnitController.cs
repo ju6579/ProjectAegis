@@ -7,9 +7,8 @@ using Pawn;
 [RequireComponent(typeof(Rigidbody), typeof(PawnBaseController))]
 public class EnemyUnitController : MonoBehaviour
 {
-    public void SetMotherShip(PawnBaseController motherPawn, EnemyController motherShip)
+    public void SetMotherShip(EnemyController motherShip)
     {
-        _motherPawn = motherPawn;
         _motherShip = motherShip;
 
         GameObject weapon = ProjectionManager.GetInstance().InstantiateWeapon(_unitWeapon).Key.gameObject;
@@ -28,10 +27,8 @@ public class EnemyUnitController : MonoBehaviour
     private GameObject _unitWeapon = null;
 
     private EnemyController _motherShip = null;
-    private PawnBaseController _motherPawn = null;
 
     private Rigidbody _unitPhysics = null;
-    private PawnBaseController _unitPawn = null;
 
     private Transform _targetTransform = null;
     private Quaternion _randomForwardAngle;
@@ -41,7 +38,6 @@ public class EnemyUnitController : MonoBehaviour
 
     private void Awake()
     {
-        _unitPawn = GetComponent<PawnBaseController>();
         _unitPhysics = GetComponent<Rigidbody>();
         _randomForwardAngle = Quaternion.Euler(Vector3.back * Random.Range(0f, 360f));
     }

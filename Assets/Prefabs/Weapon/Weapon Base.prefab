@@ -125,9 +125,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _weaponProperty:
     BulletObject: {fileID: 7395160476708356790, guid: 6b59918e5f9d4164f97ed8c2608b39cf, type: 3}
-    AttackCount: 3
+    AttackCount: 5
     AttackDelay: 0.1
-    ReloadDelay: 0.3
+    ReloadDelay: 0.6
   _muzzle: {fileID: 684143984939985697}
 --- !u!1 &6802823801800659359
 GameObject:

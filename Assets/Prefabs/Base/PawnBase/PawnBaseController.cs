@@ -21,13 +21,18 @@ namespace Pawn
         public PawnType PawnActionType = PawnType.NotSet;
         public GameObject TargetMeshAnchor = null;
         public GameObject SocketAnchor = null;
-        public ProductWrapper PawnData;
 
         public ProjectPositionTracker ProjectedTarget = null;
         public bool bIsAttack = false;
 
         [SerializeField]
         private PawnProperty _pawnProperty = new PawnProperty();
+
+        public void OnEnable()
+        {
+            if (ProjectedTarget != null)
+                ProjectedTarget.gameObject.SetActive(true);
+        }
 
         public void ApplyDamage(BulletMovement bullet)
         {
@@ -47,9 +52,13 @@ namespace Pawn
 
             if (_pawnProperty.ArmorPoint < 0)
             {
-                if (PawnActionType == PawnType.SpaceShip || PawnActionType == PawnType.Weapon)
-                    PlayerKingdom.GetInstance().ProductDestoryed(PawnData);
+                if (PawnActionType == PawnType.SpaceShip)
+                {
+                    ShipController ship = GetComponent<ShipController>();
 
+                    ship.OnShipDestroy();
+                    PlayerKingdom.GetInstance().ProductDestoryed(ship.ShipProduct);
+                }
                 GlobalObjectManager.ReturnToObjectPool(gameObject);
             }
         }
