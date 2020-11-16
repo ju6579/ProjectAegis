@@ -37,8 +37,8 @@ public class WeaponController : MonoBehaviour
 
     private bool _isAttack = false;
 
-    private ShipController _attachedShip = null;
-    private Transform _attachedSocketTransform = null;
+    public ShipController _attachedShip = null;
+    public Transform _attachedSocketTransform = null;
 
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
