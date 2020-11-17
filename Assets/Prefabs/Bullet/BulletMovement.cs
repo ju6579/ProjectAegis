@@ -57,21 +57,12 @@ public class BulletMovement : MonoBehaviour
 
     private void Update()
     {
-        switch (_bulletType)
-        {
-            case BulletType.Metal:
-                MetalMovement();
-                break;
-            case BulletType.LongLaser:
-                LaserMovement();
-                break;
-        }
+        if(_bulletType == BulletType.Metal)
+            transform.localPosition += transform.forward * Time.deltaTime * _bulletSpeed;
     }
 
     private void MetalMovement()
     {
-        transform.localPosition += transform.forward * Time.deltaTime * _bulletSpeed;
-
         _ray.origin = transform.position;
         _ray.direction = transform.forward;
 
@@ -105,6 +96,19 @@ public class BulletMovement : MonoBehaviour
         }
 
         _isChecked = true;
+    }
+
+    private void FixedUpdate()
+    {
+        switch (_bulletType)
+        {
+            case BulletType.Metal:
+                MetalMovement();
+                break;
+            case BulletType.LongLaser:
+                LaserMovement();
+                break;
+        }
     }
 
     private IEnumerator _LaserDraw(Vector3 startPosition, Vector3 endPosition)

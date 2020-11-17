@@ -157,8 +157,8 @@ MonoBehaviour:
     type: 2}
   m_RenderingPathDefaultCameraFrameSettings:
     bitDatas:
-      data1: 140664473911133
-      data2: 4539628425458548736
+      data1: 125640525070173
+      data2: 4539628425355198464
     lodBias: 1
     lodBiasMode: 0
     lodBiasQualityLevel: 0
@@ -191,10 +191,10 @@ MonoBehaviour:
   m_RenderPipelineSettings:
     supportShadowMask: 1
     supportSSR: 0
-    supportSSAO: 1
-    supportSubsurfaceScattering: 1
+    supportSSAO: 0
+    supportSubsurfaceScattering: 0
     increaseSssSampleCount: 0
-    supportVolumetrics: 1
+    supportVolumetrics: 0
     increaseResolutionOfVolumetrics: 0
     supportLightLayers: 0
     lightLayerName0: Light Layer default
@@ -205,19 +205,19 @@ MonoBehaviour:
     lightLayerName5: Light Layer 5
     lightLayerName6: Light Layer 6
     lightLayerName7: Light Layer 7
-    supportDistortion: 1
+    supportDistortion: 0
     supportTransparentBackface: 1
     supportTransparentDepthPrepass: 1
     supportTransparentDepthPostpass: 1
     colorBufferFormat: 74
     supportCustomPass: 1
-    customBufferFormat: 12
-    supportedLitShaderMode: 2
-    supportDecals: 1
+    customBufferFormat: 74
+    supportedLitShaderMode: 1
+    supportDecals: 0
     msaaSampleCount: 1
     supportMotionVectors: 1
     supportRuntimeDebugDisplay: 1
-    supportDitheringCrossFade: 1
+    supportDitheringCrossFade: 0
     supportTerrainHole: 0
     supportRayTracing: 0
     lightLoopSettings:
@@ -295,7 +295,7 @@ MonoBehaviour:
       checkerboardDepthBuffer: 1
       upsampleType: 1
     xrSettings:
-      singlePass: 1
+      singlePass: 0
       occlusionMesh: 1
     postProcessQualitySettings:
       NearBlurSampleCount: 030000000500000008000000
@@ -342,11 +342,9 @@ MonoBehaviour:
   enableSRPBatcher: 1
   shaderVariantLogLevel: 0
   availableMaterialQualityLevels: -1
-  m_DefaultMaterialQualityLevel: 4
+  m_DefaultMaterialQualityLevel: 2
   diffusionProfileSettings: {fileID: 0}
-  diffusionProfileSettingsList:
-  - {fileID: 11400000, guid: 26bdddf49760c61438938733f07fa2a2, type: 2}
-  - {fileID: 11400000, guid: 78322c7f82657514ebe48203160e3f39, type: 2}
+  diffusionProfileSettingsList: []
   beforeTransparentCustomPostProcesses: []
   beforePostProcessCustomPostProcesses: []
   afterPostProcessCustomPostProcesses: []

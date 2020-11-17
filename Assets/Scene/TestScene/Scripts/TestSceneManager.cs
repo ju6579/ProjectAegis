@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR;
 
 public class TestSceneManager : MonoBehaviour
 {
-    private void Start()
+    private void Update()
     {
-        Application.targetFrameRate = 90;
+        Application.targetFrameRate = 100;
     }
 }

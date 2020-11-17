@@ -32,17 +32,17 @@ MonoBehaviour:
     Transparency: 0
     Scale: 10
     ScrollVelocity: {x: 1000, y: 0, z: 1000}
-    Lighting: 0.73
+    Lighting: 0
     DirectLight: 0
-    Ambient: 0.523
+    Ambient: 0
     LightingQuality: 0
     LightSmoothness: 0.793
-    LightScattering: 0.367
-    Shading: 0.44
-    EdgeLighting: 0.488
-    GlobalLighting: 0.041
-    GlobalLightingRange: 0.958
-    Shadow: 1
+    LightScattering: 0
+    Shading: 0
+    EdgeLighting: 0
+    GlobalLighting: -1
+    GlobalLightingRange: 0
+    Shadow: 0
     ShadowSoftness: 0.38
     ShadowQuality: 0.121
     ShadowStrength: 0.389
@@ -50,7 +50,7 @@ MonoBehaviour:
     VolumetricShadow: 0
     VolumetricShadowDensity: 0
     VolumetricShadowStrength: 0
-    Brightness: -0.034
+    Brightness: -0.9
     Contrast: -0.081
     Horizontal: 1
     RelativeHeight: 0
@@ -63,9 +63,9 @@ MonoBehaviour:
     FromDistance: 0
     MaxDistance: 15855
     Iteration: 184
-    Fade: 8.79
-    Optimize: 0.456
-    HeightFog: 1
+    Fade: 0.01
+    Optimize: 1
+    HeightFog: 0
     GroundHeight: -1000
     HeightFogFromDistance: 1191
     HeightFogRange: 984

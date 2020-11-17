@@ -12,8 +12,10 @@ namespace Valve.VR.Extras
         public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
 
         public bool active = true;
+        [ColorUsageAttribute(true, true)]
         public Color color;
         public float thickness = 0.002f;
+        [ColorUsageAttribute(true, true)]
         public Color clickColor = Color.green;
         public GameObject holder;
         public GameObject pointer;
@@ -43,7 +45,7 @@ namespace Valve.VR.Extras
             holder.transform.localPosition = Vector3.zero;
             holder.transform.localRotation = Quaternion.identity;
 
-            pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            pointer = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             pointer.transform.parent = holder.transform;
             pointer.transform.localScale = new Vector3(thickness, thickness, 100f);
             pointer.transform.localPosition = new Vector3(0f, 0f, 50f);
@@ -65,7 +67,7 @@ namespace Valve.VR.Extras
                     Object.Destroy(collider);
                 }
             }
-            Material newMaterial = new Material(Shader.Find("Unlit/Color"));
+            Material newMaterial = new Material(Shader.Find("Shader Graphs/ProjectionShader"));
             newMaterial.SetColor("_Color", color);
             pointer.GetComponent<MeshRenderer>().material = newMaterial;
         }

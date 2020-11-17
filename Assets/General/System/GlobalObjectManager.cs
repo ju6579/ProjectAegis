@@ -28,8 +28,8 @@ public class GlobalObjectManager : Singleton<GlobalObjectManager>
 
         if(_globalObjectPool[prefab].Count == 0)
         {
-            ExtendObjectPool(prefab, _globalObjectPoolSizeHash[prefab]);
-            _globalObjectPoolSizeHash[prefab] *= 2;
+            ExtendObjectPool(prefab, 5);
+            _globalObjectPoolSizeHash[prefab] += 5;
         }
 
         GameObject instance = _globalObjectPool[prefab].Dequeue();

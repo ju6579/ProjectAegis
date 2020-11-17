@@ -121,7 +121,7 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator _CallShip()
     {
-        WaitForSeconds callrate = new WaitForSeconds(8f);
+        WaitForSeconds callrate = new WaitForSeconds(10f);
 
         while (this != null)
         {

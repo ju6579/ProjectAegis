@@ -28,8 +28,17 @@ namespace Pawn
         [SerializeField]
         private PawnProperty _pawnProperty = new PawnProperty();
 
+        private PawnProperty _pawnPropertyOrigin = new PawnProperty();
+
+        private void Awake()
+        {
+            _pawnPropertyOrigin.CopyProperty(_pawnProperty);
+        }
+
         public void OnEnable()
         {
+            _pawnProperty.CopyProperty(_pawnPropertyOrigin);
+
             if (ProjectedTarget != null)
                 ProjectedTarget.gameObject.SetActive(true);
         }
@@ -78,6 +87,13 @@ namespace Pawn
         public int ShieldPoint;
         public int ArmorPoint;
         public float AttackRestoreTime;
+
+        public void CopyProperty(PawnProperty pawn)
+        {
+            this.ShieldPoint = pawn.ShieldPoint;
+            this.ArmorPoint = pawn.ArmorPoint;
+            this.AttackRestoreTime = pawn.AttackRestoreTime;
+        }
     }
 
     public enum PawnType
