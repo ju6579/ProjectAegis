@@ -107,7 +107,7 @@ MonoBehaviour:
   _targetLayerMask:
     serializedVersion: 2
     m_Bits: 1024
-  _searchDistance: 5000
+  _searchDistance: 2000
   _unitFactory:
   - {fileID: 2801089874039069289, guid: 429a54b366ed70c47827dbe84f94f2ce, type: 3}
   _enemyWeaponFactory:
@@ -242,12 +242,12 @@ PrefabInstance:
     - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}
       propertyPath: _pawnProperty.ShieldPoint
-      value: 200
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}
       propertyPath: _pawnProperty.ArmorPoint
-      value: 200
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}

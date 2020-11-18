@@ -19,7 +19,7 @@ MonoBehaviour:
     m_Value: 4
   skyAmbientMode:
     m_OverrideState: 1
-    m_Value: 0
+    m_Value: 1
   fogType:
     m_OverrideState: 1
     m_Value: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
     min: 0
   planetCenterPosition:
     m_OverrideState: 1
-    m_Value: {x: 0, y: -6389221, z: 0}
+    m_Value: {x: 0, y: -6388018, z: 0}
   airDensityR:
     m_OverrideState: 1
     m_Value: 0.04534
@@ -177,7 +177,7 @@ MonoBehaviour:
     m_Value: {fileID: 8900000, guid: 18ec2d52be8f4524a97c25a2ed27838e, type: 3}
   spaceEmissionMultiplier:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.2
     min: 0
   spaceRotation:
     m_OverrideState: 1

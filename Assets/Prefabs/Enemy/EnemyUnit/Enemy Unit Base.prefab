@@ -372,12 +372,12 @@ PrefabInstance:
     - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}
       propertyPath: _pawnProperty.ShieldPoint
-      value: 20
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}
       propertyPath: _pawnProperty.ArmorPoint
-      value: 20
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7289561537078562141, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}

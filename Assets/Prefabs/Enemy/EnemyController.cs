@@ -55,7 +55,7 @@ public class EnemyController : MonoBehaviour
         _enemyPhysics = GetComponent<Rigidbody>();
         _enemyPawn = GetComponent<PawnBaseController>();
 
-        _arrivalWait = new WaitForSeconds(_enemyProperties.ArrivalTime);
+        _arrivalWait = new WaitForSeconds(_enemyProperties.ArrivalTime + Random.Range(1f, 5f));
         _warpPower = _warpPower * _enemyPhysics.mass;
 
         GameObject anchor = GetComponent<PawnBaseController>().SocketAnchor;
@@ -109,7 +109,7 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator _SearchTarget()
     {
-        while (this != null)
+        while (this.enabled)
         {
             _searchedTarget = Physics.OverlapSphere(transform.position, _searchDistance, _targetLayerMask);
             
@@ -123,7 +123,7 @@ public class EnemyController : MonoBehaviour
     {
         WaitForSeconds callrate = new WaitForSeconds(10f);
 
-        while (this != null)
+        while (this.enabled)
         {
             EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
 
@@ -135,7 +135,7 @@ public class EnemyController : MonoBehaviour
     {
         if (!_enemyPawn.bIsAttack)
         {
-            _enemyPhysics.AddForce(transform.forward * _enemyProperties.MaxMoveSpeed * _enemyPhysics.mass);
+            _enemyPhysics.AddForce(transform.forward * _enemyProperties.MaxMoveSpeed * _enemyPhysics.mass * 2f);
         }
     }
 }

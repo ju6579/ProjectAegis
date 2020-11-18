@@ -51,6 +51,11 @@ public class WeaponController : MonoBehaviour
         _randomWait = new WaitForSeconds(UnityEngine.Random.Range(0f, 0.05f));
     }
 
+    private void OnEnable()
+    {
+        _isAttack = false;
+    }
+
     private void Update()
     {
         transform.position = _attachedSocketTransform.position;

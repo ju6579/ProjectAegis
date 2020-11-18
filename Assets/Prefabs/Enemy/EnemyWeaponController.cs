@@ -32,21 +32,29 @@ public class EnemyWeaponController : MonoBehaviour
         _reloadWait = new WaitForSeconds(_weaponProperty.ReloadDelay);
     }
 
+    private void OnEnable()
+    {
+        _isAttack = false;
+    }
+
     private void Update()
     {
-        transform.position = _attachedSocketTransform.position;
-
-        if (_attachedEnemyController != null)
+        if(_attachedSocketTransform != null)
         {
-            Transform nextTarget = _attachedEnemyController.GetTargetTransform(transform);
+            transform.position = _attachedSocketTransform.position;
 
-            if (nextTarget != null)
+            if (_attachedEnemyController != null)
             {
-                transform.LookAt(nextTarget);
-                if (!_isAttack)
+                Transform nextTarget = _attachedEnemyController.GetTargetTransform(transform);
+
+                if (nextTarget != null)
                 {
-                    _isAttack = true;
-                    StartCoroutine(_AttackTarget());
+                    transform.LookAt(nextTarget);
+                    if (!_isAttack)
+                    {
+                        _isAttack = true;
+                        StartCoroutine(_AttackTarget());
+                    }
                 }
             }
         }
@@ -58,6 +66,12 @@ public class EnemyWeaponController : MonoBehaviour
                                                 _muzzle.transform.position,
                                                 transform.rotation,
                                                 false);
+    }
+
+    private void OnDisable()
+    {
+        _attachedEnemyController = null;
+        _attachedSocketTransform = null;
     }
 
     private IEnumerator _AttackTarget()

@@ -90,13 +90,13 @@ public class ProjectionManager : Singleton<ProjectionManager>
     /// <returns> Return Key Value Pair of World Transform and Table Projected Transform </returns>
     public KeyValuePair<Transform,Transform> InstantiateProduct(GameObject ship)
     {
-        return InstantiateToWorld(ship, Vector3.back * 5f, Quaternion.identity);
+        return InstantiateToWorld(ship, Vector3.back * 10f, Quaternion.identity);
     }
 
     public GameObject InstantiateEnemy(GameObject enemy)
     {
         return InstantiateToWorld(enemy, 
-                             Vector3.back * 5f, 
+                             Vector3.forward * 10f, 
                              Quaternion.Euler(0, 180, 0)).Key.gameObject;
     }
 
@@ -124,7 +124,7 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
     public KeyValuePair<Transform, Transform> InstantiateWeapon(GameObject weapon)
     {
-        return InstantiateToWorld(weapon, Vector3.back * 5f, Quaternion.identity);
+        return InstantiateToWorld(weapon, Vector3.up * 10f, Quaternion.identity);
     }
     #endregion
 

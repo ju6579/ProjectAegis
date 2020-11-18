@@ -157,7 +157,7 @@ MonoBehaviour:
     type: 2}
   m_RenderingPathDefaultCameraFrameSettings:
     bitDatas:
-      data1: 125640525070173
+      data1: 139934176231261
       data2: 4539628425355198464
     lodBias: 1
     lodBiasMode: 0
@@ -280,7 +280,7 @@ MonoBehaviour:
       perChannelMask: 0
     postProcessSettings:
       m_LutSize: 32
-      lutFormat: 48
+      lutFormat: 74
       bufferFormat: 74
     dynamicResolutionSettings:
       enabled: 0
@@ -316,7 +316,7 @@ MonoBehaviour:
       ChromaticAberrationMaxSamples: 03000000060000000c000000
     lightSettings:
       useContactShadow:
-        m_Values: 000101
+        m_Values: 010100
         m_SchemaId:
           m_Id: 
     maximumLODLevel:
@@ -341,7 +341,7 @@ MonoBehaviour:
   allowShaderVariantStripping: 1
   enableSRPBatcher: 1
   shaderVariantLogLevel: 0
-  availableMaterialQualityLevels: -1
+  availableMaterialQualityLevels: 3
   m_DefaultMaterialQualityLevel: 2
   diffusionProfileSettings: {fileID: 0}
   diffusionProfileSettingsList: []
