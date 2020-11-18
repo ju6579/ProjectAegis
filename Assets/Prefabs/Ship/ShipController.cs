@@ -120,7 +120,7 @@ public class ShipController : MonoBehaviour
     }
 
     #endregion
-    private float warpPower = 100f;
+    private float warpPower = 30f;
 
     private Rigidbody shipPhysics = null;
     private Vector3 _targetPosition;

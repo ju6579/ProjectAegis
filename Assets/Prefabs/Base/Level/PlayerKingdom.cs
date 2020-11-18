@@ -59,8 +59,8 @@ namespace PlayerKindom
         [SerializeField]
         private int _warpPointCutCount = 12;
 
-        [SerializeField, Range(0.1f, 0.5f)]
-        private float _warpPointBoundary = 0.2f;
+        [SerializeField, Range(0.01f, 0.2f)]
+        private float _warpPointBoundary = 0.1f;
 
         [SerializeField]
         private float _escapeSpendTime = 3f;

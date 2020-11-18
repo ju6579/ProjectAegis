@@ -63,6 +63,9 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<ProductWrapp
                 _objectUIContentsHash[product] = new List<GameObject>();
             _objectUIContentsHash[product].Add(cache);
 
+            cache.transform.localPosition = Vector3.back * 0.01f;
+            cache.transform.localRotation = Quaternion.identity;
+
             cache.SetActive(false);
         });
     }

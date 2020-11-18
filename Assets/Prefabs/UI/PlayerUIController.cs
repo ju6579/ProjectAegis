@@ -9,22 +9,10 @@ public class PlayerUIController : Singleton<PlayerUIController>
     public Transform Dummy => _dummyCanvas.transform;
 
     [SerializeField]
-    private GameObject _mainCanvas = null;
-
-    [SerializeField]
     private GameObject _mapUIPanel = null;
 
     [SerializeField]
-    private GameObject _teamUIPanel = null;
-
-    [SerializeField]
     private GameObject _shipUIPanel = null;
-
-    [SerializeField]
-    private GameObject _cargoUIPanel = null;
-
-    [SerializeField]
-    private GameObject _upgradeUIPanel = null;
 
     [SerializeField]
     private GameObject _productUIPanel = null;
@@ -42,10 +30,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
         switch (actionType)
         {
             case MainMenuButtonType.Map: _mapUIPanel.SetActive(true); break;
-            case MainMenuButtonType.Team: _teamUIPanel.SetActive(true); break;
             case MainMenuButtonType.Ship: _shipUIPanel.SetActive(true); break;
-            case MainMenuButtonType.Base: _cargoUIPanel.SetActive(true); break;
-            case MainMenuButtonType.Upgrade: _upgradeUIPanel.SetActive(true); break;
             case MainMenuButtonType.Product: _productUIPanel.SetActive(true); break;
         }
     }
@@ -88,7 +73,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        _mainCanvas.SetActive(true);
+
         _isMainPanelActive = true;
 
         ActiveAllSubPanel();
@@ -98,7 +83,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        _mainCanvas.SetActive(false);
+
         _isMainPanelActive = false;
 
         DisableAllSubPanel();
@@ -107,20 +92,14 @@ public class PlayerUIController : Singleton<PlayerUIController>
     private void DisableAllSubPanel()
     {
         _mapUIPanel.SetActive(false);
-        _teamUIPanel.SetActive(false);
         _shipUIPanel.SetActive(false);
-        _cargoUIPanel.SetActive(false);
-        _upgradeUIPanel.SetActive(false);
         _productUIPanel.SetActive(false);
     }
 
     private void ActiveAllSubPanel()
     {
         _mapUIPanel.SetActive(true);
-        _teamUIPanel.SetActive(true);
         _shipUIPanel.SetActive(true);
-        _cargoUIPanel.SetActive(true);
-        _upgradeUIPanel.SetActive(true);
         _productUIPanel.SetActive(true);
     }
     #endregion

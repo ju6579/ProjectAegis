@@ -41,6 +41,9 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
                         _objectUIContentsHash[pTask] = new List<GameObject>();
                     _objectUIContentsHash[pTask].Add(cache);
 
+                    cache.transform.localPosition = Vector3.back * 0.01f;
+                    cache.transform.localRotation = Quaternion.identity;
+
                     cache.SetActive(false);
                 });
             }

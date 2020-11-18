@@ -60,9 +60,12 @@ public class UIShipDataContentsProperty : MonoBehaviour
             if(socket != null)
             {
                 socket.transform.SetParent(targetView.content);
+
                 socket.transform.localScale = _defaultLocalScale;
-                socket.transform.localPosition = Vector3.zero;
                 socket.transform.localRotation = Quaternion.identity;
+
+                socket.transform.localPosition = -Vector3.forward * 0.01f;
+
                 socket.gameObject.SetActive(true);
             }
         });
