@@ -33,6 +33,16 @@ public class ShipController : MonoBehaviour
         _attachedWeaponHash.Remove(socket);
     }
 
+    public void OnShipToCargo()
+    {
+        var weaponSet = _attachedWeaponHash.GetEnumerator();
+
+        while (weaponSet.MoveNext())
+        {
+            weaponSet.Current.Value.DisableProductInstance();
+        }
+    }
+
     public void OnShipDestroy()
     {
         var weaponSet = _attachedWeaponHash.GetEnumerator();

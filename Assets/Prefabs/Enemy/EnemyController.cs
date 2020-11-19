@@ -55,7 +55,7 @@ public class EnemyController : MonoBehaviour
         _enemyPhysics = GetComponent<Rigidbody>();
         _enemyPawn = GetComponent<PawnBaseController>();
 
-        _arrivalWait = new WaitForSeconds(_enemyProperties.ArrivalTime + Random.Range(1f, 5f));
+        _arrivalWait = new WaitForSeconds(_enemyProperties.ArrivalTime);
         _warpPower = _warpPower * _enemyPhysics.mass;
 
         GameObject anchor = GetComponent<PawnBaseController>().SocketAnchor;
@@ -74,7 +74,7 @@ public class EnemyController : MonoBehaviour
         {
             GameObject weapon = ProjectionManager.GetInstance().InstantiateWeapon(_enemyWeaponFactory[0]).Key.gameObject;
 
-            weapon.GetComponent<EnemyWeaponController>().SetEnemyController(this, go.transform);
+            weapon.GetComponent<EnemyWeaponController>().SetEnemyController(this, go.transform, _searchDistance);
             _attachedWeaponList.Add(weapon);
         });
 
@@ -121,10 +121,11 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator _CallShip()
     {
-        WaitForSeconds callrate = new WaitForSeconds(10f);
+        WaitForSeconds callrate = new WaitForSeconds(20f);
 
         while (this.enabled)
         {
+            EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
             EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
 
             yield return callrate;

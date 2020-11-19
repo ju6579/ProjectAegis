@@ -11,20 +11,23 @@ public class EnemyUnitController : MonoBehaviour
     {
         _motherShip = motherShip;
 
-        GameObject weapon = ProjectionManager.GetInstance().InstantiateWeapon(_unitWeapon).Key.gameObject;
-        weapon.GetComponent<EnemyWeaponController>().SetEnemyController(motherShip, _socket.transform);
+        _sockets.ForEach((GameObject go) =>
+        {
+            GameObject weapon = ProjectionManager.GetInstance().InstantiateWeapon(_unitWeapon).Key.gameObject;
 
-        _weapon = weapon;
+            weapon.GetComponent<EnemyWeaponController>().SetEnemyController(motherShip, go.transform, _searchDistance);
+            _attachedWeaponList.Add(weapon);
+        });
     }
 
     [SerializeField]
     private SpaceShipProperty _unitProperty = null;
 
     [SerializeField]
-    private GameObject _socket = null;
+    private GameObject _unitWeapon = null;
 
     [SerializeField]
-    private GameObject _unitWeapon = null;
+    private float _searchDistance = 500f;
 
     private EnemyController _motherShip = null;
 
@@ -32,14 +35,25 @@ public class EnemyUnitController : MonoBehaviour
 
     private Transform _targetTransform = null;
     private Quaternion _randomForwardAngle;
-    private GameObject _weapon = null;
 
     private float ActionStartTimeStamp = 0f;
+
+    private List<GameObject> _sockets = new List<GameObject>();
+    private List<GameObject> _attachedWeaponList = new List<GameObject>();
 
     private void Awake()
     {
         _unitPhysics = GetComponent<Rigidbody>();
         _randomForwardAngle = Quaternion.Euler(Vector3.back * Random.Range(0f, 360f));
+
+        GameObject anchor = GetComponent<PawnBaseController>().SocketAnchor;
+        for (int i = 0; i < anchor.transform.childCount; i++)
+        {
+            Transform tr = anchor.transform.GetChild(i);
+
+            if (tr.CompareTag("Socket"))
+                _sockets.Add(tr.gameObject);
+        }
     }
 
     private void OnEnable()
@@ -49,10 +63,10 @@ public class EnemyUnitController : MonoBehaviour
 
     private void OnDisable()
     {
-        if(_weapon != null)
+        if (_attachedWeaponList.Count > 0)
         {
-            GlobalObjectManager.ReturnToObjectPool(_weapon);
-            _weapon = null;
+            _attachedWeaponList.ForEach((GameObject go) => GlobalObjectManager.ReturnToObjectPool(go));
+            _attachedWeaponList.Clear();
         }
     }
 

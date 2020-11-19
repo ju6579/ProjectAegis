@@ -35,6 +35,7 @@ namespace PlayerKindom
 
         public float EscapeTime => _escapeSpendTime;
         public void ExecuteEscape() => StartCoroutine(_ExecuteEscape());
+        public SpendableResource CurrentResource => _kingdomResource;
         #endregion
 
         #region Inspector Field
@@ -195,6 +196,12 @@ namespace PlayerKindom
             {
                 if (_fieldShipHash.ContainsKey(product.Instance))
                     _fieldShipHash.Remove(product.Instance);
+
+                if (product.Instance.activeSelf)
+                {
+                    product.Instance.GetComponent<ShipController>().OnShipToCargo();
+                    product.Instance.SetActive(false);
+                }
 
                 _shipCargo.Add(product);
 

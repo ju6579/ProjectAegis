@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUIController : Singleton<PlayerUIController>
 {
@@ -20,8 +21,12 @@ public class PlayerUIController : Singleton<PlayerUIController>
     [SerializeField]
     private GameObject _dummyCanvas = null;
 
+    [SerializeField]
+    private Text _timeText = null;
+
     private bool _isMainPanelActive = false;
-    
+    private UIMapPanelController _mapPanelController = null;
+
     #region Public Method Area
     public void ActiveSpecificPanel(int actionNumber)
     {
@@ -50,6 +55,8 @@ public class PlayerUIController : Singleton<PlayerUIController>
     {
         DisableUIPanelEventCallbacks();
         ActiveUIPanelEventCallbacks();
+
+        _mapPanelController = GetComponentInChildren<UIMapPanelController>();
     }
 
     private void Update()
@@ -65,6 +72,9 @@ public class PlayerUIController : Singleton<PlayerUIController>
                 DisableUIPanelEventCallbacks();
             }
         }
+
+        if (_mapPanelController != null)
+            _timeText.text = ((int)_mapPanelController.RemainTime).ToString();
     }
     #endregion
 

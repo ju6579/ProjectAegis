@@ -49,9 +49,10 @@ public class BulletMovement : MonoBehaviour
 
     private void Start()
     {
-        if (_bulletType == BulletType.LongLaser)
-            _lineRenderer = GetComponent<LineRenderer>();
+        _lineRenderer = GetComponent<LineRenderer>();
 
+        if (!(_bulletType == BulletType.LongLaser))
+            _lineRenderer.enabled = false; 
         _ray = new Ray(transform.position, transform.forward);
     }
 

@@ -10,7 +10,7 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
 
     public void RequestCreateUnit(GameObject prefab, EnemyController mother)
     {
-        if(_launchedEnemyUnit.Count < 45 )
+        if(_launchedEnemyUnit.Count < 100 )
             _launchedEnemyUnit.Add(ProjectionManager.GetInstance().InstantiateEnemyUnit(prefab, mother));
     }
 
@@ -77,9 +77,11 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
     {
         UpdateKingomByDifficulty(MapSystem.GetInstance().MapDifficulty);
 
-        if (Time.time - _enemySpawnTimeStamp > _enemySpawnTime && _launchedEnemyMotherShips.Count < 8)
+        if (Time.time - _enemySpawnTimeStamp > _enemySpawnTime && _launchedEnemyMotherShips.Count < 20)
         {
-            _launchedEnemyMotherShips.Add(ProjectionManager.GetInstance().InstantiateEnemy(_enemyFactory[0]));
+            GameObject targetEnemy = _enemyFactory[Random.Range(0, _enemyFactory.Count - 1)];
+
+            _launchedEnemyMotherShips.Add(ProjectionManager.GetInstance().InstantiateEnemy(targetEnemy));
             _enemySpawnTimeStamp = Time.time;
         }
 

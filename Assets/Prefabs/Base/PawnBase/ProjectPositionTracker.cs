@@ -7,6 +7,7 @@ using Pawn;
 public class ProjectPositionTracker : MonoBehaviour
 {
     public PawnType ProjectedType = PawnType.NotSet;
+    public ShipController TargetShipController => _projectedShipController;
 
     public void SetTargetShipContoller(ShipController ship) => _projectedShipController = ship;
     public void InputShipControl(Vector3 inputVector) => _projectedShipController.MoveShipByDirection(inputVector);

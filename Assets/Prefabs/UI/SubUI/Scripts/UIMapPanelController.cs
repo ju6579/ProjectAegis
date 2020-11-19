@@ -8,6 +8,9 @@ using PlayerKindom;
 
 public class UIMapPanelController : MonoBehaviour
 {
+    public float RemainTime => Mathf.Clamp(_escapeTimeOffset - (Time.time - _escapeTimeStamp), 
+                                      0, _escapeTimeOffset);
+
     [SerializeField]
     private GameObject _targetPanel;
 
@@ -24,6 +27,12 @@ public class UIMapPanelController : MonoBehaviour
     private Dictionary<SingleTile, Button> _tileToButton = new Dictionary<SingleTile, Button>();
 
     private float _escapeTimeStamp = 0f;
+    private bool _isTileButtonEnabled = false;
+
+    private void OnEnable()
+    {
+        _isTileButtonEnabled = false;
+    }
 
     private void Start()
     {
@@ -45,7 +54,7 @@ public class UIMapPanelController : MonoBehaviour
                 Vector3 targetPosition = _anchor.localPosition;
                 targetPosition.x += ((float)map[i][j].Properties.X) * buttonTransform.sizeDelta.x + 1f * 9 / 16;
                 targetPosition.y -= ((float)map[i][j].Properties.Y) * buttonTransform.sizeDelta.y - (i % 2 + 1) * buttonTransform.sizeDelta.y / 2f - 1f;
-                targetPosition.z = 0f;
+                targetPosition.z = -0.01f;
 
                 buttonTransform.localPosition = targetPosition;
 
@@ -55,19 +64,24 @@ public class UIMapPanelController : MonoBehaviour
             }
         }
 
-        ActiveLinkedTile(MapSystem.GetInstance().CurrentMapTile);
-
         _escapeTimeStamp = Time.time;
     }
 
     private void Update()
     {
-        if(Time.time - _escapeTimeStamp > _escapeTimeOffset)
+        if(Time.time - _escapeTimeStamp > _escapeTimeOffset && !_isTileButtonEnabled)
         {
-            PlayerKingdom.GetInstance().ExecuteEscape();
-
-            _escapeTimeStamp = Time.time + PlayerKingdom.GetInstance().EscapeTime;
+            ActiveLinkedTile(MapSystem.GetInstance().CurrentMapTile);
+            _isTileButtonEnabled = true;
         }
+    }
+
+    private void EscapeOnButtonPress()
+    {
+        PlayerKingdom.GetInstance().ExecuteEscape();
+
+        _escapeTimeStamp = Time.time + PlayerKingdom.GetInstance().EscapeTime;
+        _isTileButtonEnabled = false;
     }
 
     private void UpdateCurrentTileByClick(Button clickedButton)
@@ -75,7 +89,6 @@ public class UIMapPanelController : MonoBehaviour
         SingleTile currentTile = MapSystem.GetInstance().CurrentMapTile;
 
         DisableLinkedTile(currentTile);
-        ActiveLinkedTile(_buttonToTile[clickedButton]);
 
         MapSystem.GetInstance().SetCurrentTile(_buttonToTile[clickedButton]);
     }
@@ -108,6 +121,7 @@ public class UIMapPanelController : MonoBehaviour
                                              + tile.Properties.Y.ToString();
         button.onClick.AddListener(() =>
         {
+            EscapeOnButtonPress();
             UpdateCurrentTileByClick(button);
         });
     }

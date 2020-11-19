@@ -6,10 +6,11 @@ using Pawn;
 
 public class EnemyWeaponController : MonoBehaviour
 {
-    public void SetEnemyController(EnemyController ec, Transform socket) 
+    public void SetEnemyController(EnemyController ec, Transform socket, float weaponRange) 
     {
         _attachedEnemyController = ec;
         _attachedSocketTransform = socket;
+        _weaponRange = weaponRange;
     }
 
     [SerializeField]
@@ -25,6 +26,8 @@ public class EnemyWeaponController : MonoBehaviour
 
     private WaitForSeconds _attackWait;
     private WaitForSeconds _reloadWait;
+
+    private float _weaponRange = 0f;
 
     private void Awake()
     {
@@ -49,11 +52,14 @@ public class EnemyWeaponController : MonoBehaviour
 
                 if (nextTarget != null)
                 {
-                    transform.LookAt(nextTarget);
-                    if (!_isAttack)
+                    if(Vector3.Distance(transform.position, nextTarget.position) < _weaponRange)
                     {
-                        _isAttack = true;
-                        StartCoroutine(_AttackTarget());
+                        transform.LookAt(nextTarget);
+                        if (!_isAttack)
+                        {
+                            _isAttack = true;
+                            StartCoroutine(_AttackTarget());
+                        }
                     }
                 }
             }

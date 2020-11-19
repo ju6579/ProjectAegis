@@ -73,7 +73,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weaponProperty:
-    BulletObject: {fileID: 7395160476708356790, guid: 6b59918e5f9d4164f97ed8c2608b39cf,
+    BulletObject: {fileID: 1399846718655817379, guid: 7bf82f44ca61d2f4b95d5039f9180db0,
       type: 3}
     AttackCount: 5
     AttackDelay: 0.1

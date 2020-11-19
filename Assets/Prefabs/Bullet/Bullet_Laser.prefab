@@ -18,7 +18,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 4e316f2c4e892684ba5f0b4cbd3c97a5, type: 2}
+  - {fileID: 2100000, guid: 53e9ad496fa51684f96a39d604c58833, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -107,7 +107,7 @@ PrefabInstance:
     - target: {fileID: -8337708792484404374, guid: 6b59918e5f9d4164f97ed8c2608b39cf,
         type: 3}
       propertyPath: _bulletDamage
-      value: 2
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: -8337708792484404374, guid: 6b59918e5f9d4164f97ed8c2608b39cf,
         type: 3}

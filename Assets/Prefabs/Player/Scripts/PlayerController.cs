@@ -5,6 +5,8 @@ using HTC.UnityPlugin.Vive;
 using HTC.UnityPlugin.VRModuleManagement;
 using Pawn;
 
+using PlayerKindom;
+
 public class PlayerController : MonoBehaviour
 {
     [SerializeField]
@@ -68,6 +70,12 @@ public class PlayerController : MonoBehaviour
                 var deviceState = VRModule.GetDeviceState(_rightHandDeviceIndex);
 
                 _targetShipProjectorRight.InputShipControl(deviceState.velocity.normalized);
+
+                if(deviceState.velocity.z < 0 && deviceState.velocity.magnitude > 2.5f)
+                {
+                    Debug.Log("Recall Ship");
+                    RecallShipToKingdom(_targetShipProjectorRight);
+                }
             }
         }
         else
@@ -106,9 +114,20 @@ public class PlayerController : MonoBehaviour
                 var deviceState = VRModule.GetDeviceState(_leftHandDeviceIndex);
 
                 _targetShipProjectorLeft.InputShipControl(deviceState.velocity.normalized);
+
+                if (deviceState.velocity.z < 0 && deviceState.velocity.magnitude > 2.5f)
+                {
+                    Debug.Log("Recall Ship");
+                    RecallShipToKingdom(_targetShipProjectorLeft);
+                }
             }
         }
         else
             _targetShipProjectorLeft = null;
+    }
+
+    private void RecallShipToKingdom(ProjectPositionTracker ppt)
+    {
+        PlayerKingdom.GetInstance().ShipToCargo(ppt.TargetShipController.ShipProduct);
     }
 }
