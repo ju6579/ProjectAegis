@@ -21,8 +21,13 @@ PrefabInstance:
         type: 3}
       propertyPath: _weaponProperty.BulletObject
       value: 
-      objectReference: {fileID: 1399846718655817379, guid: 7bf82f44ca61d2f4b95d5039f9180db0,
+      objectReference: {fileID: 5696567257133485325, guid: 0623a012ccf07cd43805e44f3bdac179,
         type: 3}
+    - target: {fileID: 4388316352333382265, guid: 8c484eb6a1fc06e45a74ce5dbf1853ac,
+        type: 3}
+      propertyPath: _weaponProperty.BulletDamage
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7903357277551011885, guid: 8c484eb6a1fc06e45a74ce5dbf1853ac,
         type: 3}
       propertyPath: m_LocalPosition.x

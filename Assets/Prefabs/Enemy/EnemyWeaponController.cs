@@ -71,7 +71,8 @@ public class EnemyWeaponController : MonoBehaviour
         ProjectionManager.GetInstance().InstantiateBullet(_weaponProperty.BulletObject,
                                                 _muzzle.transform.position,
                                                 transform.rotation,
-                                                false);
+                                                false,
+                                                _weaponProperty.BulletDamage);
     }
 
     private void OnDisable()

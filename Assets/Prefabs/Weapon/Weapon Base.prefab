@@ -73,11 +73,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _weaponProperty:
-    BulletObject: {fileID: 1399846718655817379, guid: 7bf82f44ca61d2f4b95d5039f9180db0,
+    BulletObject: {fileID: 5696567257133485325, guid: 0623a012ccf07cd43805e44f3bdac179,
       type: 3}
+    BulletDamage: 3
     AttackCount: 5
-    AttackDelay: 0.1
-    ReloadDelay: 0.6
+    AttackDelay: 0.4
+    ReloadDelay: 1
   _muzzle: {fileID: 684143984939985697}
   _attachedShip: {fileID: 0}
   _attachedSocketTransform: {fileID: 0}

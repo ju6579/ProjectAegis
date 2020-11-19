@@ -55,7 +55,6 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -80,7 +79,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &1982062460786475509
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,6 +131,10 @@ MonoBehaviour:
   _projectionMaterial: {fileID: 2100000, guid: e5072259320908f4d9290cf8fb4a87e2, type: 2}
   _worldSpace: {fileID: 8310476531613686051}
   _tableSpace: {fileID: 3639834765543431259}
+  _enemyBulletMaterial: {fileID: 2100000, guid: 1140af93003390b4fb0d4ad89f162549,
+    type: 2}
+  _playerBulletMaterial: {fileID: 2100000, guid: fa18689b10731d2409ce96b193f38ade,
+    type: 2}
 --- !u!114 &-8126974779823090671
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,10 +160,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _enemyGate: {fileID: 0}
+  _enemySpawnTimeOffset: 1
   _warpPointCutCount: 12
   _warpPointBoundary: 0.2
   _enemyFactory:
   - {fileID: 7275127044657883006, guid: fd106355c33693949b0c6fd6ee0d905d, type: 3}
+  _enemySpawnTime: 20
 --- !u!114 &1663450481870267294
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +190,7 @@ MonoBehaviour:
   _warpBaseTransform: {fileID: 0}
   _warpPointCutCount: 12
   _warpPointBoundary: 0.2
+  _escapeSpendTime: 3
 --- !u!1 &3639834765543431259
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,7 +278,6 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -298,7 +302,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &7615876408410076830
 BoxCollider:
   m_ObjectHideFlags: 0

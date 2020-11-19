@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine;
 
+using Pawn;
+
 public class WeaponController : MonoBehaviour
 {
     public void SetAttachedShip(ShipController ship, Transform socket) 
@@ -16,15 +18,6 @@ public class WeaponController : MonoBehaviour
         _attachedShip = null;
 
         GlobalObjectManager.ReturnToObjectPool(gameObject);
-    }
-
-    [Serializable]
-    public class WeaponProperty
-    {
-        public GameObject BulletObject;
-        public int AttackCount;
-        public float AttackDelay;
-        public float ReloadDelay;
     }
 
     public WeaponProperty WeaponData => _weaponProperty;
@@ -81,7 +74,8 @@ public class WeaponController : MonoBehaviour
         ProjectionManager.GetInstance().InstantiateBullet(_weaponProperty.BulletObject,
                                                 _muzzle.transform.position,
                                                 transform.rotation,
-                                                true);
+                                                true,
+                                                _weaponProperty.BulletDamage);
     }
 
     private IEnumerator _AttackTarget()

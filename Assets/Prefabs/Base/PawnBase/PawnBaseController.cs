@@ -119,6 +119,7 @@ namespace Pawn
     public class WeaponProperty
     {
         public GameObject BulletObject;
+        public int BulletDamage;
         public int AttackCount;
         public float AttackDelay;
         public float ReloadDelay;

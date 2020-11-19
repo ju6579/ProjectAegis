@@ -5,15 +5,34 @@ using UnityEngine;
 public class BulletMovement : MonoBehaviour
 {
     public int Damage => _bulletDamage;
-    public bool IsShootByPlayer = false;
+    
     public float StoppingPower => _bulletStoppingPower;
-    public void SetTargetLayer(LayerMask targetLayer) => _targetLayer = targetLayer;
+
+    public void SetBulletProperty(LayerMask targetLayer, Material _material, bool isShootByPlayer, int damage)
+    {
+        _targetLayer = targetLayer;
+        _bulletDamage = damage;
+
+        switch (_bulletType)
+        {
+            case BulletType.Projectile:
+                _targetMeshRenderer.material = _material;
+                break;
+
+            case BulletType.Laser:
+                _lineRenderer.material = _material;
+                break;
+
+            case BulletType.Missile:
+                _targetMeshRenderer.material = _material;
+                break;
+        }
+    } 
 
     private enum BulletType
     {
-        Metal,
-        ShortLaser,
-        LongLaser,
+        Projectile,
+        Laser,
         Missile,
         NotSet
     }
@@ -23,12 +42,15 @@ public class BulletMovement : MonoBehaviour
 
     [SerializeField]
     private float _bulletSpeed = 1f;
-
-    [SerializeField]
-    private int _bulletDamage = 1;
-
+    
     [SerializeField]
     private float _bulletStoppingPower = 0f;
+
+    [SerializeField]
+    private MeshRenderer _targetMeshRenderer = null;
+
+    [SerializeField]
+    private LineRenderer _lineRenderer = null;
 
     private LayerMask _targetLayer = 0;
     private RaycastHit _hitInfo;
@@ -37,9 +59,10 @@ public class BulletMovement : MonoBehaviour
     private WaitForSeconds _metalLifeTime = new WaitForSeconds(1f);
     private WaitForSeconds _laserLifeTime = new WaitForSeconds(0.3f);
     private WaitForEndOfFrame _frameWait = new WaitForEndOfFrame();
-
-    private LineRenderer _lineRenderer = null;
+    
     private bool _isChecked = false;
+    private int _bulletDamage = 1;
+    private bool _IsShootByPlayer = false;
 
     private void OnEnable()
     {
@@ -51,14 +74,14 @@ public class BulletMovement : MonoBehaviour
     {
         _lineRenderer = GetComponent<LineRenderer>();
 
-        if (!(_bulletType == BulletType.LongLaser))
+        if (!(_bulletType == BulletType.Laser))
             _lineRenderer.enabled = false; 
         _ray = new Ray(transform.position, transform.forward);
     }
 
     private void Update()
     {
-        if(_bulletType == BulletType.Metal)
+        if(_bulletType == BulletType.Projectile)
             transform.localPosition += transform.forward * Time.deltaTime * _bulletSpeed;
     }
 
@@ -103,10 +126,10 @@ public class BulletMovement : MonoBehaviour
     {
         switch (_bulletType)
         {
-            case BulletType.Metal:
+            case BulletType.Projectile:
                 MetalMovement();
                 break;
-            case BulletType.LongLaser:
+            case BulletType.Laser:
                 LaserMovement();
                 break;
         }
@@ -124,10 +147,10 @@ public class BulletMovement : MonoBehaviour
     {
         switch(_bulletType)
         {
-            case BulletType.Metal:
+            case BulletType.Projectile:
                 yield return _metalLifeTime;
                 break;
-            case BulletType.LongLaser:
+            case BulletType.Laser:
                 yield return _laserLifeTime;
                 break;
         }

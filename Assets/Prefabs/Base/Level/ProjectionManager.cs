@@ -19,6 +19,12 @@ public class ProjectionManager : Singleton<ProjectionManager>
     [SerializeField]
     private GameObject _tableSpace = null;
 
+    [SerializeField]
+    private Material _enemyBulletMaterial = null;
+
+    [SerializeField]
+    private Material _playerBulletMaterial = null;
+
     private float _worldScaleRatio = 1f;
 
     #region Public Method
@@ -111,15 +117,27 @@ public class ProjectionManager : Singleton<ProjectionManager>
         return instance;
     }
 
-    public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation, bool isShootByPlayer)
+    public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation, bool isShootByPlayer, int bulletDamage)
     {
         Vector3 localPosition = _worldSpace.transform.InverseTransformPoint(worldPosition);
         KeyValuePair<Transform, Transform> instance = InstantiateToWorld(bullet, localPosition, rotation);
 
         BulletMovement bulletComponent = instance.Key.GetComponent<BulletMovement>();
-        bulletComponent.IsShootByPlayer = isShootByPlayer;
-        bulletComponent.SetTargetLayer(isShootByPlayer ? CustomLibrary.GetInstance().PlayerBulletTargetLayer
-                                                 : CustomLibrary.GetInstance().EnemyBulletTargetLayer);
+
+        if (isShootByPlayer)
+        {
+            bulletComponent.SetBulletProperty(CustomLibrary.GetInstance().PlayerBulletTargetLayer,
+                                        _playerBulletMaterial,
+                                        isShootByPlayer,
+                                        bulletDamage);
+        }
+        else
+        {
+            bulletComponent.SetBulletProperty(CustomLibrary.GetInstance().EnemyBulletTargetLayer,
+                                        _enemyBulletMaterial,
+                                        isShootByPlayer,
+                                        bulletDamage);
+        }
     }
 
     public KeyValuePair<Transform, Transform> InstantiateWeapon(GameObject weapon)

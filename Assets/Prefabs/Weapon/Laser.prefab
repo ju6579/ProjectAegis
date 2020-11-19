@@ -10,24 +10,29 @@ PrefabInstance:
     - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: _weaponProperty.AttackCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
-        type: 3}
-      propertyPath: _weaponProperty.AttackDelay
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
+      propertyPath: _weaponProperty.AttackDelay
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
       propertyPath: _weaponProperty.ReloadDelay
-      value: 0
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: _weaponProperty.BulletObject
       value: 
-      objectReference: {fileID: 7174167696313747441, guid: b0e2eaaf30f71a942b62ab6a601a0d5f,
+      objectReference: {fileID: 6688792949454866703, guid: 559e4ef302c043d45b3d98e4926aa748,
         type: 3}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: _weaponProperty.BulletDamage
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3759940353233759844, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: m_LocalPosition.x
