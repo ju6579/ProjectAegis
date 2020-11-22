@@ -74,7 +74,8 @@ public class PlayerUIController : Singleton<PlayerUIController>
         }
 
         if (_mapPanelController != null)
-            _timeText.text = ((int)_mapPanelController.RemainTime).ToString();
+            _timeText.text = (1f / Time.deltaTime).ToString();
+        //_timeText.text = ((int)_mapPanelController.RemainTime).ToString();
     }
     #endregion
 

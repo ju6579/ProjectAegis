@@ -101,11 +101,12 @@ namespace PlayerKindom
             _warpPointManager = new WarpPointManager(_warpBaseTransform,
                                                    _warpPointCutCount, 
                                                    _warpPointBoundary);
-            base.Awake();
         }
 
         private void Start()
         {
+            base.Awake();
+
             _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
             _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
 

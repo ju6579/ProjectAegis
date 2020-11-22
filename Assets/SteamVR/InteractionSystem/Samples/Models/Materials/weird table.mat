@@ -93,7 +93,7 @@ Material:
         m_Scale: {x: 0.5, y: 1}
         m_Offset: {x: 0.27, y: 0}
     - _MaskMap:
-        m_Texture: {fileID: 2800000, guid: f31b8b71375ba0640b9028a5cb05b98c, type: 3}
+        m_Texture: {fileID: 2800000, guid: d639c9d3484728541965c2a5a77e8cc8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -288,7 +288,7 @@ Material:
     - _UVDetailsMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMask: {r: 1, g: 0, b: 0, a: 0}
     - _UVMappingMaskEmissive: {r: 1, g: 0, b: 0, a: 0}
---- !u!114 &2899065066504942939
+--- !u!114 &8981081255579700179
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

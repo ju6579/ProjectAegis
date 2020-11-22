@@ -2,13 +2,13 @@
   "source": "Unity",
   "applications": [
     {
-      "app_key": "application.generated.unity.projectaegis.exe",
+      "app_key": "application.generated.unity.migrationproject.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "C:\\Users\\sungw\\Desktop\\Project\\ProjectAegis\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\sungw\\Desktop\\Project\\MigrationProject\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
-          "name": "ProjectAegis [Testing]"
+          "name": "MigrationProject [Testing]"
         }
       }
     }

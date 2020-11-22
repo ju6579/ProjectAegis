@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TestSceneManager : MonoBehaviour
 {
-    private void Update()
+    private void Awake()
     {
-        Application.targetFrameRate = 100;
+        Application.targetFrameRate = 90;
     }
 }
