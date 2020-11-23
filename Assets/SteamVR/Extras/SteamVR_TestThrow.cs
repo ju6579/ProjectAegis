@@ -46,12 +46,12 @@ namespace Valve.VR.Extras
                 Transform origin = trackedObj.origin ? trackedObj.origin : trackedObj.transform.parent;
                 if (origin != null)
                 {
-                    rigidbody.velocity = origin.TransformVector(trackedObj.GetVelocity()) * 3f;
+                    rigidbody.velocity = origin.TransformVector(trackedObj.GetVelocity());
                     rigidbody.angularVelocity = origin.TransformVector(trackedObj.GetAngularVelocity());
                 }
                 else
                 {
-                    rigidbody.velocity = trackedObj.GetVelocity() * 3f;
+                    rigidbody.velocity = trackedObj.GetVelocity();
                     rigidbody.angularVelocity = trackedObj.GetAngularVelocity();
                 }
 
