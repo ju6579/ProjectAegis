@@ -24,7 +24,8 @@ public class ResourceCounterController : MonoBehaviour
 
     private void Start()
     {
-        _targetResource = PlayerKingdom.GetInstance().CurrentResource;
+        Singleton<PlayerKingdom>.ListenSingletonLoaded(() => _targetResource = PlayerKingdom.GetInstance().CurrentResource);
+        
     }
 
     private void Update()
