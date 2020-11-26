@@ -67,7 +67,7 @@ PrefabInstance:
     - target: {fileID: -7896665677154206317, guid: fd106355c33693949b0c6fd6ee0d905d,
         type: 3}
       propertyPath: _enemyProperties.ArrivalTime
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -7896665677154206317, guid: fd106355c33693949b0c6fd6ee0d905d,
         type: 3}

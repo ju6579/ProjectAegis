@@ -63,26 +63,27 @@ public class WeaponController : MonoBehaviour
                 if (!_isAttack)
                 {
                     _isAttack = true;
-                    StartCoroutine(_AttackTarget());
+                    StartCoroutine(_AttackTarget(nextTarget));
                 }
             }
         }
     }
 
-    private void ShootTarget()
+    private void ShootTarget(Transform target)
     {
         ProjectionManager.GetInstance().InstantiateBullet(_weaponProperty.BulletObject,
                                                 _muzzle.transform.position,
                                                 transform.rotation,
                                                 true,
-                                                _weaponProperty.BulletDamage);
+                                                _weaponProperty.BulletDamage, 
+                                                target);
     }
 
-    private IEnumerator _AttackTarget()
+    private IEnumerator _AttackTarget(Transform target)
     {
         for(int i = 0; i < _weaponProperty.AttackCount; i++)
         {
-            ShootTarget();
+            ShootTarget(target);
             yield return _attackWait;
             yield return _randomWait;
         }

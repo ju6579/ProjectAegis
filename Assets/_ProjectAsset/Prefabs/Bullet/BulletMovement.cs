@@ -8,10 +8,11 @@ public class BulletMovement : MonoBehaviour
     
     public float StoppingPower => _bulletStoppingPower;
 
-    public void SetBulletProperty(LayerMask targetLayer, Material _material, bool isShootByPlayer, int damage)
+    public void SetBulletProperty(LayerMask targetLayer, Material _material, bool isShootByPlayer, int damage, Transform target)
     {
         _targetLayer = targetLayer;
         _bulletDamage = damage;
+        _missileTarget = target;
 
         switch (_bulletType)
         {
@@ -29,14 +30,6 @@ public class BulletMovement : MonoBehaviour
         }
     } 
 
-    private enum BulletType
-    {
-        Projectile,
-        Laser,
-        Missile,
-        NotSet
-    }
-
     [SerializeField]
     private BulletType _bulletType = BulletType.NotSet;
 
@@ -52,45 +45,99 @@ public class BulletMovement : MonoBehaviour
     [SerializeField]
     private LineRenderer _lineRenderer = null;
 
-    private LayerMask _targetLayer = 0;
+    [SerializeField]
+    private float _preProcessTimeAmount = 1f;
+
+    private Transform _missileTarget = null;
+
+    private LayerMask _targetLayer = -1;
     private RaycastHit _hitInfo;
     private Ray _ray;
 
     private WaitForSeconds _metalLifeTime = new WaitForSeconds(1f);
     private WaitForSeconds _laserLifeTime = new WaitForSeconds(0.3f);
+    private WaitForSeconds _missileLifeTime = new WaitForSeconds(5.0f);
     private WaitForEndOfFrame _frameWait = new WaitForEndOfFrame();
     
     private bool _isChecked = false;
     private int _bulletDamage = 1;
     private bool _IsShootByPlayer = false;
+    private float _missileTimeStamp = 0f;
+
+    private Vector3 _randomUpDirection = Vector3.up;
 
     private void OnEnable()
     {
+        _missileTimeStamp = _preProcessTimeAmount;
+        _randomUpDirection = Random.rotation * Vector3.up;
+
         _isChecked = false;
         StartCoroutine(_Lifetime());
+        _missileTimeStamp = Time.time;
     }
 
     private void Start()
     {
         _lineRenderer = GetComponent<LineRenderer>();
 
-        if (!(_bulletType == BulletType.Laser))
+        if (_bulletType != BulletType.Laser)
             _lineRenderer.enabled = false; 
+
         _ray = new Ray(transform.position, transform.forward);
     }
 
     private void Update()
     {
-        if(_bulletType == BulletType.Projectile)
-            transform.localPosition += transform.forward * Time.deltaTime * _bulletSpeed;
+        switch (_bulletType)
+        {
+            case BulletType.Laser:
+                break;
+
+
+            case BulletType.Projectile:
+                transform.localPosition += transform.forward * Time.deltaTime * _bulletSpeed;
+                break;
+
+
+            case BulletType.Missile:
+                if (_missileTarget != null && _missileTarget.gameObject.activeSelf)
+                {
+                    transform.LookAt(_missileTarget);
+                } 
+                
+                transform.localPosition += (transform.forward + _randomUpDirection * _missileTimeStamp).normalized
+                                       * Time.deltaTime * _bulletSpeed;
+
+                _missileTimeStamp -= Time.deltaTime;
+                _missileTimeStamp = Mathf.Clamp(_missileTimeStamp, 0, _preProcessTimeAmount);
+                break;
+        }
     }
 
-    private void MetalMovement()
+    private void FixedUpdate()
+    {
+        switch (_bulletType)
+        {
+            case BulletType.Projectile:
+                ProjectileHitCheck();
+                break;
+
+            case BulletType.Laser:
+                LaserHitCheck();
+                break;
+
+            case BulletType.Missile:
+                MissileHitCheck();
+                break;
+        }
+    }
+
+    private void ProjectileHitCheck()
     {
         _ray.origin = transform.position;
         _ray.direction = transform.forward;
 
-        if (Physics.Raycast(_ray, out _hitInfo, _bulletSpeed * 50f, _targetLayer))
+        if (Physics.Raycast(_ray, out _hitInfo, _bulletSpeed * 20f, _targetLayer))
         {
             PawnBaseController pbc = _hitInfo.collider.gameObject.GetComponentInParent<PawnBaseController>();
             pbc.ApplyDamage(this);
@@ -99,7 +146,7 @@ public class BulletMovement : MonoBehaviour
         }
     }
 
-    private void LaserMovement()
+    private void LaserHitCheck()
     {
         if (!_isChecked)
         {
@@ -122,16 +169,17 @@ public class BulletMovement : MonoBehaviour
         _isChecked = true;
     }
 
-    private void FixedUpdate()
+    private void MissileHitCheck()
     {
-        switch (_bulletType)
+        _ray.origin = transform.position;
+        _ray.direction = transform.forward;
+
+        if (Physics.Raycast(_ray, out _hitInfo, _bulletSpeed * 20f, _targetLayer))
         {
-            case BulletType.Projectile:
-                MetalMovement();
-                break;
-            case BulletType.Laser:
-                LaserMovement();
-                break;
+            PawnBaseController pbc = _hitInfo.collider.gameObject.GetComponentInParent<PawnBaseController>();
+            pbc.ApplyDamage(this);
+
+            GlobalObjectManager.ReturnToObjectPool(gameObject);
         }
     }
 
@@ -153,9 +201,21 @@ public class BulletMovement : MonoBehaviour
             case BulletType.Laser:
                 yield return _laserLifeTime;
                 break;
+            case BulletType.Missile:
+                yield return _missileLifeTime;
+                break;
         }
 
+        _missileTarget = null;
         GlobalObjectManager.ReturnToObjectPool(gameObject);
         yield return null;
     }
+}
+
+public enum BulletType
+{
+    Projectile,
+    Laser,
+    Missile,
+    NotSet
 }

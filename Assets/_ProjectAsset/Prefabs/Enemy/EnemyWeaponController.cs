@@ -58,7 +58,7 @@ public class EnemyWeaponController : MonoBehaviour
                         if (!_isAttack)
                         {
                             _isAttack = true;
-                            StartCoroutine(_AttackTarget());
+                            StartCoroutine(_AttackTarget(nextTarget));
                         }
                     }
                 }
@@ -66,13 +66,14 @@ public class EnemyWeaponController : MonoBehaviour
         }
     }
 
-    private void ShootTarget()
+    private void ShootTarget(Transform target)
     {
         ProjectionManager.GetInstance().InstantiateBullet(_weaponProperty.BulletObject,
                                                 _muzzle.transform.position,
                                                 transform.rotation,
                                                 false,
-                                                _weaponProperty.BulletDamage);
+                                                _weaponProperty.BulletDamage,
+                                                target);
     }
 
     private void OnDisable()
@@ -81,12 +82,12 @@ public class EnemyWeaponController : MonoBehaviour
         _attachedSocketTransform = null;
     }
 
-    private IEnumerator _AttackTarget()
+    private IEnumerator _AttackTarget(Transform target)
     {
         yield return new WaitForSeconds(Random.Range(0f, 0.5f));
         for (int i = 0; i < _weaponProperty.AttackCount; i++)
         {
-            ShootTarget();
+            ShootTarget(target);
             yield return _attackWait;
         }
         yield return _reloadWait;

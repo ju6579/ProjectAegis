@@ -12,6 +12,16 @@ PrefabInstance:
       propertyPath: _bulletType
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7346319206374973401, guid: 6b59918e5f9d4164f97ed8c2608b39cf,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7346319206374973401, guid: 6b59918e5f9d4164f97ed8c2608b39cf,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7395160476708356789, guid: 6b59918e5f9d4164f97ed8c2608b39cf,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -86,6 +96,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Laser
+      objectReference: {fileID: 0}
+    - target: {fileID: 7590157548373380863, guid: 6b59918e5f9d4164f97ed8c2608b39cf,
+        type: 3}
+      propertyPath: m_Parameters.widthMultiplier
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b59918e5f9d4164f97ed8c2608b39cf, type: 3}

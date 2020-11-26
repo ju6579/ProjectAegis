@@ -27,13 +27,13 @@ public class EnemyController : MonoBehaviour
     private float _warpPower = 1f;
 
     [SerializeField]
-    private LayerMask _targetLayerMask = -1;
-
-    [SerializeField]
     private float _searchDistance = 1000f;
 
     [SerializeField]
     private List<GameObject> _unitFactory = null;
+
+    [SerializeField]
+    private float _unitCallTime = 30f;
 
     [SerializeField]
     private List<GameObject> _enemyWeaponFactory = null;
@@ -49,6 +49,8 @@ public class EnemyController : MonoBehaviour
     private List<GameObject> _attachedWeaponList = new List<GameObject>();
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.5f);
+
+    private LayerMask _targetLayerMask = -1;
 
     private void Awake()
     {
@@ -77,6 +79,8 @@ public class EnemyController : MonoBehaviour
             weapon.GetComponent<EnemyWeaponController>().SetEnemyController(this, go.transform, _searchDistance);
             _attachedWeaponList.Add(weapon);
         });
+
+        _targetLayerMask = GlobalGameManager.GetInstance().PlayerShipLayer;
 
         _targetPosition = EnemyKingdom.GetInstance().NextWarpPoint;
         StartCoroutine(_WarpToPosition());
@@ -111,7 +115,9 @@ public class EnemyController : MonoBehaviour
     {
         while (this.enabled)
         {
-            _searchedTarget = Physics.OverlapSphere(transform.position, _searchDistance, _targetLayerMask);
+            _searchedTarget = Physics.OverlapSphere(transform.position,
+                                               _searchDistance,
+                                               _targetLayerMask);
             
             yield return _searchRate;
         }
@@ -121,11 +127,10 @@ public class EnemyController : MonoBehaviour
 
     private IEnumerator _CallShip()
     {
-        WaitForSeconds callrate = new WaitForSeconds(20f);
+        WaitForSeconds callrate = new WaitForSeconds(_unitCallTime);
 
-        while (this.enabled)
+        while (_searchedTarget.Length > 0)
         {
-            EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
             EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
 
             yield return callrate;

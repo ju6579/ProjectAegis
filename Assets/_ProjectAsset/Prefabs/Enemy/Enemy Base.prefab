@@ -35,9 +35,6 @@ MonoBehaviour:
     Accelation: 0
     ArrivalTime: 0.1
   _warpPower: 5
-  _targetLayerMask:
-    serializedVersion: 2
-    m_Bits: 1024
   _searchDistance: 2000
   _unitFactory:
   - {fileID: 2801089874039069289, guid: 429a54b366ed70c47827dbe84f94f2ce, type: 3}
@@ -52,7 +49,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4580735878028530171}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Socket Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -87,7 +84,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4409168752556629518}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Part
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -122,7 +119,7 @@ GameObject:
   - component: {fileID: 7658284762995673379}
   - component: {fileID: 5502526438315142436}
   - component: {fileID: 5246357527876968159}
-  m_Layer: 11
+  m_Layer: 9
   m_Name: Cargo
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -169,7 +166,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 73c176f402d2c2f4d929aa5da7585d17, type: 2}
+  - {fileID: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -229,7 +226,7 @@ PrefabInstance:
     - target: {fileID: 555968331597158140, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 3784536938439382799, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}
@@ -329,7 +326,7 @@ PrefabInstance:
     - target: {fileID: 7289561537078562142, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef,
         type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3c19c94b5d4a8d44ba1e82eb9434fbef, type: 3}
@@ -433,6 +430,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Socket
       objectReference: {fileID: 0}
+    - target: {fileID: 8711160440097250600, guid: d0c9cb4345d449d4dba118fec34bb9d7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0c9cb4345d449d4dba118fec34bb9d7, type: 3}
 --- !u!4 &4843438868778637642 stripped
@@ -522,6 +524,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Socket
+      objectReference: {fileID: 0}
+    - target: {fileID: 8711160440097250600, guid: d0c9cb4345d449d4dba118fec34bb9d7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0c9cb4345d449d4dba118fec34bb9d7, type: 3}
@@ -613,6 +620,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Socket
       objectReference: {fileID: 0}
+    - target: {fileID: 8711160440097250600, guid: d0c9cb4345d449d4dba118fec34bb9d7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0c9cb4345d449d4dba118fec34bb9d7, type: 3}
 --- !u!4 &2933458013977829548 stripped
@@ -703,6 +715,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Socket
       objectReference: {fileID: 0}
+    - target: {fileID: 8711160440097250600, guid: d0c9cb4345d449d4dba118fec34bb9d7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0c9cb4345d449d4dba118fec34bb9d7, type: 3}
 --- !u!4 &3101644968421367168 stripped
@@ -792,6 +809,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Socket
+      objectReference: {fileID: 0}
+    - target: {fileID: 8711160440097250600, guid: d0c9cb4345d449d4dba118fec34bb9d7,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0c9cb4345d449d4dba118fec34bb9d7, type: 3}

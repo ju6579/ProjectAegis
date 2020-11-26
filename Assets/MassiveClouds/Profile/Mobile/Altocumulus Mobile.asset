@@ -56,7 +56,7 @@ MonoBehaviour:
     RelativeHeight: 0
     HorizontalSoftnessTop: 1
     HorizontalSoftnessBottom: 1
-    HorizontalSoftnessFigure: 0.04
+    HorizontalSoftnessFigure: 1
     FromHeight: -2000
     ToHeight: -1000
     Thickness: 1048

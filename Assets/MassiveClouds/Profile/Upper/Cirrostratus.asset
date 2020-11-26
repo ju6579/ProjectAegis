@@ -3,8 +3,9 @@
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
@@ -15,7 +16,7 @@ MonoBehaviour:
     VolumeTexture: {fileID: 11700000, guid: 8a3769d6c92258a45b8a1c8840707eb5, type: 2}
     Tiling: {x: 0.7, y: 1}
     Octave: 1
-    Sculpture: 0.516
+    Sculpture: 1
     Phase: -0.43
     DetailDistance: 0
     Renderer: 0
@@ -25,22 +26,23 @@ MonoBehaviour:
     RampOffset: 0
     RampStrength: 0
     Softness: 0.859
-    Density: 1
+    Density: 0.21
     Dissolve: 0
-    Transparency: 0
-    Scale: 10
-    ScrollVelocity: {x: 500, y: 0, z: 500}
+    FarDissolve: 1
+    Transparency: 0.4
+    Scale: 0.5
+    ScrollVelocity: {x: 0, y: 0, z: 200}
     Lighting: 0.518
     DirectLight: 0
-    Ambient: 1
-    LightingQuality: 0.273
-    LightSmoothness: 0.37
+    Ambient: 0
+    LightingQuality: 0
+    LightSmoothness: 0
     LightScattering: 0
-    Shading: 0.192
+    Shading: 0
     EdgeLighting: 0.639
     GlobalLighting: -1
     GlobalLightingRange: 0.306
-    Shadow: 1
+    Shadow: 0
     ShadowSoftness: 0.08
     ShadowQuality: 0
     ShadowStrength: 0.333
@@ -49,21 +51,23 @@ MonoBehaviour:
     VolumetricShadowDensity: 0
     VolumetricShadowStrength: 0
     Brightness: 0
-    Contrast: 0
+    Contrast: 0.09
     Horizontal: 1
     RelativeHeight: 0
     HorizontalSoftnessTop: 1
     HorizontalSoftnessBottom: 1
-    HorizontalSoftnessFigure: 0.497
-    FromHeight: 2500
-    ToHeight: 2600
+    HorizontalSoftnessFigure: 1
+    FromHeight: -1500
+    ToHeight: -800
     Thickness: 1048
     FromDistance: 0
-    MaxDistance: 60000
-    Iteration: 20
-    Fade: 1.6
+    MaxDistance: 3200
+    Iteration: 10
+    Fade: 0.01
     Optimize: 0
-    HeightFog: 1
+    HeightFog: 0
     GroundHeight: 85
     HeightFogFromDistance: 1087
     HeightFogRange: 1000
+    FarHeightFogRange: 0
+    HeightFogDensity: 0

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1267074884001841770}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Part
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2609406855032876860}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Socket Anchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3493699296685093836}
   - component: {fileID: 3562359520012547472}
-  m_Layer: 10
+  m_Layer: 8
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5801404978478428391}
   - component: {fileID: 7043223484158897255}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: Controller
   m_TagString: Pawn
   m_Icon: {fileID: 0}
@@ -183,9 +183,6 @@ MonoBehaviour:
     MaxMoveSpeed: 30
     Accelation: 1
     ArrivalTime: 1
-  _targetLayerMask:
-    serializedVersion: 2
-    m_Bits: 2048
   _searchDistance: 3000
 --- !u!1001 &5842194475919909895
 PrefabInstance:

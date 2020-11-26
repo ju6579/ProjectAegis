@@ -14,6 +14,18 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
             _launchedEnemyUnit.Add(ProjectionManager.GetInstance().InstantiateEnemyUnit(prefab, mother));
     }
 
+    public EnemyController RequestNewMotherShip(EnemyUnitController unit)
+    {
+        if(_launchedEnemyMotherShips.Count > 0)
+        {
+            GameObject newMother = _launchedEnemyMotherShips[Random.Range(0, _launchedEnemyMotherShips.Count - 1)];
+
+            return newMother.GetComponent<EnemyController>();
+        }
+
+        return null;
+    } 
+
     public void DestroyCurrentEnemyOnEscape()
     {
         _launchedEnemyMotherShips.ForEach((GameObject mother) => {
@@ -32,13 +44,12 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
             }
         });
         _launchedEnemyUnit.Clear();
+
+        _enemySpawnTimeStamp = Time.time + PlayerKindom.PlayerKingdom.GetInstance().EscapeTime;
     }
 
     [SerializeField]
     private Transform _enemyGate = null;
-
-    [SerializeField]
-    private float _enemySpawnTimeOffset = 1f;
 
     [SerializeField]
     private int _warpPointCutCount = 12;

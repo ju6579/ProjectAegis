@@ -51,6 +51,8 @@ public class ShipController : MonoBehaviour
         {
             PlayerKingdom.GetInstance().ProductDestoryed(weaponSet.Current.Value);
         }
+
+        _attachedWeaponHash.Clear();
     }
 
     private bool _flag = false;
@@ -68,9 +70,6 @@ public class ShipController : MonoBehaviour
 
     [SerializeField]
     private SpaceShipProperty _shipProperty = null;
-
-    [SerializeField]
-    private LayerMask _targetLayerMask = -1;
 
     [SerializeField]
     private float _searchDistance = 1000f;
@@ -135,6 +134,7 @@ public class ShipController : MonoBehaviour
     private Rigidbody shipPhysics = null;
     private Vector3 _targetPosition;
     private float _currentSpeed = 0f;
+    private LayerMask _targetLayerMask = -1;
 
     private void Awake()
     {
@@ -165,6 +165,8 @@ public class ShipController : MonoBehaviour
         }
 
         StartCoroutine(_SearchAttackTarget());
+
+        _targetLayerMask = GlobalGameManager.GetInstance().EnemyShipLayer;
     }
 
     private void Update()
@@ -181,11 +183,18 @@ public class ShipController : MonoBehaviour
         }
     }
 
+    private void ReturnWeaponToPool()
+    {
+
+    }
+
     private IEnumerator _SearchAttackTarget()
     {
         while(this != null)
         {
-            _searchedTarget = Physics.OverlapSphere(transform.position, _searchDistance, _targetLayerMask);
+            _searchedTarget = Physics.OverlapSphere(transform.position, 
+                                               _searchDistance, 
+                                               _targetLayerMask);
 
             _searchedQueue.Clear();
             _searchedTarget.ToList().ForEach((Collider co) => _searchedQueue.Enqueue(co));
@@ -198,7 +207,7 @@ public class ShipController : MonoBehaviour
 
     private IEnumerator _WarpToPosition()
     {
-        yield return new WaitForSeconds(_shipProperty.ArrivalTime + UnityEngine.Random.Range(0.5f, 1.5f));
+        yield return new WaitForSeconds(_shipProperty.ArrivalTime);
         _targetPosition = PlayerKingdom.GetInstance().NextWarpPoint;
 
         transform.localPosition = _targetPosition;

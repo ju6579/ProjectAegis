@@ -4,7 +4,8 @@ public enum GErrorType
 {
     SingletonDuplicated,
     ComponentNull,
-    InspectorValueException
+    InspectorValueException,
+    WrongFunctionParameterExeption
 }
 
 public class GlobalLogger
@@ -13,6 +14,7 @@ public class GlobalLogger
     private static readonly string _singletonDuplicated = " : Singleton Component Has Duplicated, Please Check Component";
     private static readonly string _componentNull = " : Component Null Error, Please Check Component is Exist";
     private static readonly string _InspectorValueException = " : Component Inspector Value is Wrong Value, Please Check Inspector";
+    private static readonly string _wrongFunctionParameterExeption = " : Function Parameter is Wrong Value, Please Check Source";
 
     private static readonly string _typeNotSelected = " : Error Type Has Not Selected, Check Script";
     #endregion
@@ -34,6 +36,10 @@ public class GlobalLogger
 
             case GErrorType.InspectorValueException:
                 message = _InspectorValueException;
+                break;
+
+            case GErrorType.WrongFunctionParameterExeption:
+                message = _wrongFunctionParameterExeption;
                 break;
 
             default:

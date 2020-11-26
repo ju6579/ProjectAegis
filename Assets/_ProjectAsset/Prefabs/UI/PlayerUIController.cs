@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+
+using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerUIController : Singleton<PlayerUIController>
@@ -8,6 +11,9 @@ public class PlayerUIController : Singleton<PlayerUIController>
     public static UIActiveEvent DisableUIPanelEventCallbacks;
 
     public Transform Dummy => _dummyCanvas.transform;
+
+    [SerializeField]
+    private Transform _canvasAnchor = null;
 
     [SerializeField]
     private GameObject _mapUIPanel = null;
@@ -22,21 +28,65 @@ public class PlayerUIController : Singleton<PlayerUIController>
     private GameObject _dummyCanvas = null;
 
     [SerializeField]
-    private Text _timeText = null;
+    private List<Transform> _panelPositionAnchorSet = null;
+
+    private Dictionary<Transform, Transform> _panelDefaultTransformHash = new Dictionary<Transform, Transform>();
+    private Transform _currentActivePanel = null;
 
     private bool _isMainPanelActive = false;
-    private UIMapPanelController _mapPanelController = null;
+    private float _horizontalMove = 0f;
+    private float _verticalMove = 0f;
 
     #region Public Method Area
-    public void ActiveSpecificPanel(int actionNumber)
+    public void MainUIOnOffAction() 
     {
-        MainMenuButtonType actionType = (MainMenuButtonType)actionNumber;
-        DisableAllSubPanel();
-        switch (actionType)
+        if (_isMainPanelActive)
+            DisableUIPanelEventCallbacks();
+        else
+            ActiveUIPanelEventCallbacks();
+    }
+
+    public void ActiveSpecificPanel(MainMenuButtonType actionType)
+    {
+        if (_isMainPanelActive)
         {
-            case MainMenuButtonType.Map: _mapUIPanel.SetActive(true); break;
-            case MainMenuButtonType.Ship: _shipUIPanel.SetActive(true); break;
-            case MainMenuButtonType.Product: _productUIPanel.SetActive(true); break;
+            if (_currentActivePanel != null)
+                _currentActivePanel.position = _panelDefaultTransformHash[_currentActivePanel].position;
+
+            Transform targetTransform = null;
+
+            switch (actionType)
+            {
+                case MainMenuButtonType.Map: targetTransform = _mapUIPanel.transform; break;
+                case MainMenuButtonType.Ship: targetTransform = _shipUIPanel.transform; break;
+                case MainMenuButtonType.Product: targetTransform = _productUIPanel.transform; break;
+            }
+
+            if(targetTransform != null)
+            {
+                targetTransform.localPosition = Vector3.zero;
+
+                _currentActivePanel = targetTransform;
+            }
+        }
+    }
+
+    public void MoveMainUIPanel(Vector3 velocity)
+    {
+        if (_isMainPanelActive)
+        {
+            _horizontalMove += velocity.z * Time.deltaTime;
+            _verticalMove += velocity.y * Time.deltaTime;
+
+            Vector3 anchorDirection = (_canvasAnchor.position - transform.position).normalized;
+            Vector3 horizontalMoveDirection = Vector3.Cross(anchorDirection, transform.up).normalized;
+
+            transform.position = Vector3.Lerp(transform.position,
+                                        transform.position + horizontalMoveDirection * velocity.x, 
+                                        Time.deltaTime * 5f);
+
+            transform.position -= anchorDirection * velocity.z * Time.deltaTime * 3f;
+            transform.position += Vector3.up * velocity.y * Time.deltaTime * 3f;
         }
     }
     #endregion
@@ -49,45 +99,33 @@ public class PlayerUIController : Singleton<PlayerUIController>
         DisableUIPanelEventCallbacks += DisableMainPanel;
 
         _dummyCanvas.SetActive(false);
+
+        _panelDefaultTransformHash.Add(_productUIPanel.transform, _panelPositionAnchorSet[0]);
+        _panelDefaultTransformHash.Add(_shipUIPanel.transform, _panelPositionAnchorSet[1]);
+        _panelDefaultTransformHash.Add(_mapUIPanel.transform, _panelPositionAnchorSet[2]);
     }
 
     private void Start()
     {
         DisableUIPanelEventCallbacks();
-        ActiveUIPanelEventCallbacks();
-
-        _mapPanelController = GetComponentInChildren<UIMapPanelController>();
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            if (!_isMainPanelActive)
-            {
-                ActiveUIPanelEventCallbacks();
-            }
-            else
-            {
-                DisableUIPanelEventCallbacks();
-            }
-        }
-
-        if (_mapPanelController != null)
-            _timeText.text = (1f / Time.deltaTime).ToString();
-        //_timeText.text = ((int)_mapPanelController.RemainTime).ToString();
+        transform.LookAt(_canvasAnchor);
+        transform.Rotate(0, 180, 0);
     }
     #endregion
 
     #region Private Method Area
+    Coroutine test = null;
+
     private void ActiveMainPanel()
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
         _isMainPanelActive = true;
-
-        ActiveAllSubPanel();
     }
 
     private void DisableMainPanel()
@@ -98,32 +136,29 @@ public class PlayerUIController : Singleton<PlayerUIController>
         _isMainPanelActive = false;
 
         DisableAllSubPanel();
+
+        if(test != null)
+            StopCoroutine(test);
+
+        test = null;
     }
 
     private void DisableAllSubPanel()
     {
-        _mapUIPanel.SetActive(false);
-        _shipUIPanel.SetActive(false);
-        _productUIPanel.SetActive(false);
-    }
+        var panel = _panelDefaultTransformHash.GetEnumerator();
 
-    private void ActiveAllSubPanel()
-    {
-        _mapUIPanel.SetActive(true);
-        _shipUIPanel.SetActive(true);
-        _productUIPanel.SetActive(true);
+        while (panel.MoveNext())
+            panel.Current.Key.position = panel.Current.Value.position;
+
+        _currentActivePanel = null;
     }
     #endregion
+}
 
-    #region Custom Type
-    public enum MainMenuButtonType
-    {
-        Map = 0,
-        Team = 1,
-        Ship = 2,
-        Base = 3,
-        Upgrade = 4,
-        Product = 5
-    }
-    #endregion
+public enum MainMenuButtonType
+{
+    Map = 0,
+    Ship = 1,
+    Product = 2,
+    Kingdom = 3
 }

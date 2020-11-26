@@ -112,12 +112,12 @@ public class ProjectionManager : Singleton<ProjectionManager>
                                            ec.transform.localPosition, 
                                            ec.transform.localRotation).Key.gameObject;
 
-        instance.GetComponent<EnemyUnitController>().SetMotherShip(ec);
+        instance.GetComponent<EnemyUnitController>().InitiallizeUnit(ec);
         
         return instance;
     }
 
-    public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation, bool isShootByPlayer, int bulletDamage)
+    public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation, bool isShootByPlayer, int bulletDamage, Transform target)
     {
         Vector3 localPosition = _worldSpace.transform.InverseTransformPoint(worldPosition);
         KeyValuePair<Transform, Transform> instance = InstantiateToWorld(bullet, localPosition, rotation);
@@ -126,17 +126,19 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
         if (isShootByPlayer)
         {
-            bulletComponent.SetBulletProperty(CustomLibrary.GetInstance().PlayerBulletTargetLayer,
+            bulletComponent.SetBulletProperty(GlobalGameManager.GetInstance().PlayerBulletTargetLayer,
                                         _playerBulletMaterial,
                                         isShootByPlayer,
-                                        bulletDamage);
+                                        bulletDamage,
+                                        target);
         }
         else
         {
-            bulletComponent.SetBulletProperty(CustomLibrary.GetInstance().EnemyBulletTargetLayer,
+            bulletComponent.SetBulletProperty(GlobalGameManager.GetInstance().EnemyBulletTargetLayer,
                                         _enemyBulletMaterial,
                                         isShootByPlayer,
-                                        bulletDamage);
+                                        bulletDamage,
+                                        target);
         }
     }
 

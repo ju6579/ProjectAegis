@@ -173,6 +173,7 @@ namespace PlayerKindom
                 }
 
                 PawnType type = product.Instance.GetComponent<PawnBaseController>().PawnActionType;
+
                 if(type == PawnType.SpaceShip)
                 {
                     if (_shipCargo.Contains(product))
@@ -181,6 +182,7 @@ namespace PlayerKindom
                     if (_fieldShipHash.ContainsKey(product.Instance))
                         _fieldShipHash.Remove(product.Instance);
                 }
+
                 else if(type == PawnType.Weapon)
                 {
                     product.DisableProductInstance();

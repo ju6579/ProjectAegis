@@ -43,6 +43,7 @@ public class GlobalObjectManager : Singleton<GlobalObjectManager>
     public static void ReturnToObjectPool(GameObject instance)
     {
         instance.SetActive(false);
+        instance.transform.localPosition = Vector3.up * 5f;
 
         _globalObjectPool[_instanceCachePool[instance]].Enqueue(instance);
         _instanceCachePool.Remove(instance);
@@ -59,6 +60,4 @@ public class GlobalObjectManager : Singleton<GlobalObjectManager>
             _globalObjectPool[prefab].Enqueue(instance);
         }
     }
-
- 
 }

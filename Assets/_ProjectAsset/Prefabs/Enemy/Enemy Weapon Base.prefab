@@ -15,6 +15,7 @@ MonoBehaviour:
   _weaponProperty:
     BulletObject: {fileID: 2906851056946311601, guid: f478607258711b24585a84472ed6adb9,
       type: 3}
+    BulletDamage: 0
     AttackCount: 5
     AttackDelay: 0.4
     ReloadDelay: 1
@@ -26,6 +27,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 684143984939985697, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2482470308816425470, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 3759940353233759844, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -85,6 +96,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Enemy Weapon Base
+      objectReference: {fileID: 0}
+    - target: {fileID: 6802823801800659359, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}

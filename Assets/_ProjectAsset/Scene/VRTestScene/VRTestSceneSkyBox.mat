@@ -33,12 +33,64 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Cubemap_2B4E0BAB:
+        m_Texture: {fileID: 8900000, guid: c29a9c64619216a49baf6555eed14712, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Cubemap_6C2132FC:
+        m_Texture: {fileID: 8900000, guid: c796af2b30b297c48ba17a22a163a8a9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Cubemap_AB6E8A6:
         m_Texture: {fileID: 8900000, guid: bc0792eea0df588458e7cbb9b0c3c3f0, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - Cubemap_C1B65D00:
+        m_Texture: {fileID: 8900000, guid: bed10788681114a48ad2b4957cff3c0d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Cubemap_F54A41DF:
+        m_Texture: {fileID: 8900000, guid: dbc24340f7e57b54caa539372bf85a68, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_1626D611:
+        m_Texture: {fileID: 2800000, guid: c796af2b30b297c48ba17a22a163a8a9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_2E1D51D8:
+        m_Texture: {fileID: 2800000, guid: 5a9c4c84572e9bd4390ab5edc7a7e8b3, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_46634FE7:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Texture2D_5065542:
         m_Texture: {fileID: 2800000, guid: bc0792eea0df588458e7cbb9b0c3c3f0, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_5DC23384:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_6CD97384:
+        m_Texture: {fileID: 2800000, guid: dbc24340f7e57b54caa539372bf85a68, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_7CB6074C:
+        m_Texture: {fileID: 2800000, guid: bed10788681114a48ad2b4957cff3c0d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_B79AC285:
+        m_Texture: {fileID: 2800000, guid: c29a9c64619216a49baf6555eed14712, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_D9ABED59:
+        m_Texture: {fileID: 2800000, guid: c29a9c64619216a49baf6555eed14712, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_E68BE7A0:
+        m_Texture: {fileID: 2800000, guid: c796af2b30b297c48ba17a22a163a8a9, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
@@ -65,6 +117,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleCubemap_CEF0909B_Cube_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -74,6 +130,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_3BA5C30D: 0.02
+    - Vector1_672241B0: 10
+    - Vector1_C88DBFAA: -0.82
     - Vector1_D25FB225: 1.5
     - _AlphaClip: 0
     - _AtmosphereThickness: 1
@@ -107,6 +166,10 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
+    - Color_11E53921: {r: 0, g: 1.2941177, b: 2, a: 0}
+    - Color_1E9D9C5: {r: 0.24750803, g: 0.35701698, b: 0.509434, a: 0}
+    - Color_60B05532: {r: 0, g: 0, b: 0, a: 0}
+    - Color_8CE2A108: {r: 0, g: 0, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
