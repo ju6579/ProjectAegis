@@ -8,7 +8,7 @@ public class BulletMovement : MonoBehaviour
     
     public float StoppingPower => _bulletStoppingPower;
 
-    public void SetBulletProperty(LayerMask targetLayer, Material _material, bool isShootByPlayer, int damage, Transform target)
+    public void SetBulletProperty(LayerMask targetLayer, Material material, bool isShootByPlayer, int damage, Transform target)
     {
         _targetLayer = targetLayer;
         _bulletDamage = damage;
@@ -17,15 +17,15 @@ public class BulletMovement : MonoBehaviour
         switch (_bulletType)
         {
             case BulletType.Projectile:
-                _targetMeshRenderer.material = _material;
+                _targetMeshRenderer.material = material;
                 break;
 
             case BulletType.Laser:
-                _lineRenderer.material = _material;
+                _lineRenderer.material = material;
                 break;
 
             case BulletType.Missile:
-                _targetMeshRenderer.material = _material;
+                _targetMeshRenderer.material = material;
                 break;
         }
     } 
@@ -100,11 +100,15 @@ public class BulletMovement : MonoBehaviour
 
 
             case BulletType.Missile:
-                if (_missileTarget != null && _missileTarget.gameObject.activeSelf)
+                if (_missileTarget == null)
                 {
+                    _missileTarget = null;
+                    GlobalObjectManager.ReturnToObjectPool(gameObject);
+                }
+
+                if(_missileTarget.gameObject.activeInHierarchy)
                     transform.LookAt(_missileTarget);
-                } 
-                
+
                 transform.localPosition += (transform.forward + _randomUpDirection * _missileTimeStamp).normalized
                                        * Time.deltaTime * _bulletSpeed;
 
@@ -178,6 +182,9 @@ public class BulletMovement : MonoBehaviour
         {
             PawnBaseController pbc = _hitInfo.collider.gameObject.GetComponentInParent<PawnBaseController>();
             pbc.ApplyDamage(this);
+
+            AudioSourceManager.GetInstance().RequestPlayAudioByType(SFXType.MissileHit);
+            GlobalEffectManager.GetInstance().PlayEffectByType(VFXType.MissileExplosion, transform.position);
 
             GlobalObjectManager.ReturnToObjectPool(gameObject);
         }

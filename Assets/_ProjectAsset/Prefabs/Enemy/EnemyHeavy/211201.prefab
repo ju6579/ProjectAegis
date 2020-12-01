@@ -29,6 +29,11 @@ PrefabInstance:
       propertyPath: _searchDistance
       value: 800
       objectReference: {fileID: 0}
+    - target: {fileID: -7896665677154206317, guid: fd106355c33693949b0c6fd6ee0d905d,
+        type: 3}
+      propertyPath: _unitCallTime
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 3844570308871109935, guid: fd106355c33693949b0c6fd6ee0d905d,
         type: 3}
       propertyPath: _pawnProperty.ShieldPoint
@@ -38,6 +43,26 @@ PrefabInstance:
         type: 3}
       propertyPath: _pawnProperty.ArmorPoint
       value: 500
+      objectReference: {fileID: 0}
+    - target: {fileID: 3844570308871109935, guid: fd106355c33693949b0c6fd6ee0d905d,
+        type: 3}
+      propertyPath: _dissolveRenderer
+      value: 
+      objectReference: {fileID: 9099258994623274016}
+    - target: {fileID: 3844570308871109935, guid: fd106355c33693949b0c6fd6ee0d905d,
+        type: 3}
+      propertyPath: _explosionSize.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3844570308871109935, guid: fd106355c33693949b0c6fd6ee0d905d,
+        type: 3}
+      propertyPath: _explosionSize.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 3844570308871109935, guid: fd106355c33693949b0c6fd6ee0d905d,
+        type: 3}
+      propertyPath: _explosionSize.z
+      value: 40
       objectReference: {fileID: 0}
     - target: {fileID: 7275127044657883005, guid: fd106355c33693949b0c6fd6ee0d905d,
         type: 3}
@@ -179,3 +204,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6d11e9435ca600c409158e14ca4c07da, type: 3}
+--- !u!23 &9099258994623274016 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: 6d11e9435ca600c409158e14ca4c07da,
+    type: 3}
+  m_PrefabInstance: {fileID: 9099258994625561664}
+  m_PrefabAsset: {fileID: 0}

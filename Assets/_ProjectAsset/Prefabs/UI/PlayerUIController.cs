@@ -16,6 +16,9 @@ public class PlayerUIController : Singleton<PlayerUIController>
     private Transform _canvasAnchor = null;
 
     [SerializeField]
+    private GameObject _kingdomUIPanel = null;
+
+    [SerializeField]
     private GameObject _mapUIPanel = null;
 
     [SerializeField]
@@ -60,6 +63,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
                 case MainMenuButtonType.Map: targetTransform = _mapUIPanel.transform; break;
                 case MainMenuButtonType.Ship: targetTransform = _shipUIPanel.transform; break;
                 case MainMenuButtonType.Product: targetTransform = _productUIPanel.transform; break;
+                case MainMenuButtonType.Kingdom: targetTransform = _kingdomUIPanel.transform; break;
             }
 
             if(targetTransform != null)
@@ -103,6 +107,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
         _panelDefaultTransformHash.Add(_productUIPanel.transform, _panelPositionAnchorSet[0]);
         _panelDefaultTransformHash.Add(_shipUIPanel.transform, _panelPositionAnchorSet[1]);
         _panelDefaultTransformHash.Add(_mapUIPanel.transform, _panelPositionAnchorSet[2]);
+        _panelDefaultTransformHash.Add(_kingdomUIPanel.transform, _panelPositionAnchorSet[3]);
     }
 
     private void Start()
@@ -118,29 +123,18 @@ public class PlayerUIController : Singleton<PlayerUIController>
     #endregion
 
     #region Private Method Area
-    Coroutine test = null;
-
     private void ActiveMainPanel()
     {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
-
         _isMainPanelActive = true;
+
+        ActiveSpecificPanel(MainMenuButtonType.Kingdom);
     }
 
     private void DisableMainPanel()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
         _isMainPanelActive = false;
 
         DisableAllSubPanel();
-
-        if(test != null)
-            StopCoroutine(test);
-
-        test = null;
     }
 
     private void DisableAllSubPanel()

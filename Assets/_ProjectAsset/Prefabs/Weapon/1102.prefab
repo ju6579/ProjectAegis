@@ -7,6 +7,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: _shotSound
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: _weaponProperty.AttackCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: _weaponProperty.AttackDelay
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: _weaponProperty.BulletDamage
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 3759940353233759844, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -65,7 +85,7 @@ PrefabInstance:
     - target: {fileID: 3759940353233759847, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: m_Name
-      value: Weapon Base
+      value: 1102
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a2ace1d4489f0d64aa1e3543da7f4a80, type: 3}

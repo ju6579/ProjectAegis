@@ -16,7 +16,7 @@ public class UISocketContentsProperty : MonoBehaviour
     private Image _socketWeaponImage = null;
 
     private readonly string _socketDefaultName = "Empty Socket";
-    private ProductWrapper _socketedWeapon = null;
+    private ProductionTask _socketedWeapon = null;
     private GameObject _targetSocket = null;
     private ShipController _shipController = null;
 
@@ -28,23 +28,21 @@ public class UISocketContentsProperty : MonoBehaviour
         _contentsButton = GetComponent<Button>();
     }
 
-    public void AttachSocket(ProductionTask productData, ShipController ship)
+    public void AttachSocket(ProductionTask product, ShipController ship)
     {
         if (_socketedWeapon != null)
             return;
 
-        ProductWrapper product = PlayerKingdom.GetInstance().WeaponToField(productData, ship, _targetSocket);
-        
-        if (product == null)
-            return;
+        if (PlayerKingdom.GetInstance().WeaponToField(product))
+        {
+            _shipController = ship;
+            ship.SetWeaponOnSocket(product, _targetSocket);
 
-        _shipController = ship;
-        ship.SetWeaponOnSocket(product, _targetSocket);
+            _socketedWeapon = product;
 
-        _socketedWeapon = product;
-
-        _socketWeaponName.text = product.ProductData.TaskName;
-        _socketWeaponImage.sprite = product.ProductData.TaskIcon;
+            _socketWeaponName.text = product.TaskName;
+            _socketWeaponImage.sprite = product.TaskIcon;
+        }
     }
 
     public void ClearSocket()

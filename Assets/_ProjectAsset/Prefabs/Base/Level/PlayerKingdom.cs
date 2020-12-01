@@ -14,9 +14,8 @@ namespace PlayerKindom
         public void ShipToCargo(ProductWrapper product) => _kingdomCargo.AddShipToCargo(product);
         public void ShipToField(ProductWrapper product) => _kingdomCargo.LaunchShip(product);
 
-        public void WeaponToCargo(ProductWrapper product) => _kingdomCargo.AddWeaponToCargo(product);
-        public ProductWrapper WeaponToField(ProductionTask productData, ShipController ship, GameObject socket)
-            => _kingdomCargo.GetWeaponProduct(productData, ship, socket);
+        public void WeaponToCargo(ProductionTask product) => _kingdomCargo.AddWeaponToCargo(product);
+        public bool WeaponToField(ProductionTask product) => _kingdomCargo.WeaponToField(product);
 
         public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
 
@@ -28,7 +27,7 @@ namespace PlayerKindom
         #region Kingdom Handler
         public int CurrentAvailableTaskCount => _availableTaskCount;
         public void EndTask() => _availableTaskCount++;
-        public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveProduct(product);
+        public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveShip(product);
 
         public List<ProductionTask> ProductList => _productionTaskCatalog;
         public List<ResearchTask> ResearchList => _researchTaskCatalog;
@@ -107,8 +106,16 @@ namespace PlayerKindom
         {
             base.Awake();
 
-            _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
-            _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
+            if(ResearchManager.GetInstance() != null)
+            {
+                ResearchManager.GetInstance().AvailableShipList.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
+                ResearchManager.GetInstance().AvailableWeaponList.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
+            }
+            else
+            {
+                _productionTaskCatalog.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
+                _researchTaskCatalog.ForEach((ResearchTask rt) => AddAvailableResearch(rt));
+            }
 
             _harvestTimeStamp = Time.time;
         }
@@ -159,12 +166,11 @@ namespace PlayerKindom
 
             private List<ProductWrapper> _shipCargo = new List<ProductWrapper>();
 
-            private Dictionary<ProductionTask, Queue<ProductWrapper>> _weaponCargo
-                = new Dictionary<ProductionTask, Queue<ProductWrapper>>();
+            private Dictionary<ProductionTask, int> _weaponCargo = new Dictionary<ProductionTask, int>();
 
             private Dictionary<GameObject, ProductWrapper> _fieldShipHash = new Dictionary<GameObject, ProductWrapper>();
 
-            public void RemoveProduct(ProductWrapper product)
+            public void RemoveShip(ProductWrapper product)
             {
                 if (product.Instance == null)
                 {
@@ -181,15 +187,6 @@ namespace PlayerKindom
 
                     if (_fieldShipHash.ContainsKey(product.Instance))
                         _fieldShipHash.Remove(product.Instance);
-                }
-
-                else if(type == PawnType.Weapon)
-                {
-                    product.DisableProductInstance();
-                }
-                else
-                {
-                    GlobalLogger.CallLogError(product.ProductData.Product.name, GErrorType.InspectorValueException);
                 }
 
                 product.ClearProductWrapper();
@@ -226,33 +223,28 @@ namespace PlayerKindom
                 product.Instance.GetComponent<ShipController>().WarpToPosition();
             }
 
-            public void AddWeaponToCargo(ProductWrapper product)
+            public void AddWeaponToCargo(ProductionTask product)
             {
-                if (!_weaponCargo.ContainsKey(product.ProductData))
-                    _weaponCargo[product.ProductData] = new Queue<ProductWrapper>();
+                if (!_weaponCargo.ContainsKey(product))
+                    _weaponCargo[product] = 0;
 
-                product.DisableProductInstance();
-
-                _weaponCargo[product.ProductData].Enqueue(product);
+                _weaponCargo[product]++;
             }
 
-            public ProductWrapper GetWeaponProduct(ProductionTask productData, ShipController ship, GameObject socket)
+            public bool WeaponToField(ProductionTask product)
             {
-                ProductWrapper product = null;
-
-                if (GetSpecificWeaponCount(productData) > 0)
+                if (GetSpecificWeaponCount(product) > 0)
                 {
-                    ProductWrapper cache = _weaponCargo[productData].Dequeue();
-
-                    product = cache;
+                    _weaponCargo[product]--;
+                    return true;
                 }
-
-                return product;
+                else
+                    return false;
             }
 
             public int GetSpecificWeaponCount(ProductionTask productData)
             {
-                return _weaponCargo.ContainsKey(productData) ? _weaponCargo[productData].Count : 0;
+                return _weaponCargo.ContainsKey(productData) ? _weaponCargo[productData] : 0;
             }
 
             public void HandleFieldShipOnEscape()
@@ -296,11 +288,13 @@ namespace PlayerKindom
         [Serializable]
         public class ProductionTask : PlayerTask
         {
+            public int ProductionID;
             public GameObject Product = null;
             public PawnType ProductType
                 => Product.GetComponent<PawnBaseController>().PawnActionType;
 
             public Sprite TaskIcon = null;
+            public int ProductionTPPoint = 0;
 
             protected override void TaskAction()
             {
@@ -322,7 +316,7 @@ namespace PlayerKindom
                         if (Product.GetComponent<WeaponController>() == null)
                             GlobalLogger.CallLogError(TaskName, GErrorType.InspectorValueException);
 
-                        PlayerKingdom.GetInstance().WeaponToCargo(new ProductWrapper(this));
+                        PlayerKingdom.GetInstance().WeaponToCargo(this);
                         break;
 
                     default:

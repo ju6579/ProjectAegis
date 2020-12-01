@@ -43,6 +43,8 @@ public class ReticlePoser : MonoBehaviour
         var pointCount = points.Count;
         var result = raycaster.FirstRaycastResult();
 
+        HandleProjectedObject(result);
+
         if ((showOnHitOnly && !result.isValid) || pointCount <= 1)
         {
             reticleForDefaultRay.gameObject.SetActive(false);
@@ -121,5 +123,29 @@ public class ReticlePoser : MonoBehaviour
     {
         reticleForDefaultRay.gameObject.SetActive(false);
         reticleForCurvedRay.gameObject.SetActive(false);
+    }
+
+    private ProjectPositionTracker _currentShipTracker = null;
+    private void HandleProjectedObject(UnityEngine.EventSystems.RaycastResult result)
+    {
+        ProjectPositionTracker ppt = null;
+
+        if (result.gameObject != null)
+            ppt = result.gameObject.GetComponentInParent<ProjectPositionTracker>();
+
+        if (_currentShipTracker != ppt)
+        {
+            if(_currentShipTracker?.ProjectedType == Pawn.PawnType.SpaceShip)
+            {
+                _currentShipTracker.RevertMaterial();
+                _currentShipTracker = null;
+            }
+
+            if (ppt?.ProjectedType == Pawn.PawnType.SpaceShip)
+            {
+                ppt.ReplaceMaterial(defaultReticleMaterial);
+                _currentShipTracker = ppt;
+            }
+        }
     }
 }

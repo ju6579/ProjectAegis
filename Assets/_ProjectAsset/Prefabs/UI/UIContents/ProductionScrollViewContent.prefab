@@ -314,8 +314,10 @@ MonoBehaviour:
       Explosive: 0
       Metal: 0
       Electronic: 0
+    ProductionID: 0
     Product: {fileID: 0}
     TaskIcon: {fileID: 0}
+    ProductionTPPoint: 0
 --- !u!1 &1265746241042905120
 GameObject:
   m_ObjectHideFlags: 0
@@ -1068,7 +1070,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_Maskable: 1
   m_OnCullStateChanged:

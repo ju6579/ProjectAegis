@@ -66,6 +66,7 @@ Material:
     - _Blend: 0
     - _Brightness: 1
     - _BumpScale: 1
+    - _ColorMask: 15
     - _Contrast: 1
     - _Cull: 2
     - _Cutoff: 0.5
@@ -85,6 +86,11 @@ Material:
     - _Speed: 1
     - _SpeedCC: 1
     - _SrcBlend: 1
+    - _Stencil: 0
+    - _StencilComp: 8
+    - _StencilOp: 0
+    - _StencilReadMask: 255
+    - _StencilWriteMask: 255
     - _Surface: 0
     - _TintOneOn: 0
     - _UnscaledTime: 0

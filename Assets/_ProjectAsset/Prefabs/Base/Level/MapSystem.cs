@@ -22,6 +22,7 @@ public class MapSystem : Singleton<MapSystem>
 
     public void SetCurrentTile(SingleTile clickedTile)
     {
+        GlobalGameManager.GetInstance().ChangeSkyByProgress(GetTileProgressByPosition(clickedTile));
         _currentTile = clickedTile;
     }
     #endregion
@@ -43,6 +44,11 @@ public class MapSystem : Singleton<MapSystem>
         GenerateTileMap();
         _currentTile = _hexagonalMap[0][0];
         base.Awake();
+    }
+
+    private void Start()
+    {
+        SetCurrentTile(_currentTile);
     }
 
     private void GenerateTileMap()
@@ -107,6 +113,14 @@ public class MapSystem : Singleton<MapSystem>
     private float DifficultyFormular(float currentDifficulty)
     {
         return currentDifficulty * _difficultyOffset + 0.1f;
+    }
+
+    private float GetTileProgressByPosition(SingleTile tile)
+    {
+        float xProgress = (float)tile.Properties.X / (float)MaxWidth;
+        float yProgress = (float)tile.Properties.Y / (float)MaxHeight;
+        Debug.Log((xProgress + yProgress));
+        return (xProgress + yProgress);
     }
 }
 

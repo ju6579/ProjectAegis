@@ -84,6 +84,8 @@ public class EnemyWeaponController : MonoBehaviour
 
     private IEnumerator _AttackTarget(Transform target)
     {
+        AudioSourceManager.GetInstance().RequestPlayAudioByBullet(_weaponProperty.BulletActionType, _weaponProperty.AttackCount);
+
         yield return new WaitForSeconds(Random.Range(0f, 0.5f));
         for (int i = 0; i < _weaponProperty.AttackCount; i++)
         {

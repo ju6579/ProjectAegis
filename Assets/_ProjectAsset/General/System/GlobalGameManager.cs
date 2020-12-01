@@ -8,6 +8,33 @@ public class GlobalGameManager : Singleton<GlobalGameManager>
     public LayerMask EnemyBulletTargetLayer = 0;
     public LayerMask PlayerShipLayer = 0;
     public LayerMask EnemyShipLayer = 0;
+
+    [SerializeField]
+    private List<Material> _nearGroundSkyList = new List<Material>();
+    [SerializeField]
+    private List<Material> _middleAtmosphereSkyList = new List<Material>();
+    [SerializeField]
+    private List<Material> _spaceSkyList = new List<Material>();
+
+    public void ChangeSkyByProgress(float progress)
+    {
+        Material targetMaterial = null;
+
+        if (progress < 0.333f)
+        {
+            targetMaterial = _nearGroundSkyList[Random.Range(0, _nearGroundSkyList.Count - 1)];
+        }
+        else if (progress >= 0.333f && progress < 0.666f)
+        {
+            targetMaterial = _middleAtmosphereSkyList[Random.Range(0, _middleAtmosphereSkyList.Count - 1)];
+        }
+        else
+        {
+            targetMaterial = _spaceSkyList[Random.Range(0, _spaceSkyList.Count - 1)];
+        }
+
+        RenderSettings.skybox = targetMaterial;
+    }
 }
 
 public class WarpPointManager

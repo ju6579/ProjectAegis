@@ -41,7 +41,7 @@ public class WeaponController : MonoBehaviour
     {
         _attackWait = new WaitForSeconds(_weaponProperty.AttackDelay);
         _reloadWait = new WaitForSeconds(_weaponProperty.ReloadDelay);
-        _randomWait = new WaitForSeconds(UnityEngine.Random.Range(0f, 0.05f));
+        _randomWait = new WaitForSeconds(UnityEngine.Random.Range(0f, 0.5f));
     }
 
     private void OnEnable()
@@ -81,11 +81,14 @@ public class WeaponController : MonoBehaviour
 
     private IEnumerator _AttackTarget(Transform target)
     {
-        for(int i = 0; i < _weaponProperty.AttackCount; i++)
+        yield return _randomWait;
+        AudioSourceManager.GetInstance().RequestPlayAudioByBullet(_weaponProperty.BulletActionType, _weaponProperty.AttackCount);
+
+        for (int i = 0; i < _weaponProperty.AttackCount; i++)
         {
             ShootTarget(target);
+
             yield return _attackWait;
-            yield return _randomWait;
         }
         yield return _reloadWait;
         _isAttack = false;

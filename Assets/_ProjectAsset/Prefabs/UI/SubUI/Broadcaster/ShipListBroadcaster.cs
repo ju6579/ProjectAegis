@@ -25,7 +25,27 @@ public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, P
 
     protected override void LoadList()
     {
-        PlayerKingdom.GetInstance().ProductList.ForEach((ProductionTask pTask) =>
+        if (ResearchManager.GetInstance() != null)
+            LoadListByProvider(ResearchManager.GetInstance().AvailableShipList);
+        else
+            LoadListByProvider(PlayerKingdom.GetInstance().ProductList);
+    }
+
+    protected override void OnListChanged(ProductionTask changed, bool isAdd)
+    {
+        base.OnListChanged(changed, isAdd);
+        if (PawnBaseController.CompareType(changed.Product, PawnType.SpaceShip))
+            _objectUIContentsHash[changed].ForEach((GameObject go) => go.SetActive(true));
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
+    private void LoadListByProvider(List<ProductionTask> productList)
+    {
+        productList.ForEach((ProductionTask pTask) =>
         {
             if (PawnBaseController.CompareType(pTask.Product, PawnType.SpaceShip))
             {
@@ -35,7 +55,7 @@ public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, P
                     cache.GetComponent<UIProductContentsProperty>().SetUIContentsData(pTask);
 
                     Button buttonCache = cache.GetComponent<Button>();
-                    buttonCache.onClick.AddListener(() 
+                    buttonCache.onClick.AddListener(()
                         => keyPair.Value.OnClickProductContents(buttonCache, pTask));
 
                     if (!_objectUIContentsHash.ContainsKey(pTask))
@@ -49,17 +69,5 @@ public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, P
                 });
             }
         });
-    }
-
-    protected override void OnListChanged(ProductionTask changed, bool isAdd)
-    {
-        base.OnListChanged(changed, isAdd);
-        if (PawnBaseController.CompareType(changed.Product, PawnType.SpaceShip))
-            _objectUIContentsHash[changed].ForEach((GameObject go) => go.SetActive(true));
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
     }
 }

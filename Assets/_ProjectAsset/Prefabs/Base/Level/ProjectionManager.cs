@@ -8,10 +8,13 @@ public class ProjectionManager : Singleton<ProjectionManager>
     public Vector3 TableWorldPosition => _tableSpace.transform.position;
     public Transform WorldTransform => _worldSpace.transform;
     public Transform TableTransform => _tableSpace.transform;
-    public Material ProjectionMaterial => _projectionMaterial;
+    public Material ProjectionMaterial => _playerProjectionMaterial;
 
     [SerializeField]
-    private Material _projectionMaterial = null;
+    private Material _playerProjectionMaterial = null;
+
+    [SerializeField]
+    private Material _enemyProjectionMaterial = null;
 
     [SerializeField]
     private GameObject _worldSpace = null;
@@ -45,7 +48,8 @@ public class ProjectionManager : Singleton<ProjectionManager>
     /// <returns> Return Key Value Pair of World Transform and Table Projected Transform </returns>
     private KeyValuePair<Transform,Transform> InstantiateToWorld(GameObject origin, 
                                                         Vector3 targetPosition, 
-                                                        Quaternion targetRotation)
+                                                        Quaternion targetRotation,
+                                                        bool isEnemy)
     {
         Transform worldTr = InstantiateByObjectPool(origin, _worldSpace.transform).transform;
         worldTr.localPosition = targetPosition;
@@ -68,10 +72,12 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
             ProjectPositionTracker tracker = tableTr.GetComponent<ProjectPositionTracker>();
             if (tracker == null)
-                tracker = (ProjectPositionTracker)tableTr.gameObject
-                    .AddComponent(typeof(ProjectPositionTracker));
+                tracker = (ProjectPositionTracker)tableTr.gameObject.AddComponent(typeof(ProjectPositionTracker));
 
-            tracker.SetTargetTransform(worldTr, worldPawn.TargetMeshAnchor.transform);
+            tracker.SetTargetTransform(worldTr,
+                                  worldPawn.TargetMeshAnchor.transform,
+                                  isEnemy ? _enemyProjectionMaterial : _playerProjectionMaterial);
+
             tracker.ProjectedType = worldPawn.PawnActionType;
             if (tracker.ProjectedType == PawnType.SpaceShip)
                 tracker.SetTargetShipContoller(worldTr.gameObject.GetComponent<ShipController>());
@@ -79,14 +85,20 @@ public class ProjectionManager : Singleton<ProjectionManager>
             worldPawn.ProjectedTarget = tracker;
         }
         else
+        {
             tableTr = worldPawn.ProjectedTarget.transform;
+
+            tableTr.GetComponent<ProjectPositionTracker>()
+                .ReplaceMaterial(isEnemy ? _enemyProjectionMaterial : _playerProjectionMaterial);
+        }
+            
 
         return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
     }
 
     public KeyValuePair<Transform,Transform> InstantiatePlayerBaseShip(GameObject playerBaseShip)
     {
-        return InstantiateToWorld(playerBaseShip, _tableSpace.transform.position, _tableSpace.transform.rotation);
+        return InstantiateToWorld(playerBaseShip, _tableSpace.transform.position, _tableSpace.transform.rotation, false);
     }
 
     /// <summary>
@@ -96,21 +108,23 @@ public class ProjectionManager : Singleton<ProjectionManager>
     /// <returns> Return Key Value Pair of World Transform and Table Projected Transform </returns>
     public KeyValuePair<Transform,Transform> InstantiateProduct(GameObject ship)
     {
-        return InstantiateToWorld(ship, Vector3.back * 10f, Quaternion.identity);
+        return InstantiateToWorld(ship, Vector3.back * 10f, Quaternion.identity, false);
     }
 
     public GameObject InstantiateEnemy(GameObject enemy)
     {
         return InstantiateToWorld(enemy, 
                              Vector3.forward * 10f, 
-                             Quaternion.Euler(0, 180, 0)).Key.gameObject;
+                             Quaternion.Euler(0, 180, 0),
+                             true).Key.gameObject;
     }
 
     public GameObject InstantiateEnemyUnit(GameObject unit, EnemyController ec)
     {
         GameObject instance = InstantiateToWorld(unit, 
                                            ec.transform.localPosition, 
-                                           ec.transform.localRotation).Key.gameObject;
+                                           ec.transform.localRotation,
+                                           true).Key.gameObject;
 
         instance.GetComponent<EnemyUnitController>().InitiallizeUnit(ec);
         
@@ -120,10 +134,10 @@ public class ProjectionManager : Singleton<ProjectionManager>
     public void InstantiateBullet(GameObject bullet, Vector3 worldPosition, Quaternion rotation, bool isShootByPlayer, int bulletDamage, Transform target)
     {
         Vector3 localPosition = _worldSpace.transform.InverseTransformPoint(worldPosition);
-        KeyValuePair<Transform, Transform> instance = InstantiateToWorld(bullet, localPosition, rotation);
+        KeyValuePair<Transform, Transform> instance = InstantiateToWorld(bullet, localPosition, rotation, !isShootByPlayer);
 
         BulletMovement bulletComponent = instance.Key.GetComponent<BulletMovement>();
-
+        
         if (isShootByPlayer)
         {
             bulletComponent.SetBulletProperty(GlobalGameManager.GetInstance().PlayerBulletTargetLayer,
@@ -144,7 +158,7 @@ public class ProjectionManager : Singleton<ProjectionManager>
 
     public KeyValuePair<Transform, Transform> InstantiateWeapon(GameObject weapon)
     {
-        return InstantiateToWorld(weapon, Vector3.up * 10f, Quaternion.identity);
+        return InstantiateToWorld(weapon, Vector3.up * 10f, Quaternion.identity, true);
     }
     #endregion
 

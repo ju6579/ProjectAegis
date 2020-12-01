@@ -24,9 +24,29 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
 
     protected override void LoadList()
     {
-        PlayerKingdom.GetInstance().ProductList.ForEach((ProductionTask pTask) =>
+        if (ResearchManager.GetInstance() != null)
+            LoadListByProvider(ResearchManager.GetInstance().AvailableWeaponList);
+        else
+            LoadListByProvider(PlayerKingdom.GetInstance().ProductList);
+    }
+
+    protected override void OnListChanged(ProductionTask changed, bool isAdd)
+    {
+        base.OnListChanged(changed, isAdd);
+        if(PawnBaseController.CompareType(changed.Product, PawnType.Weapon))
+            _objectUIContentsHash[changed].ForEach((GameObject go) => go.SetActive(true));
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+    }
+
+    private void LoadListByProvider(List<ProductionTask> productList)
+    {
+        productList.ForEach((ProductionTask pTask) =>
         {
-            if(PawnBaseController.CompareType(pTask.Product, PawnType.Weapon))
+            if (PawnBaseController.CompareType(pTask.Product, PawnType.Weapon))
             {
                 _scrollContentsBroadcaster.ForEach((KeyValuePair<ScrollRect, IUIContentsCallbacks> keyPair) =>
                 {
@@ -34,7 +54,7 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
                     cache.GetComponent<UIProductContentsProperty>().SetUIContentsData(pTask);
 
                     Button buttonCache = cache.GetComponent<Button>();
-                    buttonCache.onClick.AddListener(() 
+                    buttonCache.onClick.AddListener(()
                         => keyPair.Value.OnClickProductContents(buttonCache, pTask));
 
                     if (!_objectUIContentsHash.ContainsKey(pTask))
@@ -48,17 +68,5 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
                 });
             }
         });
-    }
-
-    protected override void OnListChanged(ProductionTask changed, bool isAdd)
-    {
-        base.OnListChanged(changed, isAdd);
-        if(PawnBaseController.CompareType(changed.Product, PawnType.Weapon))
-            _objectUIContentsHash[changed].ForEach((GameObject go) => go.SetActive(true));
-    }
-
-    protected override void Awake()
-    {
-        base.Awake();
     }
 }

@@ -16,7 +16,7 @@ PrefabInstance:
     - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: _weaponProperty.BulletDamage
-      value: 5
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
@@ -31,6 +31,11 @@ PrefabInstance:
     - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
         type: 3}
       propertyPath: _weaponProperty.ReloadDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3709907327410089493, guid: a2ace1d4489f0d64aa1e3543da7f4a80,
+        type: 3}
+      propertyPath: _weaponProperty.BulletActionType
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3759940353233759844, guid: a2ace1d4489f0d64aa1e3543da7f4a80,

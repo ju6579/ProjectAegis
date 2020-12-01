@@ -19,18 +19,18 @@ MonoBehaviour:
     Sculpture: 0
     Phase: -0.43
     DetailDistance: 1
-    Renderer: 4
+    Renderer: 0
     Ramp: 0
     RampTexture: {fileID: 0}
     RampScale: 0
     RampOffset: 0
     RampStrength: 0
-    Softness: 0.34
-    Density: 0.87
+    Softness: 0.33
+    Density: 0.82
     Dissolve: 0
-    FarDissolve: 0
+    FarDissolve: 0.78
     Transparency: 0.34
-    Scale: 10
+    Scale: 4.3
     ScrollVelocity: {x: 0, y: 0, z: 300}
     Lighting: 1
     DirectLight: 0
@@ -50,19 +50,19 @@ MonoBehaviour:
     VolumetricShadow: 0
     VolumetricShadowDensity: 0
     VolumetricShadowStrength: 0
-    Brightness: -0.98
+    Brightness: -0.94
     Contrast: 0
     Horizontal: 1
     RelativeHeight: 0
     HorizontalSoftnessTop: 1
     HorizontalSoftnessBottom: 1
-    HorizontalSoftnessFigure: 1
+    HorizontalSoftnessFigure: 0.34
     FromHeight: -2000
     ToHeight: -1000
     Thickness: 1048
     FromDistance: 0
-    MaxDistance: 15000
-    Iteration: 3
+    MaxDistance: 42632
+    Iteration: 8
     Fade: 1.5
     Optimize: 0.17
     HeightFog: 0

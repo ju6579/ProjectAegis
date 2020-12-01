@@ -16,20 +16,18 @@ public class ShipController : MonoBehaviour
     public void MoveShipByDirection(Vector3 inputVector) => _currentInput = inputVector;
     public ProductWrapper ShipProduct = null;
 
-    public void SetWeaponOnSocket(ProductWrapper weapon, GameObject socket)
+    public void SetWeaponOnSocket(ProductionTask weapon, GameObject socket)
     {
-        if(weapon.Instance == null)
-        {
-            _attachedWeaponHash.Add(socket, weapon);
-            _sockets.Remove(socket);
-        }
+        _attachedWeaponHash.Add(socket, weapon);
+        _sockets.Remove(socket);
     }
 
     public void DetachWeaponOnSocket(GameObject socket)
     {
-        ProductWrapper weapon = _attachedWeaponHash[socket];
+        ProductionTask weapon = _attachedWeaponHash[socket];
 
         PlayerKingdom.GetInstance().WeaponToCargo(weapon);
+
         _attachedWeaponHash.Remove(socket);
     }
 
@@ -39,20 +37,15 @@ public class ShipController : MonoBehaviour
 
         while (weaponSet.MoveNext())
         {
-            weaponSet.Current.Value.DisableProductInstance();
+            PlayerKingdom.GetInstance().WeaponToCargo(weaponSet.Current.Value);
         }
+
+        ReturnWeaponToPool();
     }
 
     public void OnShipDestroy()
     {
-        var weaponSet = _attachedWeaponHash.GetEnumerator();
-
-        while (weaponSet.MoveNext())
-        {
-            PlayerKingdom.GetInstance().ProductDestoryed(weaponSet.Current.Value);
-        }
-
-        _attachedWeaponHash.Clear();
+        ReturnWeaponToPool();
     }
 
     private bool _flag = false;
@@ -67,19 +60,129 @@ public class ShipController : MonoBehaviour
         StartCoroutine(_WarpToPosition());
     }
 
-
     [SerializeField]
     private SpaceShipProperty _shipProperty = null;
 
     [SerializeField]
     private float _searchDistance = 1000f;
 
+    [SerializeField]
+    private MeshRenderer _dissolveMeshRenderer = null;
+
     private List<GameObject> _sockets = new List<GameObject>();
+    private Dictionary<GameObject, ProductionTask> _attachedWeaponHash = new Dictionary<GameObject, ProductionTask>();
+    private List<GameObject> _attachedWeaponInstance = new List<GameObject>();
+
     private Rigidbody _shipRigidBody = null;
-    private Dictionary<GameObject, ProductWrapper> _attachedWeaponHash = new Dictionary<GameObject, ProductWrapper>();
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.333f);
+
+    private Material _instancedMaterial = null;
+    private MaterialPropertyBlock _materialPropertyHandler;
+    private PawnBaseController _pawnController = null;
+
     private Vector3 _currentInput = Vector3.zero;
+    private Vector3 _targetPosition;
+    private LayerMask _targetLayerMask = -1;
+
+    private float warpPower = 100f;
+    private float _currentSpeed = 0f;
+
+    private void Awake()
+    {
+        _shipRigidBody = GetComponent<Rigidbody>();
+        _pawnController = GetComponent<PawnBaseController>();
+
+        _materialPropertyHandler = new MaterialPropertyBlock();
+
+        _targetPosition = transform.position;
+        warpPower = warpPower * _shipRigidBody.mass;
+
+        GameObject anchor = _pawnController.SocketAnchor;
+        for (int i = 0; i < anchor.transform.childCount; i++)
+        {
+            Transform tr = anchor.transform.GetChild(i);
+
+            if (tr.CompareTag("Socket"))
+                _sockets.Add(tr.gameObject);
+        }
+    }
+
+    private void OnEnable()
+    {
+        var weaponSet = _attachedWeaponHash.GetEnumerator();
+
+        GameObject cache = null;
+
+        while (weaponSet.MoveNext())
+        {
+            cache = GlobalObjectManager.GetObject(weaponSet.Current.Value.Product);
+            cache.GetComponent<WeaponController>().SetAttachedShip(this, weaponSet.Current.Key.transform);
+
+            _attachedWeaponInstance.Add(cache);
+        }
+
+        StartCoroutine(_SearchAttackTarget());
+
+        _targetLayerMask = GlobalGameManager.GetInstance().EnemyShipLayer;
+    }
+
+    private void Update()
+    {
+        ShipMovement();
+    }
+
+    private void ShipMovement()
+    {
+        if(_currentInput != Vector3.zero)
+        {
+            _shipRigidBody.AddForce(_currentInput * _shipProperty.MaxMoveSpeed * _shipRigidBody.mass);
+            _currentInput = Vector3.zero;
+        }
+    }
+
+    private void ReturnWeaponToPool()
+    {
+        _attachedWeaponInstance.ForEach((GameObject instance) =>
+        {
+            GlobalObjectManager.ReturnToObjectPool(instance);
+        });
+        
+        _attachedWeaponInstance.Clear();
+    }
+
+    private IEnumerator _SearchAttackTarget()
+    {
+        while(this != null)
+        {
+            _searchedTarget = Physics.OverlapSphere(transform.position, 
+                                               _searchDistance, 
+                                               _targetLayerMask);
+
+            _searchedQueue.Clear();
+            _searchedTarget.ToList().ForEach((Collider co) => _searchedQueue.Enqueue(co));
+
+            yield return _searchRate;
+        }
+
+        yield return null;
+    }
+
+    private IEnumerator _WarpToPosition()
+    {
+        yield return new WaitForSeconds(_shipProperty.ArrivalTime);
+
+        _targetPosition = PlayerKingdom.GetInstance().NextWarpPoint;
+
+        transform.localPosition = _targetPosition;
+        _shipRigidBody.AddForce(transform.forward * warpPower, ForceMode.Impulse);
+
+        _pawnController.PlayHideToShowEffect();
+    }
+
+
+
+
 
     #region Experimental
     private Queue<Collider> _searchedQueue = new Queue<Collider>();
@@ -90,7 +193,7 @@ public class ShipController : MonoBehaviour
         Transform target = null;
         Collider cache;
 
-        if(_searchedQueue.Count > 0)
+        if (_searchedQueue.Count > 0)
         {
             cache = _searchedQueue.Dequeue();
             if (cache != null)
@@ -129,88 +232,5 @@ public class ShipController : MonoBehaviour
     }
 
     #endregion
-    private float warpPower = 30f;
 
-    private Rigidbody shipPhysics = null;
-    private Vector3 _targetPosition;
-    private float _currentSpeed = 0f;
-    private LayerMask _targetLayerMask = -1;
-
-    private void Awake()
-    {
-        _shipRigidBody = GetComponent<Rigidbody>();
-        GameObject anchor = GetComponent<PawnBaseController>().SocketAnchor;
-        for (int i = 0; i < anchor.transform.childCount; i++)
-        {
-            Transform tr = anchor.transform.GetChild(i);
-
-            if (tr.CompareTag("Socket"))
-                _sockets.Add(tr.gameObject);
-        }
-
-        shipPhysics = GetComponent<Rigidbody>();
-
-        _targetPosition = transform.position;
-        warpPower = warpPower * shipPhysics.mass;
-    }
-
-    private void OnEnable()
-    {
-        var weaponSet = _attachedWeaponHash.GetEnumerator();
-
-        while (weaponSet.MoveNext())
-        {
-            weaponSet.Current.Value.ActiveProductInstance().GetComponent<WeaponController>()
-                .SetAttachedShip(this, weaponSet.Current.Key.transform);
-        }
-
-        StartCoroutine(_SearchAttackTarget());
-
-        _targetLayerMask = GlobalGameManager.GetInstance().EnemyShipLayer;
-    }
-
-    private void Update()
-    {
-        ShipMovement();
-    }
-
-    private void ShipMovement()
-    {
-        if(_currentInput != Vector3.zero)
-        {
-            _shipRigidBody.AddForce(_currentInput * _shipProperty.MaxMoveSpeed * _shipRigidBody.mass);
-            _currentInput = Vector3.zero;
-        }
-    }
-
-    private void ReturnWeaponToPool()
-    {
-
-    }
-
-    private IEnumerator _SearchAttackTarget()
-    {
-        while(this != null)
-        {
-            _searchedTarget = Physics.OverlapSphere(transform.position, 
-                                               _searchDistance, 
-                                               _targetLayerMask);
-
-            _searchedQueue.Clear();
-            _searchedTarget.ToList().ForEach((Collider co) => _searchedQueue.Enqueue(co));
-
-            yield return _searchRate;
-        }
-
-        yield return null;
-    }
-
-    private IEnumerator _WarpToPosition()
-    {
-        yield return new WaitForSeconds(_shipProperty.ArrivalTime);
-        _targetPosition = PlayerKingdom.GetInstance().NextWarpPoint;
-
-        transform.localPosition = _targetPosition;
-        shipPhysics.AddForce(transform.forward * warpPower, ForceMode.Impulse);
-    }
 }

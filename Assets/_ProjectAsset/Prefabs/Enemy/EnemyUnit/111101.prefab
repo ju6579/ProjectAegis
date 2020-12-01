@@ -57,6 +57,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 474a2c265baa8384c9ddafada363e4b1, type: 3}
+--- !u!23 &575699985989632796 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: 474a2c265baa8384c9ddafada363e4b1,
+    type: 3}
+  m_PrefabInstance: {fileID: 575699985991932796}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1905853171122283334
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -168,7 +174,7 @@ PrefabInstance:
     - target: {fileID: 4086571459650591938, guid: 429a54b366ed70c47827dbe84f94f2ce,
         type: 3}
       propertyPath: _unitProperty.MaxMoveSpeed
-      value: 600
+      value: 300
       objectReference: {fileID: 0}
     - target: {fileID: 4280641511250626771, guid: 429a54b366ed70c47827dbe84f94f2ce,
         type: 3}
@@ -198,12 +204,32 @@ PrefabInstance:
     - target: {fileID: 8607401114295844920, guid: 429a54b366ed70c47827dbe84f94f2ce,
         type: 3}
       propertyPath: _pawnProperty.ShieldPoint
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 8607401114295844920, guid: 429a54b366ed70c47827dbe84f94f2ce,
         type: 3}
       propertyPath: _pawnProperty.ArmorPoint
-      value: 100
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 8607401114295844920, guid: 429a54b366ed70c47827dbe84f94f2ce,
+        type: 3}
+      propertyPath: _dissolveRenderer
+      value: 
+      objectReference: {fileID: 575699985989632796}
+    - target: {fileID: 8607401114295844920, guid: 429a54b366ed70c47827dbe84f94f2ce,
+        type: 3}
+      propertyPath: _explosionSize.x
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8607401114295844920, guid: 429a54b366ed70c47827dbe84f94f2ce,
+        type: 3}
+      propertyPath: _explosionSize.y
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8607401114295844920, guid: 429a54b366ed70c47827dbe84f94f2ce,
+        type: 3}
+      propertyPath: _explosionSize.z
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 429a54b366ed70c47827dbe84f94f2ce, type: 3}

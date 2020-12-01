@@ -425,20 +425,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4394421777731430, guid: 00d47af0a69650841b3ea3c402fea78b, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.002
-      objectReference: {fileID: 0}
-    - target: {fileID: 4394421777731430, guid: 00d47af0a69650841b3ea3c402fea78b, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.002
-      objectReference: {fileID: 0}
-    - target: {fileID: 4394421777731430, guid: 00d47af0a69650841b3ea3c402fea78b, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.002
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00d47af0a69650841b3ea3c402fea78b, type: 3}
+--- !u!23 &7001333405847107251 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 23127153092957882, guid: 00d47af0a69650841b3ea3c402fea78b,
+    type: 3}
+  m_PrefabInstance: {fileID: 7024368188671533065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7678815926567899211
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -456,6 +450,11 @@ PrefabInstance:
       propertyPath: _shipProperty.MaxMoveSpeed
       value: 60
       objectReference: {fileID: 0}
+    - target: {fileID: 3165790089073599628, guid: 08d6574a60823564992d15c4af884105,
+        type: 3}
+      propertyPath: _dissolveMeshRenderer
+      value: 
+      objectReference: {fileID: 7001333405847107251}
     - target: {fileID: 3763352825025767769, guid: 08d6574a60823564992d15c4af884105,
         type: 3}
       propertyPath: m_Name
@@ -544,12 +543,32 @@ PrefabInstance:
     - target: {fileID: 7320254467535975176, guid: 08d6574a60823564992d15c4af884105,
         type: 3}
       propertyPath: _pawnProperty.ShieldPoint
-      value: 500
+      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 7320254467535975176, guid: 08d6574a60823564992d15c4af884105,
         type: 3}
       propertyPath: _pawnProperty.ArmorPoint
-      value: 500
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320254467535975176, guid: 08d6574a60823564992d15c4af884105,
+        type: 3}
+      propertyPath: _dissolveRenderer
+      value: 
+      objectReference: {fileID: 7001333405847107251}
+    - target: {fileID: 7320254467535975176, guid: 08d6574a60823564992d15c4af884105,
+        type: 3}
+      propertyPath: _explosionSize.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320254467535975176, guid: 08d6574a60823564992d15c4af884105,
+        type: 3}
+      propertyPath: _explosionSize.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7320254467535975176, guid: 08d6574a60823564992d15c4af884105,
+        type: 3}
+      propertyPath: _explosionSize.z
+      value: 40
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08d6574a60823564992d15c4af884105, type: 3}

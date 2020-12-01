@@ -128,12 +128,23 @@ public class EnemyController : MonoBehaviour
     private IEnumerator _CallShip()
     {
         WaitForSeconds callrate = new WaitForSeconds(_unitCallTime);
+        WaitForEndOfFrame frameWait = new WaitForEndOfFrame();
+        bool isSpawned = false;
 
-        while (_searchedTarget.Length > 0)
+        while (gameObject.activeInHierarchy)
         {
-            EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
+            if(_searchedTarget.Length > 0)
+            {
+                EnemyKingdom.GetInstance().RequestCreateUnit(_unitFactory[0], this);
+                isSpawned = true;
+            }
 
-            yield return callrate;
+            if (isSpawned)
+                yield return callrate;
+            else
+                yield return frameWait;
+
+            isSpawned = false;
         }
     }
 

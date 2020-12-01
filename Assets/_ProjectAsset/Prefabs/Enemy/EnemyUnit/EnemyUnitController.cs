@@ -95,10 +95,16 @@ public class EnemyUnitController : MonoBehaviour
             _nextMoveDirection += (_randomRotation * transform.up).normalized;
 
 
-        if (!_motherShip.gameObject.activeSelf)
+        if (_motherShip == null)
             _motherShip = EnemyKingdom.GetInstance().RequestNewMotherShip(this);
         else
-            _targetTransform = _motherShip.GetTargetTransform(transform);
+        {
+            if(!_motherShip.gameObject.activeInHierarchy)
+                _motherShip = EnemyKingdom.GetInstance().RequestNewMotherShip(this);
+            else
+                _targetTransform = _motherShip.GetTargetTransform(transform);
+        }
+           
 
 
         if (_targetTransform != null)

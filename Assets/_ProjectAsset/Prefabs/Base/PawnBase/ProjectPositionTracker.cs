@@ -17,8 +17,10 @@ public class ProjectPositionTracker : MonoBehaviour
 
     private Dictionary<Transform, Transform> _projectionHash = new Dictionary<Transform, Transform>();
     private ShipController _projectedShipController = null;
+    private List<MeshRenderer> _meshRenderers = new List<MeshRenderer>();
+    private Material _originalMaterial = null;
 
-    public void SetTargetTransform(Transform root, Transform targetAnchor)
+    public void SetTargetTransform(Transform root, Transform targetAnchor, Material targetMaterial)
     {
         _projectionHash.Clear();
 
@@ -33,6 +35,23 @@ public class ProjectPositionTracker : MonoBehaviour
 
         for (int i = 0; i < followTargets.Count; i++)
             _projectionHash.Add(followTargets[i], followers[i]);
+
+        _originalMaterial = targetMaterial;
+
+        if(_meshRenderers.Count <= 0)
+            _meshRenderers = GetComponentsInChildren<MeshRenderer>().ToList<MeshRenderer>();
+
+        ReplaceMaterial(targetMaterial);
+    }
+
+    public void ReplaceMaterial(Material material)
+    {
+        _meshRenderers.ForEach((MeshRenderer mr) => mr.material = material);
+    }
+
+    public void RevertMaterial()
+    {
+        _meshRenderers.ForEach((MeshRenderer mr) => mr.material = _originalMaterial);
     }
 
     public Transform GetProjectedTransform(Transform worldTr) => _projectionHash[worldTr];
@@ -44,12 +63,6 @@ public class ProjectPositionTracker : MonoBehaviour
         ProjectPositionTracker ppt = root.GetComponentInParent<PawnBaseController>().ProjectedTarget;
         Transform projectedRoot = ppt.GetProjectedTransform(root);
         this.transform.SetParent(projectedRoot);
-    }
-
-    private void Awake()
-    {
-        List<MeshRenderer> meshRenderers = GetComponentsInChildren<MeshRenderer>().ToList<MeshRenderer>();
-        meshRenderers.ForEach((MeshRenderer mr) => mr.material = ProjectionManager.GetInstance().ProjectionMaterial);
     }
 
     private void Update()
