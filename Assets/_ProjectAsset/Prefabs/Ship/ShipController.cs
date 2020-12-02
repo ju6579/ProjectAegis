@@ -15,6 +15,17 @@ public class ShipController : MonoBehaviour
     public List<GameObject> SocketList => _sockets;
     public void MoveShipByDirection(Vector3 inputVector) => _currentInput = inputVector;
     public ProductWrapper ShipProduct = null;
+    public void OnShipInputEnd() 
+    { 
+        if(!_emissionEffectLock)
+            StartCoroutine(_DownGradeEmission()); 
+    }
+
+    public void RecallShipToCargo()
+    {
+        StopAllCoroutines();
+        StartCoroutine(_WarpToCargo());
+    }
 
     public void SetWeaponOnSocket(ProductionTask weapon, GameObject socket)
     {
@@ -60,6 +71,11 @@ public class ShipController : MonoBehaviour
         StartCoroutine(_WarpToPosition());
     }
 
+    public void WarpToPositionByWait(float time)
+    {
+        StartCoroutine(_WarpToPositionByWait(time));
+    }
+
     [SerializeField]
     private SpaceShipProperty _shipProperty = null;
 
@@ -76,9 +92,10 @@ public class ShipController : MonoBehaviour
     private Rigidbody _shipRigidBody = null;
 
     private WaitForSeconds _searchRate = new WaitForSeconds(0.333f);
+    private WaitForEndOfFrame _frameWait = new WaitForEndOfFrame();
+    private WaitForSeconds _cargoWait = new WaitForSeconds(0.3f);
 
     private Material _instancedMaterial = null;
-    private MaterialPropertyBlock _materialPropertyHandler;
     private PawnBaseController _pawnController = null;
 
     private Vector3 _currentInput = Vector3.zero;
@@ -92,8 +109,6 @@ public class ShipController : MonoBehaviour
     {
         _shipRigidBody = GetComponent<Rigidbody>();
         _pawnController = GetComponent<PawnBaseController>();
-
-        _materialPropertyHandler = new MaterialPropertyBlock();
 
         _targetPosition = transform.position;
         warpPower = warpPower * _shipRigidBody.mass;
@@ -136,6 +151,7 @@ public class ShipController : MonoBehaviour
     {
         if(_currentInput != Vector3.zero)
         {
+            _pawnController.GradeEmission(100f, 500f);
             _shipRigidBody.AddForce(_currentInput * _shipProperty.MaxMoveSpeed * _shipRigidBody.mass);
             _currentInput = Vector3.zero;
         }
@@ -180,9 +196,48 @@ public class ShipController : MonoBehaviour
         _pawnController.PlayHideToShowEffect();
     }
 
+    private IEnumerator _WarpToPositionByWait(float time)
+    {
+        yield return new WaitForSeconds(time);
 
+        yield return new WaitForSeconds(_shipProperty.ArrivalTime);
 
+        _targetPosition = PlayerKingdom.GetInstance().NextWarpPoint;
 
+        transform.localPosition = _targetPosition;
+        _shipRigidBody.AddForce(transform.forward * warpPower, ForceMode.Impulse);
+
+        _pawnController.PlayHideToShowEffect();
+    }
+
+    private bool _emissionEffectLock = false;
+    private IEnumerator _WarpToCargo()
+    {
+        _emissionEffectLock = true;
+
+        while (!_pawnController.GradeEmission(1500f, 1000f))
+            yield return _frameWait;
+
+        yield return _cargoWait;
+
+        for (int i = 0; i < 50; i++)
+        {
+            transform.position += Vector3.forward * Time.deltaTime * 20000f;
+            yield return _frameWait;
+        }
+
+        _emissionEffectLock = false;
+        PlayerKingdom.GetInstance().ShipToCargo(ShipProduct);
+        yield return null;
+    }
+
+    private IEnumerator _DownGradeEmission()
+    {
+        while (!_pawnController.DownEmission(500f))
+            yield return _frameWait;
+
+        yield return null;
+    }
 
     #region Experimental
     private Queue<Collider> _searchedQueue = new Queue<Collider>();

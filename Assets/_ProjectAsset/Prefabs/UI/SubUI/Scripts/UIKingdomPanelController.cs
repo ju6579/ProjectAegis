@@ -9,28 +9,19 @@ using PlayerKindom.PlayerKindomTypes;
 public class UIKingdomPanelController : MonoBehaviour
 {
     [SerializeField]
-    private Text _crystalValue = null;
-
-    [SerializeField]
-    private Text _explosiveValue = null;
-
-    [SerializeField]
-    private Text _metalValue = null;
-
-    [SerializeField]
-    private Text _electronicValue = null;
-
-    [SerializeField]
     private Text _remainTimeText = null;
 
     [SerializeField]
     private UIMapPanelController _mapPanel = null;
 
-    private SpendableResource _targetResource = null;
+    [SerializeField]
+    private Text _currentTP = null;
+
+    [SerializeField]
+    private Text _currentKilledEnemy = null;
 
     private void Start()
     {
-        Singleton<PlayerKingdom>.ListenSingletonLoaded(() => _targetResource = PlayerKingdom.GetInstance().CurrentResource);
         
     }
 
@@ -41,12 +32,10 @@ public class UIKingdomPanelController : MonoBehaviour
 
     private void UpdateKingdomInformation()
     {
-        _crystalValue.text = _targetResource.Crystal.ToString();
-        _explosiveValue.text = _targetResource.Explosive.ToString();
-        _metalValue.text = _targetResource.Metal.ToString();
-        _electronicValue.text = _targetResource.Electronic.ToString();
-
         if (_mapPanel != null)
             _remainTimeText.text = ((int)_mapPanel.RemainTime).ToString();
+
+        _currentTP.text = ResearchManager.GetInstance().TrainingPoint.ToString();
+        _currentKilledEnemy.text = PlayerKingdom.GetInstance().KillNumber.ToString();
     }
 }

@@ -74,7 +74,8 @@ public class EnemyController : MonoBehaviour
     {
         _sockets.ForEach((GameObject go) =>
         {
-            GameObject weapon = ProjectionManager.GetInstance().InstantiateWeapon(_enemyWeaponFactory[0]).Key.gameObject;
+            GameObject weapon = ProjectionManager.GetInstance()
+            .InstantiateWeapon(_enemyWeaponFactory[Random.Range(0, _enemyWeaponFactory.Count-1)]).Key.gameObject;
 
             weapon.GetComponent<EnemyWeaponController>().SetEnemyController(this, go.transform, _searchDistance);
             _attachedWeaponList.Add(weapon);

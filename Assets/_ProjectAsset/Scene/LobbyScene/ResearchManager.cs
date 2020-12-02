@@ -7,6 +7,8 @@ using PlayerKindom.PlayerKindomTypes;
 public class ResearchManager : Singleton<ResearchManager>
 {
     public int TrainingPoint => _currentTP;
+    public void OnEnemyKilled(int point) => _currentTP += point;
+
     public List<ProductionTask> AvailableShipList => _availableShipList;
     public List<ProductionTask> AvailableWeaponList => _availableWeaponList;
 

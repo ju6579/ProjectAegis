@@ -7,6 +7,12 @@ using MapTileProperties;
 public class EnemyKingdom : Singleton<EnemyKingdom>
 {
     public Vector3 NextWarpPoint => _enemyWarpPointManager.GetNextShipWarpPoint();
+    
+    public void RequestCreateBoss()
+    {
+        _launchedEnemyBoss = ProjectionManager.GetInstance().InstantiateEnemy(_enemyBoss);
+        _isBossLaunched = true;
+    }
 
     public void RequestCreateUnit(GameObject prefab, EnemyController mother)
     {
@@ -28,6 +34,8 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
 
     public void DestroyCurrentEnemyOnEscape()
     {
+        _currentEnemySpawnTime = _enemySpawnTime;
+
         _launchedEnemyMotherShips.ForEach((GameObject mother) => {
             if (mother.activeSelf)
             {
@@ -61,6 +69,9 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
     private List<GameObject> _enemyFactory = null;
 
     [SerializeField]
+    private GameObject _enemyBoss = null;
+
+    [SerializeField]
     private float _enemySpawnTime = 20f;
 
     private WarpPointManager _enemyWarpPointManager = null;
@@ -68,13 +79,19 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
     private List<GameObject> _launchedEnemyMotherShips = new List<GameObject>();
     private List<GameObject> _launchedEnemyUnit = new List<GameObject>();
 
+    private GameObject _launchedEnemyBoss = null;
+    private bool _isBossLaunched = false;
+
     private float _enemySpawnTimeStamp = 0f;
-    
+    private float _currentEnemySpawnTime = 0f;
+
     protected override void Awake()
     {
         _enemyWarpPointManager = new WarpPointManager(_enemyGate,
                                                     _warpPointCutCount,
                                                     _warpPointBoundary);
+
+        _isBossLaunched = false;
 
         base.Awake();
     }
@@ -82,18 +99,23 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
     private void Start()
     {
         _enemySpawnTimeStamp = Time.time;
+        _currentEnemySpawnTime = _enemySpawnTime;
     }
 
     private void Update()
     {
         UpdateKingomByDifficulty(MapSystem.GetInstance().MapDifficulty);
 
-        if (Time.time - _enemySpawnTimeStamp > _enemySpawnTime && _launchedEnemyMotherShips.Count < 20)
+        if (Time.time - _enemySpawnTimeStamp > _currentEnemySpawnTime && _launchedEnemyMotherShips.Count < 20)
         {
             GameObject targetEnemy = _enemyFactory[Random.Range(0, _enemyFactory.Count - 1)];
 
             _launchedEnemyMotherShips.Add(ProjectionManager.GetInstance().InstantiateEnemy(targetEnemy));
             _enemySpawnTimeStamp = Time.time;
+
+            _currentEnemySpawnTime -= 2f;
+
+            _currentEnemySpawnTime = Mathf.Clamp(_currentEnemySpawnTime, 5f, _enemySpawnTime);
         }
 
         for (int i = 0; i < _launchedEnemyUnit.Count; i++)
@@ -112,6 +134,15 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
                 _launchedEnemyMotherShips.RemoveAt(i);
                 i--;
             }
+        }
+
+        if (_isBossLaunched)
+        {
+            if (!_launchedEnemyBoss.activeInHierarchy)
+            {
+                _isBossLaunched = false;
+                GlobalGameManager.GetInstance().EndMainGameScene(); 
+            } 
         }
     }
 

@@ -87,7 +87,7 @@ public class UIMapPanelController : MonoBehaviour
     private void UpdateCurrentTileByClick(Button clickedButton)
     {
         SingleTile currentTile = MapSystem.GetInstance().CurrentMapTile;
-
+        currentTile.DestroySingleTile();
         DisableLinkedTile(currentTile);
 
         MapSystem.GetInstance().SetCurrentTile(_buttonToTile[clickedButton]);
@@ -107,8 +107,7 @@ public class UIMapPanelController : MonoBehaviour
         target.NextTileList.ForEach((SingleTile tile) =>
         {
             _tileToButton[tile].enabled = false;
-            _tileToButton[tile].GetComponentInChildren<Text>().text = tile.Properties.X.ToString()
-                                                         + tile.Properties.Y.ToString();
+            _tileToButton[tile].GetComponentInChildren<Text>().text = tile.ButtonID.ToString();
         });
     }
 
@@ -117,8 +116,7 @@ public class UIMapPanelController : MonoBehaviour
         SingleTile tile = _buttonToTile[button];
 
         button.enabled = false;
-        button.GetComponentInChildren<Text>().text = tile.Properties.X.ToString() 
-                                             + tile.Properties.Y.ToString();
+        button.GetComponentInChildren<Text>().text = tile.ButtonID.ToString();
         button.onClick.AddListener(() =>
         {
             EscapeOnButtonPress();

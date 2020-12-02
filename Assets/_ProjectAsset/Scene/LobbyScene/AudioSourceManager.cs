@@ -72,9 +72,9 @@ public class AudioSourceManager : Singleton<AudioSourceManager>
 
     protected override void Awake()
     {
-        _tripleProjectileAudioHandler = new AudioSourceHandler(this, 3, _tripleProjectileClip, 0.5f, 0, 1);
-        _quadProjectileAudioHandler = new AudioSourceHandler(this, 3, _quadProjectileClip, 0.5f, 0, 1);
-        _laserAudioHandler = new AudioSourceHandler(this, 3, _laserClip, 0.6f, 0, 1);
+        _tripleProjectileAudioHandler = new AudioSourceHandler(this, 3, _tripleProjectileClip, 0.20f, 0, 1);
+        _quadProjectileAudioHandler = new AudioSourceHandler(this, 3, _quadProjectileClip, 0.35f, 0.3f, 1);
+        _laserAudioHandler = new AudioSourceHandler(this, 3, _laserClip, 1f, 0, 1);
         _missileHitAudioHandler = new AudioSourceHandler(this, 2, _missileHitClip, 0.5f, 0.1f, 1);
         _shipExplosionAudioHandler = new AudioSourceHandler(this, 4, _shipExplosionClip, 1f, 0.6f, 1);
 

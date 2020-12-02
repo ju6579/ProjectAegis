@@ -20,12 +20,13 @@ public class Singleton<T> : MonoBehaviour where T : class
     {
         if (_instance != null)
         {
-            GlobalLogger.CallLogError(this.gameObject.name, GErrorType.SingletonDuplicated);
             Destroy(this.gameObject);
         }
+        else
+        {
+            _instance = this;
 
-        _instance = this;
-
-        _invokeCallbacks?.Invoke();
+            _invokeCallbacks?.Invoke();
+        }
     }
 }

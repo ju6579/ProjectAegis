@@ -705,7 +705,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tripleProjectileClip: {fileID: 8300000, guid: 29a39ae1d87e6564c86c09eb9d2c8710,
     type: 3}
-  _quadProjectileClip: {fileID: 8300000, guid: adddc46776ae7234484ff74d6c7d4e61, type: 3}
+  _quadProjectileClip: {fileID: 8300000, guid: de10a254bc032f74ab97674bc6b5bfb9, type: 3}
   _laserClip: {fileID: 8300000, guid: c9735b4ba3bccad4cae7b7e91b787779, type: 3}
   _missileHitClip: {fileID: 8300000, guid: 3a7fed6da9e91a74ebc11e064dc3a148, type: 3}
   _shipExplosionClip: {fileID: 8300000, guid: b8a5f4d56b3ddd0409eac5f956651c43, type: 3}
@@ -903,8 +903,8 @@ RectTransform:
   m_Father: {fileID: 1436490932}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.35, y: 0.48}
-  m_AnchorMax: {x: 0.55, y: 0.52}
+  m_AnchorMin: {x: 0.4, y: 0.53}
+  m_AnchorMax: {x: 0.7, y: 0.58}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -933,10 +933,10 @@ MonoBehaviour:
     m_FontStyle: 0
     m_BestFit: 1
     m_MinSize: 10
-    m_MaxSize: 300
+    m_MaxSize: 50
     m_Alignment: 0
     m_AlignByGeometry: 0
-    m_RichText: 1
+    m_RichText: 0
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
@@ -1193,7 +1193,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 3127020835009633007}
-  m_PlaneDistance: 0.3
+  m_PlaneDistance: 0.6
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -1450,7 +1450,7 @@ PrefabInstance:
     - target: {fileID: 102756425438965457, guid: b9c83ab29389b5c45be3278bd78eba84,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000021970314
+      value: 0.00008009922
       objectReference: {fileID: 0}
     - target: {fileID: 467629805735045693, guid: b9c83ab29389b5c45be3278bd78eba84,
         type: 3}
@@ -2264,6 +2264,7 @@ MonoBehaviour:
   _fadeInOutTime: 3
   _isBlackoutStart: 1
   _initializeText: {fileID: 868450926}
+  _operationText: {fileID: 0}
 --- !u!120 &3127020835968601920
 LineRenderer:
   m_ObjectHideFlags: 0

@@ -46,6 +46,12 @@ namespace Pawn
                     PlayerKingdom.GetInstance().ProductDestoryed(ship.ShipProduct);
                 }
 
+                if(PawnActionType == PawnType.Enemy)
+                {
+                    ResearchManager.GetInstance().OnEnemyKilled(_trainingPoint);
+                    PlayerKingdom.GetInstance().KillNumber++;
+                }
+
                 AudioSourceManager.GetInstance().RequestPlayAudioByType(SFXType.ShipExplosion);
                 GlobalEffectManager.GetInstance().PlayEffectByTypeAndScale(VFXType.ShipExplosion, transform.position, _explosionSize);
 
@@ -57,7 +63,6 @@ namespace Pawn
             if (_dissolveRenderer != null)
             {
                 float hurtAmount = 1f - (float)_pawnProperty.ArmorPoint / (float)_pawnPropertyOrigin.ArmorPoint;
-                Debug.Log(hurtAmount);
                 _materialPropertyHandler.SetFloat("_HurtAmount", hurtAmount);
                 _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
             }
@@ -70,6 +75,32 @@ namespace Pawn
         public ProjectPositionTracker ProjectedTarget = null;
         public bool bIsAttack = false;
 
+        public bool GradeEmission(float amount, float maxValue)
+        {
+            _shipEmissionGrade += amount * Time.deltaTime;
+            _shipEmissionGrade = Mathf.Clamp(_shipEmissionGrade, 0f, maxValue);
+            _materialPropertyHandler.SetFloat("_EmissionValue", _shipEmissionGrade);
+            _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
+
+            if (_shipEmissionGrade > maxValue -1f)
+                return true;
+            else
+                return false;
+        }
+
+        public bool DownEmission(float amount)
+        {
+            _shipEmissionGrade -= amount * Time.deltaTime;
+            _shipEmissionGrade = Mathf.Clamp(_shipEmissionGrade, 0f, 1000f);
+            _materialPropertyHandler.SetFloat("_EmissionValue", _shipEmissionGrade);
+            _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
+
+            if (_shipEmissionGrade < 1f)
+                return true;
+            else
+                return false;
+        }
+
         [SerializeField]
         private PawnProperty _pawnProperty = new PawnProperty();
 
@@ -79,8 +110,12 @@ namespace Pawn
         [SerializeField]
         private Vector3 _explosionSize = Vector3.zero;
 
+        [SerializeField]
+        private int _trainingPoint = 0;
+
         private PawnProperty _pawnPropertyOrigin = new PawnProperty();
         private MaterialPropertyBlock _materialPropertyHandler = null;
+        private float _shipEmissionGrade = 0f;
 
         private void Awake()
         {
@@ -93,12 +128,15 @@ namespace Pawn
         private void OnEnable()
         {
             _pawnProperty.CopyProperty(_pawnPropertyOrigin);
+            _shipEmissionGrade = 0f;
 
             if (_dissolveRenderer != null)
             {
                 _materialPropertyHandler.Clear();
                 _materialPropertyHandler.SetFloat("_HurtAmount", 0);
+                _materialPropertyHandler.SetFloat("_EmissionValue", 1);
                 _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
+                
             }
                 
             if (ProjectedTarget != null)

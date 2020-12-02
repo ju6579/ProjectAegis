@@ -98,9 +98,6 @@ public class UIShipDataContentsProperty : MonoBehaviour
     private Text _armorAmount = null;
 
     [SerializeField]
-    private Text _arrivalTime = null;
-
-    [SerializeField]
     private GameObject _socketUIContentsObject = null;
     #endregion
 
@@ -173,6 +170,5 @@ public class UIShipDataContentsProperty : MonoBehaviour
     {
         _shieldAmount.text = _shipProperty.ShieldPoint.ToString();
         _armorAmount.text = _shipProperty.ArmorPoint.ToString();
-        _arrivalTime.text = _shipProperty.ArrivalTime.ToString();
     }
 }

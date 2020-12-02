@@ -14,6 +14,8 @@ public class MapSystem : Singleton<MapSystem>
     public int MaxHeight => _maxMapHeight;
     public float MapDifficulty => _currentTile.Properties.Difficulty;
 
+    public float GetCurrentTileProgress() => GetTileProgressByPosition(_currentTile);
+
     public void HarvestResourceAtCurrentTile(SpendableResource container)
     {
         container.AddResourceByData(_currentTile.Properties.TileResource);
@@ -22,7 +24,7 @@ public class MapSystem : Singleton<MapSystem>
 
     public void SetCurrentTile(SingleTile clickedTile)
     {
-        GlobalGameManager.GetInstance().ChangeSkyByProgress(GetTileProgressByPosition(clickedTile));
+        //GlobalGameManager.GetInstance().ChangeSkyByProgress(GetTileProgressByPosition(clickedTile));
         _currentTile = clickedTile;
     }
     #endregion
@@ -140,12 +142,15 @@ namespace MapTileProperties
 
         public TileProperties Properties => _tileProperties;
         public List<SingleTile> NextTileList => _nextTileHash.Values.ToList<SingleTile>();
+        public int ButtonID;
 
         private Dictionary<TileDirection, SingleTile> _nextTileHash = new Dictionary<TileDirection, SingleTile>();
         private TileProperties _tileProperties = null;
+        private static int _buttonID = 1;
 
         public SingleTile(TileProperties tileProperties)
         {
+            ButtonID = _buttonID++;
             _tileProperties = tileProperties;
         }
 

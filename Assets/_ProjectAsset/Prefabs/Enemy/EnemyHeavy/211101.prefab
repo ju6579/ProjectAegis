@@ -64,6 +64,11 @@ PrefabInstance:
       propertyPath: _explosionSize.z
       value: 40
       objectReference: {fileID: 0}
+    - target: {fileID: 3844570308871109935, guid: fd106355c33693949b0c6fd6ee0d905d,
+        type: 3}
+      propertyPath: _trainingPoint
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 4409168752556629518, guid: fd106355c33693949b0c6fd6ee0d905d,
         type: 3}
       propertyPath: m_LocalPosition.z

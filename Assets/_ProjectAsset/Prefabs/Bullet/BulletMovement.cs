@@ -56,7 +56,7 @@ public class BulletMovement : MonoBehaviour
 
     private WaitForSeconds _metalLifeTime = new WaitForSeconds(1f);
     private WaitForSeconds _laserLifeTime = new WaitForSeconds(0.3f);
-    private WaitForSeconds _missileLifeTime = new WaitForSeconds(5.0f);
+    private WaitForSeconds _missileLifeTime = new WaitForSeconds(3.0f);
     private WaitForEndOfFrame _frameWait = new WaitForEndOfFrame();
     
     private bool _isChecked = false;

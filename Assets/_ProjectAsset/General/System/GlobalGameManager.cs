@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GlobalGameManager : Singleton<GlobalGameManager>
 {
@@ -34,6 +35,18 @@ public class GlobalGameManager : Singleton<GlobalGameManager>
         }
 
         RenderSettings.skybox = targetMaterial;
+    }
+
+    public void EndMainGameScene()
+    {
+        StartCoroutine(_EndMainGameScene());
+    }
+
+    private IEnumerator _EndMainGameScene()
+    {
+        PlayerCameraController.GetInstance().EndScene(5f);
+        yield return new WaitForSeconds(5f);
+        SceneManager.LoadScene("LobbyScene");
     }
 }
 

@@ -111,7 +111,6 @@ public class UIResearchPanelController : MonoBehaviour
 
     private void SetOffInformationPanel()
     {
-        _currentTP.gameObject.SetActive(false);
         _productImage.gameObject.SetActive(false);
         _productName.gameObject.SetActive(false);
         _productInformation.gameObject.SetActive(false);
@@ -120,7 +119,6 @@ public class UIResearchPanelController : MonoBehaviour
 
     private void SetOnInformationPanel(ProductionTask pTask)
     {
-        _currentTP.text = ResearchManager.GetInstance().TrainingPoint.ToString();
         _productImage.sprite = pTask.TaskIcon;
         _productName.text = pTask.TaskName;
         _productInformation.text = pTask.TaskInformation;
@@ -128,7 +126,6 @@ public class UIResearchPanelController : MonoBehaviour
         bool isUnlocked = ResearchManager.GetInstance().IsProductUnlocked(pTask);
         _unlockTPValueText.text = isUnlocked ? _unlockedTextComment : pTask.ProductionTPPoint.ToString();
 
-        _currentTP.gameObject.SetActive(true);
         _productImage.gameObject.SetActive(true);
         _productName.gameObject.SetActive(true);
         _productInformation.gameObject.SetActive(true);
@@ -150,5 +147,10 @@ public class UIResearchPanelController : MonoBehaviour
     private void TurnOffResearchPanel()
     {
         _researchUIPanel.SetActive(false);
+    }
+
+    private void Update()
+    {
+        _currentTP.text = ResearchManager.GetInstance().TrainingPoint.ToString();
     }
 }

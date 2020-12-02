@@ -15,19 +15,13 @@ public class UIProductContentsProperty : MonoBehaviour
     private Text _productName = null;
 
     [SerializeField]
-    private Text _crystalCost = null;
-
-    [SerializeField]
-    private Text _explosiveCost = null;
-
-    [SerializeField]
-    private Text _metalCost = null;
-
-    [SerializeField]
-    private Text _electronicCost = null;
-
-    [SerializeField]
     private Text _productCounter = null;
+
+    [SerializeField]
+    private Text _productCounterText = null;
+
+    [SerializeField]
+    private Text _productSpendTime = null;
 
     public ProductionTask TaskData = null;
     
@@ -41,11 +35,7 @@ public class UIProductContentsProperty : MonoBehaviour
     public void SetUIContentsData(ProductionTask pTask)
     {
         if (_productImage == null &&
-            _productName == null &&
-            _crystalCost == null &&
-            _explosiveCost == null &&
-            _metalCost == null &&
-            _electronicCost == null &&
+            _productSpendTime == null &&
             _productCounter == null)
             GlobalLogger.CallLogError(pTask.TaskName, GErrorType.ComponentNull);
 
@@ -53,13 +43,13 @@ public class UIProductContentsProperty : MonoBehaviour
 
         _productImage.sprite = TaskData.TaskIcon;
         _productName.text = TaskData.TaskName;
-        _crystalCost.text = TaskData.TaskCost.Crystal.ToString();
-        _explosiveCost.text = TaskData.TaskCost.Explosive.ToString();
-        _metalCost.text = TaskData.TaskCost.Metal.ToString();
-        _electronicCost.text = TaskData.TaskCost.Electronic.ToString();
+        _productSpendTime.text = TaskData.TaskExecuteTime.ToString();
 
         if (PawnBaseController.CompareType(pTask.Product, PawnType.SpaceShip))
+        {
             _productCounter.gameObject.SetActive(false);
+            _productCounterText.gameObject.SetActive(false);
+        }
         else
             Singleton<PlayerUIController>.ListenSingletonLoaded(() => {
                 PlayerUIController.GetInstance().StartCoroutine(_ObserveWeaponCount());

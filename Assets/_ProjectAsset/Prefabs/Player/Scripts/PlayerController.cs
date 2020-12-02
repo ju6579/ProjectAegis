@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour
 
     private void RecallShipToKingdom(ProjectPositionTracker ppt)
     {
-        PlayerKingdom.GetInstance().ShipToCargo(ppt.TargetShipController.ShipProduct);
+        ppt.TargetShipController.RecallShipToCargo();
     }
 
     private void ActiveSpecificMenuInput(HandRole hand)
@@ -169,7 +169,10 @@ public class PlayerController : MonoBehaviour
             }
         }
         else
+        {
+            if (_targetShipProjectorRight != null) _targetShipProjectorRight.TargetShipController.OnShipInputEnd();
             _targetShipProjectorRight = null;
+        }
     }
 
     private void InputLeftHandProjectionControl(ControllerButton button)
@@ -213,7 +216,11 @@ public class PlayerController : MonoBehaviour
             }
         }
         else
+        {
+            if (_targetShipProjectorLeft != null) _targetShipProjectorLeft.TargetShipController.OnShipInputEnd();
             _targetShipProjectorLeft = null;
+        }
+            
     }
     #endregion
 }

@@ -22,6 +22,7 @@ namespace PlayerKindom
         public List<ProductWrapper> ShipCargoList => _kingdomCargo.ShipCargoList;
 
         public Vector3 NextWarpPoint => _warpPointManager.GetNextShipWarpPoint();
+        public int KillNumber = 0;
         #endregion
 
         #region Kingdom Handler
@@ -147,13 +148,19 @@ namespace PlayerKindom
 
         private IEnumerator _ExecuteEscape()
         {
-            WaitForSeconds escapeWait = new WaitForSeconds(_escapeSpendTime / 2f);
-            yield return escapeWait;
+            float escapeWaitTime = _escapeSpendTime / 2f;
+
+            yield return PlayerCameraController.GetInstance().FadeOutByTime(0.3f);
 
             EnemyKingdom.GetInstance().DestroyCurrentEnemyOnEscape();
             _kingdomCargo.HandleFieldShipOnEscape();
 
-            yield return escapeWait;
+            yield return new WaitForSeconds(_escapeSpendTime);
+
+            float progress = MapSystem.GetInstance().GetCurrentTileProgress();
+            GlobalGameManager.GetInstance().ChangeSkyByProgress(progress);
+
+            yield return PlayerCameraController.GetInstance().FadeInByTime(0.3f);
             
             yield return null;
         }
@@ -255,7 +262,7 @@ namespace PlayerKindom
                 {
                     ShipController ship = fieldEnum.Current.Key.GetComponent<ShipController>();
                     ship.transform.localPosition = Vector3.back * 5f;
-                    ship.WarpToPosition();
+                    ship.WarpToPositionByWait(PlayerKingdom.GetInstance().EscapeTime);
                 }
             }
         }
