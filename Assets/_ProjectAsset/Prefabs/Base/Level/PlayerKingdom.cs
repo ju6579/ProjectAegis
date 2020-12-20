@@ -158,6 +158,7 @@ namespace PlayerKindom
             yield return new WaitForSeconds(_escapeSpendTime);
 
             float progress = MapSystem.GetInstance().GetCurrentTileProgress();
+            GlobalGameManager.GetInstance().SwitchMusic(progress);
             GlobalGameManager.GetInstance().ChangeSkyByProgress(progress);
 
             yield return PlayerCameraController.GetInstance().FadeInByTime(0.3f);

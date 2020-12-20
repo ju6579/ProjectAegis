@@ -8,9 +8,14 @@ public class LobbySceneManager : MonoBehaviour
     private string _playSceneName = null;
 
     [SerializeField]
+    private string _tutorialSceneName = null;
+
+    [SerializeField]
     private AudioSource _startSound = null;
 
     public void OnClickGameStartButton() => StartCoroutine(_StartMainScene());
+
+    public void OnClickTutorialButton() => StartCoroutine(_StartTutorialScene());
 
     private IEnumerator _StartMainScene()
     {
@@ -18,6 +23,15 @@ public class LobbySceneManager : MonoBehaviour
         yield return PlayerCameraController.GetInstance().FadeOut();
 
         SceneManager.LoadScene(_playSceneName);
+        yield return null;
+    }
+
+    private IEnumerator _StartTutorialScene()
+    {
+        _startSound.Play();
+        yield return PlayerCameraController.GetInstance().FadeOut();
+
+        SceneManager.LoadScene(_tutorialSceneName);
         yield return null;
     }
 }

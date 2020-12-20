@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_ProjectAsset/Scene/VRTestScene.unity
     guid: 2286397b6c2cf3d40ba8494c26e09532
+  - enabled: 1
+    path: Assets/_ProjectAsset/Scene/tutorial.unity
+    guid: 411bc7abeab0ed3478249b38e8b562bf
   m_configObjects: {}

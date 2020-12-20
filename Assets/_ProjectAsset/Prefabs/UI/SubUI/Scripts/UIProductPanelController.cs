@@ -35,6 +35,12 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
     [SerializeField]
     private UIInfoProductProperty _infoProperty = null;
 
+    [SerializeField]
+    private ShipListBroadcaster _shipBroadcaster = null;
+
+    [SerializeField]
+    private WeaponListBroadcaster _weaponBroadcaster = null;
+
     private Button _selectedButton = null;
     private ProductionTask _selectedTask = null;
     private PawnType _selectedProductType = PawnType.NotSet;
@@ -50,8 +56,8 @@ public class UIProductPanelController : MonoBehaviour, IUIContentsCallbacks
 
     private void Awake()
     {
-        ShipListBroadcaster.ListenShipListChanged(_shipScrollView, this);
-        WeaponListBroadcaster.ListenWeaponListChanged(_weaponScrollView, this);
+        _shipBroadcaster.ListenShipListChanged(_shipScrollView, this);
+        _weaponBroadcaster.ListenWeaponListChanged(_weaponScrollView, this);
 
         _createButton.onClick.AddListener(() =>
         {

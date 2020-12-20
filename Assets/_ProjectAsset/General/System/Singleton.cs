@@ -15,7 +15,7 @@ public class Singleton<T> : MonoBehaviour where T : class
 
     private static Singleton<T> _instance = null;
     public static T GetInstance() => _instance as T;
-    
+
     protected virtual void Awake()
     {
         if (_instance != null)
@@ -28,5 +28,11 @@ public class Singleton<T> : MonoBehaviour where T : class
 
             _invokeCallbacks?.Invoke();
         }
+    }
+
+    protected virtual void OnDestroy()
+    {
+        _instance = null;
+        _invokeCallbacks = null;
     }
 }

@@ -10,6 +10,14 @@ public class PlayerUIController : Singleton<PlayerUIController>
     public static UIActiveEvent ActiveUIPanelEventCallbacks;
     public static UIActiveEvent DisableUIPanelEventCallbacks;
 
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        ActiveUIPanelEventCallbacks = null;
+        DisableUIPanelEventCallbacks = null;
+    }
+
     public Transform Dummy => _dummyCanvas.transform;
 
     [SerializeField]
@@ -39,6 +47,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
     private bool _isMainPanelActive = false;
     private float _horizontalMove = 0f;
     private float _verticalMove = 0f;
+    private float _distanceMove = 0f;
 
     #region Public Method Area
     public void MainUIOnOffAction() 
@@ -75,22 +84,47 @@ public class PlayerUIController : Singleton<PlayerUIController>
         }
     }
 
+    private float _horizontalMoveMax = 0.7f;
+    private float _verticalMoveMax = 0.4f;
+    private float _distanceMoveMax = 0.6f;
     public void MoveMainUIPanel(Vector3 velocity)
     {
         if (_isMainPanelActive)
         {
-            _horizontalMove += velocity.z * Time.deltaTime;
+
+            _horizontalMove += velocity.x * Time.deltaTime * 3f;
+            _horizontalMove = Mathf.Clamp(_horizontalMove, -_horizontalMoveMax, _horizontalMoveMax);
+
             _verticalMove += velocity.y * Time.deltaTime;
+            _verticalMove = Mathf.Clamp(_verticalMove, -_verticalMoveMax, _verticalMoveMax);
+
+            _distanceMove += velocity.z * Time.deltaTime;
+            _distanceMove = Mathf.Clamp(_distanceMove, -_distanceMoveMax, _distanceMoveMax);
 
             Vector3 anchorDirection = (_canvasAnchor.position - transform.position).normalized;
-            Vector3 horizontalMoveDirection = Vector3.Cross(anchorDirection, transform.up).normalized;
 
-            transform.position = Vector3.Lerp(transform.position,
-                                        transform.position + horizontalMoveDirection * velocity.x, 
-                                        Time.deltaTime * 5f);
+            if (Mathf.Abs(_horizontalMove) < _horizontalMoveMax)
+            {
+                Vector3 horizontalMoveDirection = Vector3.Cross(anchorDirection, transform.up).normalized;
 
-            transform.position -= anchorDirection * velocity.z * Time.deltaTime * 3f;
-            transform.position += Vector3.up * velocity.y * Time.deltaTime * 3f;
+                //transform.position = Vector3.Lerp(transform.position,
+                //            transform.position + horizontalMoveDirection * velocity.x,
+                //            Time.deltaTime * 5f);
+
+                transform.position += transform.right * velocity.x * Time.deltaTime * 3f;
+            }
+
+            if (Mathf.Abs(_distanceMove) < _distanceMoveMax)
+            {
+                transform.position -= anchorDirection * velocity.z * Time.deltaTime;
+                //transform.position -= anchorDirection * velocity.z * Time.deltaTime * 3f;
+            }
+
+            if(Mathf.Abs(_verticalMove) < _verticalMoveMax)
+            {
+                transform.position += Vector3.up * velocity.y * Time.deltaTime;
+                //transform.position += Vector3.up * velocity.y * Time.deltaTime * 3f;
+            }
         }
     }
     #endregion
@@ -113,6 +147,7 @@ public class PlayerUIController : Singleton<PlayerUIController>
     private void Start()
     {
         DisableUIPanelEventCallbacks();
+        ActiveUIPanelEventCallbacks();
     }
 
     private void Update()

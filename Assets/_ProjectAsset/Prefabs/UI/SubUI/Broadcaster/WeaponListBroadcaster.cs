@@ -11,13 +11,21 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
     [SerializeField]
     private GameObject _weaponScrollContents = null;
 
-    private static List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster
+    private List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster
         = new List<KeyValuePair<ScrollRect, IUIContentsCallbacks>>();
 
     private static Dictionary<ProductionTask, List<GameObject>> _objectUIContentsHash
         = new Dictionary<ProductionTask, List<GameObject>>();
 
-    public static void ListenWeaponListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        _scrollContentsBroadcaster.Clear();
+        _objectUIContentsHash.Clear();
+    }
+
+    public void ListenWeaponListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
     {
         _scrollContentsBroadcaster.Add(new KeyValuePair<ScrollRect, IUIContentsCallbacks>(targetScrollRect, callback));
     }

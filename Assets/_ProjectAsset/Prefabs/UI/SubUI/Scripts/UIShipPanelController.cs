@@ -29,6 +29,12 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
     [SerializeField]
     private Button _shipLaunchButton = null;
 
+    [SerializeField]
+    private WeaponListBroadcaster _weaponBroadcaster = null;
+
+    [SerializeField]
+    private CargoShipListBroadcaster _cargoBroadcaster = null;
+
     private Button _selectedWeaponButton = null;
     private ProductionTask _selectedWeapon = null;
 
@@ -44,8 +50,8 @@ public class UIShipPanelController : MonoBehaviour, IUIContentsCallbacks
 
     private void Awake()
     {
-        WeaponListBroadcaster.ListenWeaponListChanged(_weaponScrollView, this);
-        CargoShipListBroadcaster.ListenCargoShipListChanged(_shipCargoScrollView, this);
+        _weaponBroadcaster.ListenWeaponListChanged(_weaponScrollView, this);
+        _cargoBroadcaster.ListenCargoShipListChanged(_shipCargoScrollView, this);
 
         _shipLaunchButton.onClick.AddListener(() => OnClickLaunchButton());
     }

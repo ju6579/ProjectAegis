@@ -12,6 +12,11 @@ public abstract class ListChangedObserveComponent<T, SingletonComponent> : MonoB
     public static void BroadcastListChange(T changed, bool isAdd) 
         => BroadcastAvailableTaskChanged?.Invoke(changed, isAdd);
 
+    protected virtual void OnDestroy()
+    {
+        BroadcastAvailableTaskChanged = null;
+    }
+
     protected virtual void Awake()
     {
         BroadcastAvailableTaskChanged += OnListChanged;

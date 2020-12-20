@@ -11,13 +11,21 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<ProductWrapp
     [SerializeField]
     private GameObject _shipScrollContents = null;
 
-    private static List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster 
+    private List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster 
         = new List<KeyValuePair<ScrollRect, IUIContentsCallbacks>>();
 
     private static Dictionary<ProductWrapper, List<GameObject>> _objectUIContentsHash
         = new Dictionary<ProductWrapper, List<GameObject>>();
 
-    public static void ListenCargoShipListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+
+        _scrollContentsBroadcaster.Clear();
+        _objectUIContentsHash.Clear();
+    }
+
+    public void ListenCargoShipListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
     {
         _scrollContentsBroadcaster.Add(new KeyValuePair<ScrollRect, IUIContentsCallbacks>(targetScrollRect, callback));
     }

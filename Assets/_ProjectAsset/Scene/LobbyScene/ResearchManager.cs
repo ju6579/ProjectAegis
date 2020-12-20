@@ -42,6 +42,11 @@ public class ResearchManager : Singleton<ResearchManager>
 
     private int _currentTP = 0;
 
+    protected override void OnDestroy()
+    {
+        
+    }
+
     protected override void Awake()
     {
         _shipProductList.ForEach((ProductionTask pt) => _shipProductHash.Add(pt.ProductionID, pt));
@@ -50,7 +55,7 @@ public class ResearchManager : Singleton<ResearchManager>
         _availableShipTaskID.ForEach((int id) => _availableShipList.Add(_shipProductHash[id]));
         _availableWeaponTaskID.ForEach((int id) => _availableWeaponList.Add(_weaponProductHash[id]));
 
-        DontDestroyOnLoad(gameObject);
         base.Awake();
+        DontDestroyOnLoad(gameObject);
     }
 }

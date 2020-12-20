@@ -115,7 +115,7 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
 
             _currentEnemySpawnTime -= 2f;
 
-            _currentEnemySpawnTime = Mathf.Clamp(_currentEnemySpawnTime, 5f, _enemySpawnTime);
+            _currentEnemySpawnTime = Mathf.Clamp(_currentEnemySpawnTime, 3f, _enemySpawnTime);
         }
 
         for (int i = 0; i < _launchedEnemyUnit.Count; i++)

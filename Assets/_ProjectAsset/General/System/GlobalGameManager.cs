@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Mewlist;
 
 public class GlobalGameManager : Singleton<GlobalGameManager>
 {
@@ -11,30 +12,76 @@ public class GlobalGameManager : Singleton<GlobalGameManager>
     public LayerMask EnemyShipLayer = 0;
 
     [SerializeField]
-    private List<Material> _nearGroundSkyList = new List<Material>();
+    private List<SkyBoxSettings> _nearGroundSkyList = new List<SkyBoxSettings>();
     [SerializeField]
-    private List<Material> _middleAtmosphereSkyList = new List<Material>();
+    private List<SkyBoxSettings> _middleAtmosphereSkyList = new List<SkyBoxSettings>();
     [SerializeField]
-    private List<Material> _spaceSkyList = new List<Material>();
+    private List<SkyBoxSettings> _spaceSkyList = new List<SkyBoxSettings>();
 
-    public void ChangeSkyByProgress(float progress)
+    [SerializeField]
+    private AudioSource _backgroundAudio = null;
+
+    private List<MassiveCloudsProfile> _cloudProfilesCache = new List<MassiveCloudsProfile>();
+
+    public void SwitchMusic(float progress)
     {
-        Material targetMaterial = null;
+        SkyBoxSettings sky;
 
         if (progress < 0.333f)
         {
-            targetMaterial = _nearGroundSkyList[Random.Range(0, _nearGroundSkyList.Count - 1)];
+            sky = _nearGroundSkyList[Random.Range(0, _nearGroundSkyList.Count - 1)];
         }
         else if (progress >= 0.333f && progress < 0.666f)
         {
-            targetMaterial = _middleAtmosphereSkyList[Random.Range(0, _middleAtmosphereSkyList.Count - 1)];
+            sky = _middleAtmosphereSkyList[Random.Range(0, _middleAtmosphereSkyList.Count - 1)];
         }
         else
         {
-            targetMaterial = _spaceSkyList[Random.Range(0, _spaceSkyList.Count - 1)];
+            sky = _spaceSkyList[Random.Range(0, _spaceSkyList.Count - 1)];
         }
 
-        RenderSettings.skybox = targetMaterial;
+        StartCoroutine(_SwitchMusic(sky.BGM));
+    }
+
+    public void ChangeSkyByProgress(float progress)
+    {
+        
+        SkyBoxSettings sky;
+        _cloudProfilesCache.Clear();
+
+        if (progress < 0.333f)
+        {
+            sky = _nearGroundSkyList[Random.Range(0, _nearGroundSkyList.Count - 1)];
+        }
+        else if (progress >= 0.333f && progress < 0.666f)
+        {
+            sky = _middleAtmosphereSkyList[Random.Range(0, _middleAtmosphereSkyList.Count - 1)];
+        }
+        else
+        {
+            sky = _spaceSkyList[Random.Range(0, _spaceSkyList.Count - 1)];
+        }
+
+        RenderSettings.skybox = sky.SkyBox;
+
+        MassiveClouds cloudsEffect = null;
+        if (Camera.main != null)
+            cloudsEffect = Camera.main.GetComponent<MassiveClouds>();
+
+        if (cloudsEffect != null)
+        {
+            if (sky.IsDrawCloud)
+            {
+                cloudsEffect.enabled = true;
+                _cloudProfilesCache.Add(sky.Layer);
+                cloudsEffect.SetProfiles(_cloudProfilesCache);
+            }
+                
+            else
+            {
+                cloudsEffect.enabled = false;
+            }
+        }
     }
 
     public void EndMainGameScene()
@@ -47,6 +94,40 @@ public class GlobalGameManager : Singleton<GlobalGameManager>
         PlayerCameraController.GetInstance().EndScene(5f);
         yield return new WaitForSeconds(5f);
         SceneManager.LoadScene("LobbyScene");
+    }
+
+    private IEnumerator _SwitchMusic(AudioClip clip)
+    {
+        WaitForSeconds switchRate = new WaitForSeconds(0.05f);
+        float volumeRate = 0.3f / 20f;
+
+        for (int i = 0; i < 20; i++) 
+        {
+            _backgroundAudio.volume = Mathf.Clamp(_backgroundAudio.volume - volumeRate, 0f, 0.3f);
+            yield return switchRate;
+        }
+        _backgroundAudio.Stop();
+        
+        _backgroundAudio.clip = clip;
+        _backgroundAudio.loop = true;
+        _backgroundAudio.Play();
+
+        for (int i = 0; i < 20; i++)
+        {
+            _backgroundAudio.volume = Mathf.Clamp(_backgroundAudio.volume + volumeRate, 0f, 0.3f);
+            yield return switchRate;
+        }
+
+        yield return null;
+    }
+
+    [System.Serializable]
+    public struct SkyBoxSettings
+    {
+        public bool IsDrawCloud;
+        public Material SkyBox;
+        public MassiveCloudsProfile Layer;
+        public AudioClip BGM;
     }
 }
 

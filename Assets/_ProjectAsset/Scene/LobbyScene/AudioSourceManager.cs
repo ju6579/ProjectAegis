@@ -129,6 +129,11 @@ public class AudioSourceManager : Singleton<AudioSourceManager>
             _sourceQueue.Enqueue(source);
         }
     }
+
+    protected override void OnDestroy()
+    {
+        
+    }
 }
 
 public enum SFXType

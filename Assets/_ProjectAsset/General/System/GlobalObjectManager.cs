@@ -16,6 +16,16 @@ public class GlobalObjectManager : Singleton<GlobalObjectManager>
 
     private static Dictionary<GameObject, int> _globalObjectPoolSizeHash = new Dictionary<GameObject, int>();
 
+    protected override void Awake()
+    {
+        _objectPoolStartSize = 5;
+        _globalObjectPool.Clear();
+        _instanceCachePool.Clear();
+        _globalObjectPoolSizeHash.Clear();
+
+        base.Awake();
+    }
+
     public static GameObject GetObject(GameObject prefab)
     {
         if (!_globalObjectPool.ContainsKey(prefab)) 

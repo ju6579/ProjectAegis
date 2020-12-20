@@ -20,14 +20,22 @@ public class UIKingdomPanelController : MonoBehaviour
     [SerializeField]
     private Text _currentKilledEnemy = null;
 
+    private WaitForSeconds _uiUpdateRate = new WaitForSeconds(0.3f);
+
     private void Start()
     {
-        
+        StartCoroutine(_UpdateUI());
     }
 
-    private void Update()
+    private IEnumerator _UpdateUI()
     {
-        UpdateKingdomInformation();
+        while (this != null)
+        {
+            UpdateKingdomInformation();
+            yield return _uiUpdateRate;
+        }
+            
+        yield return null;
     }
 
     private void UpdateKingdomInformation()
@@ -35,7 +43,9 @@ public class UIKingdomPanelController : MonoBehaviour
         if (_mapPanel != null)
             _remainTimeText.text = ((int)_mapPanel.RemainTime).ToString();
 
-        _currentTP.text = ResearchManager.GetInstance().TrainingPoint.ToString();
+        if(ResearchManager.GetInstance() != null)
+            _currentTP.text = ResearchManager.GetInstance().TrainingPoint.ToString();
+        
         _currentKilledEnemy.text = PlayerKingdom.GetInstance().KillNumber.ToString();
     }
 }

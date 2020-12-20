@@ -12,13 +12,20 @@ public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, P
     [SerializeField]
     private GameObject _shipScrollContents = null;
 
-    private static List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster
+    private List<KeyValuePair<ScrollRect, IUIContentsCallbacks>> _scrollContentsBroadcaster
         = new List<KeyValuePair<ScrollRect, IUIContentsCallbacks>>();
 
     private static Dictionary<ProductionTask, List<GameObject>> _objectUIContentsHash
         = new Dictionary<ProductionTask, List<GameObject>>();
 
-    public static void ListenShipListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+        _scrollContentsBroadcaster.Clear();
+        _objectUIContentsHash.Clear();
+    }
+
+    public void ListenShipListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
     {
         _scrollContentsBroadcaster.Add(new KeyValuePair<ScrollRect, IUIContentsCallbacks>(targetScrollRect, callback));
     }
@@ -41,6 +48,11 @@ public class ShipListBroadcaster : ListChangedObserveComponent<ProductionTask, P
     protected override void Awake()
     {
         base.Awake();
+    }
+
+    private void Start()
+    {
+        
     }
 
     private void LoadListByProvider(List<ProductionTask> productList)

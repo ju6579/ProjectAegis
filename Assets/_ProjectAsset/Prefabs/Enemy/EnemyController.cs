@@ -155,5 +155,8 @@ public class EnemyController : MonoBehaviour
         {
             _enemyPhysics.AddForce(transform.forward * _enemyProperties.MaxMoveSpeed * _enemyPhysics.mass * 2f);
         }
+
+        if (transform.localPosition.z < -0.5f)
+            GlobalGameManager.GetInstance().EndMainGameScene();
     }
 }
