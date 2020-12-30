@@ -25,11 +25,13 @@ public class WeaponListBroadcaster : ListChangedObserveComponent<ProductionTask,
         _objectUIContentsHash.Clear();
     }
 
+    // Chain Delegate Function for Listen Contents Change
     public void ListenWeaponListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
     {
         _scrollContentsBroadcaster.Add(new KeyValuePair<ScrollRect, IUIContentsCallbacks>(targetScrollRect, callback));
     }
 
+    // Initialize and Setup List for UI
     protected override void LoadList()
     {
         if (ResearchManager.GetInstance() != null)

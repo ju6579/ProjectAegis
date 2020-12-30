@@ -10,25 +10,28 @@ namespace PlayerKindom
 {
     public class PlayerKingdom : Singleton<PlayerKingdom>
     {
-        #region Facility Handler
+        // Handle Facility (Ship and Weapon Instance Handling)
+        #region Facility Interface
         public void ShipToCargo(ProductWrapper product) => _kingdomCargo.AddShipToCargo(product);
         public void ShipToField(ProductWrapper product) => _kingdomCargo.LaunchShip(product);
 
         public void WeaponToCargo(ProductionTask product) => _kingdomCargo.AddWeaponToCargo(product);
         public bool WeaponToField(ProductionTask product) => _kingdomCargo.WeaponToField(product);
-
         public int WeaponCount(ProductionTask pTask) => _kingdomCargo.GetSpecificWeaponCount(pTask);
+
+        public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveShip(product);
 
         public List<ProductWrapper> ShipCargoList => _kingdomCargo.ShipCargoList;
 
         public Vector3 NextWarpPoint => _warpPointManager.GetNextShipWarpPoint();
         public int KillNumber = 0;
         #endregion
-
-        #region Kingdom Handler
+        
+        // Player Resources Handling Interface
+        #region Kingdom Interface
         public int CurrentAvailableTaskCount => _availableTaskCount;
         public void EndTask() => _availableTaskCount++;
-        public void ProductDestoryed(ProductWrapper product) => _kingdomCargo.RemoveShip(product);
+       
 
         public List<ProductionTask> ProductList => _productionTaskCatalog;
         public List<ResearchTask> ResearchList => _researchTaskCatalog;
@@ -78,6 +81,11 @@ namespace PlayerKindom
         #endregion
 
         #region Kingdom Command
+        /// <summary>
+        /// Request to Kingdom for Run Player Task. If Tasks already run max count, It run nothing and return boolean.
+        /// </summary>
+        /// <param name="pTask"></param>
+        /// <returns>Is Task Run Succeed</returns>
         public bool RequestTaskToKingdom(PlayerTask pTask)
         {
             bool isAvailable = _availableTaskCount > 0 && _kingdomResource.IsSpendable(pTask.TaskCost);
@@ -87,11 +95,6 @@ namespace PlayerKindom
                 StartCoroutine(pTask._Run());
             }
             return isAvailable;
-        }
-
-        public void RequestWarpToField(GameObject go)
-        {
-
         }
         #endregion
 
@@ -107,6 +110,7 @@ namespace PlayerKindom
         {
             base.Awake();
 
+            // Broadcast Available Product to UI Controllers
             if(ResearchManager.GetInstance() != null)
             {
                 ResearchManager.GetInstance().AvailableShipList.ForEach((ProductionTask pt) => AddAvailableProduction(pt));
@@ -133,12 +137,15 @@ namespace PlayerKindom
         #endregion
 
         #region Private Method Area
+        // Add and Broadcast Available Research
         private void AddAvailableResearch(ResearchTask rTask)
         {
             _availableResearch.Add(rTask);
 
             ListChangedObserveComponent<ResearchTask, PlayerKingdom>.BroadcastListChange(rTask, true);
         }
+
+        // Add and Broadcast Available Product
         private void AddAvailableProduction(ProductionTask pTask)
         {
             _availableProduction.Add(pTask);
@@ -168,6 +175,7 @@ namespace PlayerKindom
         #endregion
 
         #region Player Kingdom Facilities
+        // Controller for Weapon and Ship Instance
         private class PlayerKingdomCargo
         {
             public List<ProductWrapper> ShipCargoList => _shipCargo;
@@ -255,6 +263,7 @@ namespace PlayerKindom
                 return _weaponCargo.ContainsKey(productData) ? _weaponCargo[productData] : 0;
             }
 
+            // On Escape, Return to Cargo All Launched Ship and Re-Launch to Player Front Position
             public void HandleFieldShipOnEscape()
             {
                 var fieldEnum = _fieldShipHash.GetEnumerator();
@@ -270,6 +279,7 @@ namespace PlayerKindom
         #endregion
     }
 
+    // Custom Type for Handle Player Data
     namespace PlayerKindomTypes
     {
         #region Player Task Type
@@ -282,6 +292,7 @@ namespace PlayerKindom
             public float TaskExecuteTime = 0;
             public SpendableResource TaskCost;
 
+            // Wait Task Excute time and Run Task
             public IEnumerator _Run()
             {
                 yield return new WaitForSeconds(TaskExecuteTime);
@@ -304,6 +315,7 @@ namespace PlayerKindom
             public Sprite TaskIcon = null;
             public int ProductionTPPoint = 0;
 
+            // Make Product by Product Type
             protected override void TaskAction()
             {
                 base.TaskAction();

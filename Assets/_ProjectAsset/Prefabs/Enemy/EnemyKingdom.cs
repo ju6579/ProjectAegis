@@ -6,8 +6,9 @@ using MapTileProperties;
 
 public class EnemyKingdom : Singleton<EnemyKingdom>
 {
+    #region Public Method Area
     public Vector3 NextWarpPoint => _enemyWarpPointManager.GetNextShipWarpPoint();
-    
+
     public void RequestCreateBoss()
     {
         _launchedEnemyBoss = ProjectionManager.GetInstance().InstantiateEnemy(_enemyBoss);
@@ -16,13 +17,13 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
 
     public void RequestCreateUnit(GameObject prefab, EnemyController mother)
     {
-        if(_launchedEnemyUnit.Count < 100 )
+        if (_launchedEnemyUnit.Count < 100)
             _launchedEnemyUnit.Add(ProjectionManager.GetInstance().InstantiateEnemyUnit(prefab, mother));
     }
 
     public EnemyController RequestNewMotherShip(EnemyUnitController unit)
     {
-        if(_launchedEnemyMotherShips.Count > 0)
+        if (_launchedEnemyMotherShips.Count > 0)
         {
             GameObject newMother = _launchedEnemyMotherShips[Random.Range(0, _launchedEnemyMotherShips.Count - 1)];
 
@@ -30,8 +31,9 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
         }
 
         return null;
-    } 
+    }
 
+    // If Player Escape Current Map, Destroy All Launched Enemy Unit and Mothership and Reset Data by Map Difficulties.
     public void DestroyCurrentEnemyOnEscape()
     {
         _currentEnemySpawnTime = _enemySpawnTime;
@@ -55,6 +57,7 @@ public class EnemyKingdom : Singleton<EnemyKingdom>
 
         _enemySpawnTimeStamp = Time.time + PlayerKindom.PlayerKingdom.GetInstance().EscapeTime;
     }
+    #endregion
 
     [SerializeField]
     private Transform _enemyGate = null;

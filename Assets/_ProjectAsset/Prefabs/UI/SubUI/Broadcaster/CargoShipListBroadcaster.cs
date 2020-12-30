@@ -25,11 +25,13 @@ public class CargoShipListBroadcaster : ListChangedObserveComponent<ProductWrapp
         _objectUIContentsHash.Clear();
     }
 
+    // Chain Delegate Function for Listen Contents Change
     public void ListenCargoShipListChanged(ScrollRect targetScrollRect, IUIContentsCallbacks callback)
     {
         _scrollContentsBroadcaster.Add(new KeyValuePair<ScrollRect, IUIContentsCallbacks>(targetScrollRect, callback));
     }
 
+    // Initialize and Setup List for UI
     protected override void LoadList()
     {
         PlayerKingdom.GetInstance().ShipCargoList.ForEach((ProductWrapper product) =>

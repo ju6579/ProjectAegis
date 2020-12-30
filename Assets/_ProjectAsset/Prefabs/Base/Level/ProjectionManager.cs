@@ -5,10 +5,12 @@ using Pawn;
 
 public class ProjectionManager : Singleton<ProjectionManager>
 {
+    #region Projection Manager Data
     public Vector3 TableWorldPosition => _tableSpace.transform.position;
     public Transform WorldTransform => _worldSpace.transform;
     public Transform TableTransform => _tableSpace.transform;
     public Material ProjectionMaterial => _playerProjectionMaterial;
+    #endregion
 
     [SerializeField]
     private Material _playerProjectionMaterial = null;
@@ -31,81 +33,6 @@ public class ProjectionManager : Singleton<ProjectionManager>
     private float _worldScaleRatio = 1f;
 
     #region Public Method
-    private GameObject InstantiateByObjectPool(GameObject original, Transform parent)
-    {
-        GameObject result = GlobalObjectManager.GetObject(original);
-        result.transform.SetParent(parent);
-
-        return result;
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="origin"></param>
-    /// <param name="targetPosition"></param>
-    /// <param name="targetRotation"></param>
-    /// <returns> Return Key Value Pair of World Transform and Table Projected Transform </returns>
-    private KeyValuePair<Transform,Transform> InstantiateToWorld(GameObject origin, 
-                                                        Vector3 targetPosition, 
-                                                        Quaternion targetRotation,
-                                                        bool isEnemy)
-    {
-        Transform worldTr = InstantiateByObjectPool(origin, _worldSpace.transform).transform;
-        worldTr.localPosition = targetPosition;
-        worldTr.rotation = targetRotation;
-        //worldTr.localScale *= _worldScaleRatio;
-
-        
-        PawnBaseController worldPawn = worldTr.GetComponent<PawnBaseController>();
-
-        Transform tableTr = null;
-
-        if (worldPawn.ProjectedTarget == null)
-        {
-            PawnBaseController prefabPawn = origin.GetComponent<PawnBaseController>();
-
-            tableTr = InstantiateByObjectPool(prefabPawn.TargetMeshAnchor, _tableSpace.transform).transform;
-            tableTr.localPosition = worldTr.localPosition;
-            tableTr.rotation = worldTr.rotation;
-            tableTr.localScale = worldTr.localScale;
-
-            ProjectPositionTracker tracker = tableTr.GetComponent<ProjectPositionTracker>();
-            if (tracker == null)
-                tracker = (ProjectPositionTracker)tableTr.gameObject.AddComponent(typeof(ProjectPositionTracker));
-
-            tracker.SetTargetTransform(worldTr,
-                                  worldPawn.TargetMeshAnchor.transform,
-                                  isEnemy ? _enemyProjectionMaterial : _playerProjectionMaterial);
-
-            tracker.ProjectedType = worldPawn.PawnActionType;
-            if (tracker.ProjectedType == PawnType.SpaceShip)
-                tracker.SetTargetShipContoller(worldTr.gameObject.GetComponent<ShipController>());
-
-            worldPawn.ProjectedTarget = tracker;
-        }
-        else
-        {
-            tableTr = worldPawn.ProjectedTarget.transform;
-
-            tableTr.GetComponent<ProjectPositionTracker>()
-                .ReplaceMaterial(isEnemy ? _enemyProjectionMaterial : _playerProjectionMaterial);
-        }
-            
-
-        return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
-    }
-
-    public KeyValuePair<Transform,Transform> InstantiatePlayerBaseShip(GameObject playerBaseShip)
-    {
-        return InstantiateToWorld(playerBaseShip, _tableSpace.transform.position, _tableSpace.transform.rotation, false);
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="ship"></param>
-    /// <returns> Return Key Value Pair of World Transform and Table Projected Transform </returns>
     public KeyValuePair<Transform,Transform> InstantiateProduct(GameObject ship)
     {
         return InstantiateToWorld(ship, Vector3.back * 10f, Quaternion.identity, false);
@@ -160,6 +87,13 @@ public class ProjectionManager : Singleton<ProjectionManager>
     {
         return InstantiateToWorld(weapon, Vector3.up * 10f, Quaternion.identity, true);
     }
+
+    ////////////////////////////////// Not Use
+    public KeyValuePair<Transform, Transform> InstantiatePlayerBaseShip(GameObject playerBaseShip)
+    {
+        return InstantiateToWorld(playerBaseShip, _tableSpace.transform.position, _tableSpace.transform.rotation, false);
+    }
+    ////////////////////////////////// Not Use
     #endregion
 
     #region MonoBehaviour Callbacks
@@ -167,6 +101,74 @@ public class ProjectionManager : Singleton<ProjectionManager>
     {
         _worldScaleRatio = 1f / _worldSpace.transform.localScale.x;
         base.Awake();
+    }
+    #endregion
+
+    #region Private Method Area
+    private GameObject InstantiateByObjectPool(GameObject original, Transform parent)
+    {
+        GameObject result = GlobalObjectManager.GetObject(original);
+        result.transform.SetParent(parent);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Instantiate Prefab to World and Table, and Link Each Other for Project Mesh.
+    /// </summary>
+    /// <param name="origin"></param>
+    /// <param name="targetPosition"></param>
+    /// <param name="targetRotation"></param>
+    /// <param name="isEnemy"></param>
+    /// <returns> Return Key Value Pair of World Transform and Table Projected Transform </returns>
+    private KeyValuePair<Transform, Transform> InstantiateToWorld(GameObject origin,
+                                                        Vector3 targetPosition,
+                                                        Quaternion targetRotation,
+                                                        bool isEnemy)
+    {
+        Transform worldTr = InstantiateByObjectPool(origin, _worldSpace.transform).transform;
+        worldTr.localPosition = targetPosition;
+        worldTr.rotation = targetRotation;
+        //worldTr.localScale *= _worldScaleRatio;
+
+
+        PawnBaseController worldPawn = worldTr.GetComponent<PawnBaseController>();
+
+        Transform tableTr = null;
+
+        // If Instantiate First, Add Component Position Tracker, or not Reuse Tracker
+        if (worldPawn.ProjectedTarget == null)
+        {
+            PawnBaseController prefabPawn = origin.GetComponent<PawnBaseController>();
+
+            tableTr = InstantiateByObjectPool(prefabPawn.TargetMeshAnchor, _tableSpace.transform).transform;
+            tableTr.localPosition = worldTr.localPosition;
+            tableTr.rotation = worldTr.rotation;
+            tableTr.localScale = worldTr.localScale;
+
+            ProjectPositionTracker tracker = tableTr.GetComponent<ProjectPositionTracker>();
+            if (tracker == null)
+                tracker = (ProjectPositionTracker)tableTr.gameObject.AddComponent(typeof(ProjectPositionTracker));
+
+            tracker.SetTargetTransform(worldTr,
+                                  worldPawn.TargetMeshAnchor.transform,
+                                  isEnemy ? _enemyProjectionMaterial : _playerProjectionMaterial);
+
+            tracker.ProjectedType = worldPawn.PawnActionType;
+            if (tracker.ProjectedType == PawnType.SpaceShip)
+                tracker.SetTargetShipContoller(worldTr.gameObject.GetComponent<ShipController>());
+
+            worldPawn.ProjectedTarget = tracker;
+        }
+        else
+        {
+            tableTr = worldPawn.ProjectedTarget.transform;
+
+            tableTr.GetComponent<ProjectPositionTracker>()
+                .ReplaceMaterial(isEnemy ? _enemyProjectionMaterial : _playerProjectionMaterial);
+        }
+
+        return new KeyValuePair<Transform, Transform>(worldTr, tableTr);
     }
     #endregion
 }

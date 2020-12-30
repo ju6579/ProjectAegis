@@ -75,32 +75,6 @@ namespace Pawn
         public ProjectPositionTracker ProjectedTarget = null;
         public bool bIsAttack = false;
 
-        public bool GradeEmission(float amount, float maxValue)
-        {
-            _shipEmissionGrade += amount * Time.deltaTime;
-            _shipEmissionGrade = Mathf.Clamp(_shipEmissionGrade, 0f, maxValue);
-            _materialPropertyHandler.SetFloat("_EmissionValue", _shipEmissionGrade);
-            _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
-
-            if (_shipEmissionGrade > maxValue -1f)
-                return true;
-            else
-                return false;
-        }
-
-        public bool DownEmission(float amount)
-        {
-            _shipEmissionGrade -= amount * Time.deltaTime;
-            _shipEmissionGrade = Mathf.Clamp(_shipEmissionGrade, 0f, 1000f);
-            _materialPropertyHandler.SetFloat("_EmissionValue", _shipEmissionGrade);
-            _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
-
-            if (_shipEmissionGrade < 1f)
-                return true;
-            else
-                return false;
-        }
-
         [SerializeField]
         private PawnProperty _pawnProperty = new PawnProperty();
 
@@ -150,6 +124,33 @@ namespace Pawn
             yield return null;
         }
 
+        #region Shader Handler
+        public bool GradeEmission(float amount, float maxValue)
+        {
+            _shipEmissionGrade += amount * Time.deltaTime;
+            _shipEmissionGrade = Mathf.Clamp(_shipEmissionGrade, 0f, maxValue);
+            _materialPropertyHandler.SetFloat("_EmissionValue", _shipEmissionGrade);
+            _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
+
+            if (_shipEmissionGrade > maxValue - 1f)
+                return true;
+            else
+                return false;
+        }
+
+        public bool DownEmission(float amount)
+        {
+            _shipEmissionGrade -= amount * Time.deltaTime;
+            _shipEmissionGrade = Mathf.Clamp(_shipEmissionGrade, 0f, 1000f);
+            _materialPropertyHandler.SetFloat("_EmissionValue", _shipEmissionGrade);
+            _dissolveRenderer.SetPropertyBlock(_materialPropertyHandler);
+
+            if (_shipEmissionGrade < 1f)
+                return true;
+            else
+                return false;
+        }
+
         private static readonly float DISSOLVEMAXVALUE = 1f;
         private static readonly float DISSOLVEMINVALUE = -1f;
         private static readonly float DISSOLVESPENDTIME = 2F;
@@ -177,8 +178,8 @@ namespace Pawn
         {
             yield return null;
         }
+        #endregion
     }
-
 
     [Serializable]
     public class PawnProperty
